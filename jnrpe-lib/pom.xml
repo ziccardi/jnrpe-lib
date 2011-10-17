@@ -10,7 +10,7 @@
 
 	<groupId>net.sf.jnrpe</groupId>
 	<artifactId>jnrpe-lib</artifactId>
-	<version>1.0.1-beta-01-SNAPSHOT</version>
+	<version>1.0.1-beta-01</version>
 	<packaging>jar</packaging>
 
 	<name>jnrpe-lib</name>
