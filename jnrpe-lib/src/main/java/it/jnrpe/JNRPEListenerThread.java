@@ -16,11 +16,13 @@
 package it.jnrpe;
 
 import it.jnrpe.commands.CommandInvoker;
+import it.jnrpe.utils.StreamManager;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -34,6 +36,7 @@ import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.StreamHandler;
 
 import javax.net.ServerSocketFactory;
 import javax.net.ssl.KeyManagerFactory;
@@ -61,6 +64,9 @@ class JNRPEListenerThread extends Thread
     private boolean m_bSSL = false;
     
     private int m_iCommandExecutionTimeout = 20000;
+    
+    private static final String m_sKeyStoreFileName = "keys.jks";
+    private static final String m_sKeyStorePwd = "p@55w0rd";
     
     JNRPEListenerThread(String sBindingAddress, int iBindingPort, CommandInvoker commandInvoker)
     {
@@ -94,40 +100,48 @@ class JNRPEListenerThread extends Thread
      * 
      * @see it.intesa.fi2.client.network.ISSLObjectsFactory#getSSLSocketFactory(String, String, String)
      */
-    public SSLServerSocketFactory getSSLSocketFactory(
-        String sKeyStoreFile,
-        String sKeyStorePwd,
-        String sKeyStoreType) throws KeyStoreException, CertificateException, FileNotFoundException, IOException, UnrecoverableKeyException, KeyManagementException 
+    private SSLServerSocketFactory getSSLSocketFactory() throws KeyStoreException, CertificateException, FileNotFoundException, IOException, UnrecoverableKeyException, KeyManagementException 
     {
-        if (sKeyStoreFile == null)
-            throw new KeyStoreException("KEYSTORE HAS NOT BEEN SPECIFIED");
-        if (!new File(sKeyStoreFile).exists())
-            throw new KeyStoreException("COULD NOT FIND KEYSTORE '" + sKeyStoreFile + "'");
 
-        if (sKeyStorePwd == null)
-            throw new KeyStoreException("KEYSTORE PASSWORD HAS NOT BEEN SPECIFIED");
+        // Open the KeyStore Stream
+        StreamManager h = new StreamManager();
+        
+        
+//        if (sKeyStoreFile == null)
+//            throw new KeyStoreException("KEYSTORE HAS NOT BEEN SPECIFIED");
+//        if (!new File(sKeyStoreFile).exists())
+//            throw new KeyStoreException("COULD NOT FIND KEYSTORE '" + sKeyStoreFile + "'");
+//
+//        if (sKeyStorePwd == null)
+//            throw new KeyStoreException("KEYSTORE PASSWORD HAS NOT BEEN SPECIFIED");
         
         SSLContext ctx;
         KeyManagerFactory kmf;
 
         try
         {
+            InputStream ksStream = getClass().getClassLoader().getResourceAsStream("keys.jks");
+            h.handle(ksStream);
             ctx = SSLContext.getInstance("SSLv3");
             
             kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
             
             //KeyStore ks = getKeystore(sKeyStoreFile, sKeyStorePwd, sKeyStoreType);
-            KeyStore ks = KeyStore.getInstance(sKeyStoreType);
-            ks.load(new FileInputStream(sKeyStoreFile), sKeyStorePwd.toCharArray());
+            //KeyStore ks = KeyStore.getInstance(sKeyStoreType);
+            KeyStore ks = KeyStore.getInstance("JKS");
+            char[] passphrase = m_sKeyStorePwd.toCharArray();
+            ks.load(ksStream, passphrase);
             
-            char[] passphrase = sKeyStorePwd.toCharArray();
             kmf.init(ks, passphrase);
             ctx.init(kmf.getKeyManagers(), null, new java.security.SecureRandom());           
-            
         }
         catch (NoSuchAlgorithmException e)
         {
             throw new SSLException ("Unable to initialize SSLSocketFactory.\n" + e.getMessage());
+        }
+        finally
+        {
+            h.closeAll();
         }
         
         return ctx.getServerSocketFactory();
@@ -142,6 +156,7 @@ class JNRPEListenerThread extends Thread
         if (m_bSSL)
         {
             // TODO: configurazione keystore
+            sf = getSSLSocketFactory();
             //sf = getSSLSocketFactory(m_Binding.getKeyStoreFile(), m_Binding.getKeyStorePassword(), "JKS");
         }
         else

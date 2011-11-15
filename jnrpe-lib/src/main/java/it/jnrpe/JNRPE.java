@@ -50,6 +50,11 @@ public class JNRPE
         //m_threadFactory = new ThreadFactory(20000, new CommandInvoker(pluginRepository, commandRepository));
     }
     
+    public JNRPEListenerThread listen(final String sAddress, final int iPort)
+    {
+        return listen(sAddress, iPort, true);
+    }
+    
     /**
      * Starts a new thread that listen for requests.
      * The method is <b>not blocking</b>
@@ -57,7 +62,7 @@ public class JNRPE
      * @param iPort The listening port
      * @return Returns the newly created thread.
      */
-    public JNRPEListenerThread listen(final String sAddress, final int iPort)
+    public JNRPEListenerThread listen(final String sAddress, final int iPort, final boolean bSSL)
     {
         JNRPEListenerThread bt = new JNRPEListenerThread(sAddress, iPort, new CommandInvoker(m_pluginRepository, m_commandRepository));
         try
@@ -67,9 +72,11 @@ public class JNRPE
         }
         catch (UnknownHostException e)
         {
-            // TODO Auto-generated catch block
+            // FIXME : must be handled!!
             e.printStackTrace();
         }
+        if (bSSL)
+            bt.enableSSL();
         bt.start();
         return bt;
     }
