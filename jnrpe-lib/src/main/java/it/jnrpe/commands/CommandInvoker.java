@@ -90,6 +90,18 @@ public class CommandInvoker
     			{
                     //sCommandLine[j] = CStringUtil.replaceAll(sCommandLine[j], "$ARG" + (i + 1) + "$", args[i]);
     			    sCommandLine[j] =  sCommandLine[j].replaceAll("\\$[Aa][Rr][Gg]" + (i + 1) + "\\$", args[i]);
+    			    if (sCommandLine[j].indexOf(' ') != -1)
+    			    {
+    			        if (sCommandLine[j].indexOf('\'') == -1)
+    			        {
+    			            sCommandLine[j] = "'" + sCommandLine[j] + "'";
+    			        }
+    			        else
+    			            if (sCommandLine[j].indexOf('"') == -1)
+    			            {
+    			                sCommandLine[j] = "\"" + sCommandLine[j] + "\"";
+    			            }
+    			    }
     			}
 		
 		PluginProxy plugin;
