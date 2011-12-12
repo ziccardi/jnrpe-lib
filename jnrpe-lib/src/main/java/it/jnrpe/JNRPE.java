@@ -50,7 +50,7 @@ public class JNRPE
         //m_threadFactory = new ThreadFactory(20000, new CommandInvoker(pluginRepository, commandRepository));
     }
     
-    public JNRPEListenerThread listen(final String sAddress, final int iPort)
+    public IJNRPEListener listen(final String sAddress, final int iPort)
     {
         return listen(sAddress, iPort, true);
     }
@@ -62,7 +62,7 @@ public class JNRPE
      * @param iPort The listening port
      * @return Returns the newly created thread.
      */
-    public JNRPEListenerThread listen(final String sAddress, final int iPort, final boolean bSSL)
+    public IJNRPEListener listen(final String sAddress, final int iPort, final boolean bSSL)
     {
         JNRPEListenerThread bt = new JNRPEListenerThread(sAddress, iPort, new CommandInvoker(m_pluginRepository, m_commandRepository));
         try
