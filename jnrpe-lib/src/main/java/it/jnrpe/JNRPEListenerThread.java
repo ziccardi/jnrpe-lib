@@ -50,7 +50,7 @@ import javax.net.ssl.SSLServerSocketFactory;
  * 
  * @author Massimiliano Ziccardi
  */
-class JNRPEListenerThread extends Thread
+class JNRPEListenerThread extends Thread implements IJNRPEListener
 {
     private ServerSocket m_serverSocket = null;
     
@@ -212,6 +212,10 @@ class JNRPEListenerThread extends Thread
         notify();
     }
 
+    /* (non-Javadoc)
+     * @see it.jnrpe.IJNRPEListener#close()
+     */
+    @Override
     public synchronized void close()
     {
  
