@@ -25,20 +25,48 @@ import it.jnrpe.net.IJNRPEConstants;
  */
 public class ReturnValue
 {
-	private final int m_iReturnCode;
-	private final String m_sMessage;
+	private int m_iReturnCode;
+	private String m_sMessage;
 
-    public ReturnValue(String sMessage)
+    public ReturnValue()
+    {
+        
+    }
+	
+	public ReturnValue(String sMessage)
     {
         m_iReturnCode = IJNRPEConstants.STATE_OK;
         m_sMessage = sMessage;
     }
 
-	
 	public ReturnValue(int iReturnCode, String sMessage)
 	{
 		m_iReturnCode = iReturnCode;
 		m_sMessage = sMessage;
+	}
+
+	/**
+	 * Sets the return code and returns 'this' so that
+	 * the calls can be cascaded
+	 * @param iReturnCode
+	 * @return
+	 */
+	public ReturnValue withReturnCode(int iReturnCode)
+	{
+	    m_iReturnCode = iReturnCode;
+	    return this;
+	}
+	
+	/**
+	 * Sets the message and returns 'this' so that
+	 * the calls can be cascaded
+	 * @param sMessage
+	 * @return
+	 */
+	public ReturnValue withMessage(String sMessage)
+	{
+	    m_sMessage = sMessage;
+	    return this;
 	}
 	
 	public int getReturnCode()
