@@ -15,6 +15,7 @@
  */
 package it.jnrpe;
 import it.jnrpe.commands.CommandInvoker;
+import it.jnrpe.events.IJNRPEEventListener;
 import it.jnrpe.net.BadCRCException;
 import it.jnrpe.net.IJNRPEConstants;
 import it.jnrpe.net.JNRPERequest;
@@ -25,6 +26,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.util.List;
 
 /**
  * Thread used to server client request 
@@ -36,6 +38,8 @@ class JNRPEServerThread extends Thread
 	private Socket socket = null;
 	private Boolean m_bStopped = Boolean.FALSE;
 	private final CommandInvoker m_commandInvoker;
+	private JNRPEListenerThread m_parent = null;
+	private List<IJNRPEEventListener> m_vListeners = null;
 	
 	public JNRPEServerThread(Socket socket, CommandInvoker commandInvoker)
 	{
@@ -44,6 +48,12 @@ class JNRPEServerThread extends Thread
 		m_commandInvoker = commandInvoker;
 	}
 
+	void configure(JNRPEListenerThread listenerThread, List<IJNRPEEventListener> vListeners)
+	{
+	    m_parent = listenerThread;
+	    m_vListeners = vListeners;
+	}
+	
 	public JNRPEResponse handleRequest (JNRPERequest req)
 	{
 		// extracting command name and params
@@ -63,10 +73,34 @@ class JNRPEServerThread extends Thread
 		res.setMessage(ret.getMessage());
 		res.updateCRC();
 		
+		EventsUtil.sendEvent(m_vListeners, m_parent, "COMMAND_INVOKED", 
+		        new Object[]{"COMMAND_NAME", sCommandName, 
+		                    "ARGS", argsToString(vArgs), 
+		                    "RETURN_CODE", ret.getReturnCode(), 
+		                    "RETURN_MESSAGE", ret.getMessage()});
+		
 		return res;
 	}
 	
-	public void run()
+	private String argsToString(String[] vArgs)
+    {
+	    if (vArgs == null || vArgs.length == 0)
+	        return "[]";
+	    
+	    StringBuffer sbRes = new StringBuffer();
+	    
+	    StringBuffer sbTmp = new StringBuffer();
+	    for (String sArg : vArgs)
+	    {
+	        sbRes
+	            .append(",")
+	            .append(sArg);
+	    }
+	    
+	    return sbRes.append("[").append(sbTmp.substring(1)).append("]").toString();
+    }
+
+    public void run()
 	{
 		StreamManager streamMgr = new StreamManager();
 		
@@ -118,6 +152,10 @@ class JNRPEServerThread extends Thread
 		{
 //			if (!m_bStopped.booleanValue())
 //			    m_Logger.error("ERROR DURING SOCKET OPERATION.", e);
+		    EventsUtil.sendEvent(m_vListeners, m_parent, "ERROR", 
+	                new Object[]{"MESSAGE", "Error during socket operation",
+		                         "EXCEPTION", e
+		                        });
 		}
 		finally
 		{
@@ -164,7 +202,6 @@ class JNRPEServerThread extends Thread
                     }
                     catch (IOException e)
                     {
-                        // TODO Auto-generated catch block
                     }
                     
                     // Let's try to interrupt all other operations...

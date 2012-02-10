@@ -16,6 +16,7 @@
 package it.jnrpe;
 
 import it.jnrpe.commands.CommandInvoker;
+import it.jnrpe.events.IJNRPEEventListener;
 import it.jnrpe.utils.StreamManager;
 
 import java.io.File;
@@ -68,11 +69,14 @@ class JNRPEListenerThread extends Thread implements IJNRPEListener
     private static final String m_sKeyStoreFileName = "keys.jks";
     private static final String m_sKeyStorePwd = "p@55w0rd";
     
-    JNRPEListenerThread(String sBindingAddress, int iBindingPort, CommandInvoker commandInvoker)
+    private List<IJNRPEEventListener> m_vEventListeners = null;
+    
+    JNRPEListenerThread(List<IJNRPEEventListener> vEventListeners, String sBindingAddress, int iBindingPort, CommandInvoker commandInvoker)
     {
         m_sBindingAddress = sBindingAddress;
         m_iBindingPort = iBindingPort;
         m_commandInvoker = commandInvoker;
+        m_vEventListeners = vEventListeners;
 //        try
 //        {
 //            init();
@@ -192,6 +196,7 @@ class JNRPEListenerThread extends Thread implements IJNRPEListener
                 }
 
                 JNRPEServerThread kk = m_threadFactory.createNewThread(clientSocket);
+                kk.configure(this, m_vEventListeners);
                 kk.start();
             }
         }
@@ -202,6 +207,7 @@ class JNRPEListenerThread extends Thread implements IJNRPEListener
         }
         catch (Exception e)
         {
+            EventsUtil.sendEvent(m_vEventListeners, this, "ERROR", new Object[]{"MESSAGE", e.getMessage(), "EXCEPTION", e});
         }
 
         exit();
@@ -210,6 +216,7 @@ class JNRPEListenerThread extends Thread implements IJNRPEListener
     private synchronized void exit()
     {
         notify();
+        EventsUtil.sendEvent(m_vEventListeners, this, "INFO", new Object[]{"MESSAGE", "Listener Closed"});
     }
 
     /* (non-Javadoc)
@@ -241,7 +248,8 @@ class JNRPEListenerThread extends Thread implements IJNRPEListener
                 return true;
         }
 
-        System.out.println ("Refusing connection to " + inetAddress);
+        //System.out.println ("Refusing connection to " + inetAddress);
+        EventsUtil.sendEvent(m_vEventListeners, this, "INFO", new Object[]{"MESSAGE", "Connection refused from : " + inetAddress});
         
         return false;
     }

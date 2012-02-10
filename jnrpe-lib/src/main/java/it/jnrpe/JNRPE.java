@@ -23,6 +23,7 @@ import java.util.Map;
 
 import it.jnrpe.commands.CommandInvoker;
 import it.jnrpe.commands.CommandRepository;
+import it.jnrpe.events.IJNRPEEventListener;
 import it.jnrpe.plugins.PluginRepository;
 
 /**
@@ -39,6 +40,8 @@ public class JNRPE
     private List<String> m_vAcceptedHosts = new ArrayList<String>();
     
     private Map<String, IJNRPEListener> m_mInstantiatedListeners = new HashMap<String, IJNRPEListener>();
+    
+    private List<IJNRPEEventListener> m_vEventListeners = new ArrayList<IJNRPEEventListener>();
     
     /**
      * Initializes the JNRPE worker
@@ -68,7 +71,7 @@ public class JNRPE
      */
     public IJNRPEListener listen(final String sAddress, final int iPort, final boolean bSSL)
     {
-        JNRPEListenerThread bt = new JNRPEListenerThread(sAddress, iPort, new CommandInvoker(m_pluginRepository, m_commandRepository));
+        JNRPEListenerThread bt = new JNRPEListenerThread(m_vEventListeners, sAddress, iPort, new CommandInvoker(m_pluginRepository, m_commandRepository));
         try
         {
             for (String sAddr : m_vAcceptedHosts)
