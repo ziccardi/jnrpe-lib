@@ -17,7 +17,9 @@ package it.jnrpe;
 
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import it.jnrpe.commands.CommandInvoker;
 import it.jnrpe.commands.CommandRepository;
@@ -35,6 +37,8 @@ public class JNRPE
     private final CommandRepository m_commandRepository;
     
     private List<String> m_vAcceptedHosts = new ArrayList<String>();
+    
+    private Map<String, IJNRPEListener> m_mInstantiatedListeners = new HashMap<String, IJNRPEListener>();
     
     /**
      * Initializes the JNRPE worker
@@ -78,6 +82,9 @@ public class JNRPE
         if (bSSL)
             bt.enableSSL();
         bt.start();
+        
+        m_mInstantiatedListeners.put(sAddress + iPort, bt);
+        
         return bt;
     }
     
@@ -88,5 +95,19 @@ public class JNRPE
     public void addAcceptedHost(String sAddress)
     {
         m_vAcceptedHosts.add(sAddress);
+    }
+    
+    /**
+     * Shuts down all the listener handled by this instance
+     */
+    public void shutdown()
+    {
+        if (m_mInstantiatedListeners.isEmpty())
+            return;
+        
+        for (IJNRPEListener listener : m_mInstantiatedListeners.values())
+        {
+            listener.close();
+        }
     }
 }
