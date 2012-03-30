@@ -63,6 +63,15 @@ public class JNRPE
     }
     
     /**
+     * Adds a new event listener
+     * @param listener
+     */
+    public void addEventListener(IJNRPEEventListener listener)
+    {
+        m_vEventListeners.add(listener);
+    }
+    
+    /**
      * Starts a new thread that listen for requests.
      * The method is <b>not blocking</b>
      * @param sAddress The address to bind to
