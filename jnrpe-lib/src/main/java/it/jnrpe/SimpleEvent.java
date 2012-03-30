@@ -33,7 +33,7 @@ class SimpleEvent implements IJNRPEEvent
     public SimpleEvent(String sEventName, Object[] vParams)
     {
         m_sEventName = sEventName;
-        for (int i = 0; vParams != null && i < vParams.length - 2; i+=2)
+        for (int i = 0; vParams != null && i < vParams.length; i+=2)
         {
             m_mParams.put((String)vParams[i], vParams[i + 1]);
         }
