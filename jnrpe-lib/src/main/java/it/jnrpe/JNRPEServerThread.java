@@ -28,6 +28,8 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  * Thread used to server client request 
  * 
@@ -84,20 +86,11 @@ class JNRPEServerThread extends Thread
 	
 	private String argsToString(String[] vArgs)
     {
-	    if (vArgs == null || vArgs.length == 0)
-	        return "[]";
-	    
-	    StringBuffer sbRes = new StringBuffer();
-	    
-	    StringBuffer sbTmp = new StringBuffer();
-	    for (String sArg : vArgs)
-	    {
-	        sbRes
-	            .append(",")
-	            .append(sArg);
-	    }
-	    
-	    return sbRes.append("[").append(sbTmp.substring(1)).append("]").toString();
+		StringBuffer sb = new StringBuffer();
+		sb.append("[");
+		sb.append(StringUtils.join(vArgs, ","));
+		sb.append("]");
+		return sb.toString();
     }
 
     public void run()
