@@ -1,27 +1,21 @@
 /*
- * Copyright (c) 2008 Massimiliano Ziccardi
- *  
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
- * You may obtain a copy of the License at 
- * 
- *     http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- * See the License for the specific language governing permissions and 
- * limitations under the License.
+ * Copyright (c) 2008 Massimiliano Ziccardi Licensed under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file except in compliance
+ * with the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
+ * or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
  */
 package it.jnrpe;
 
 import it.jnrpe.commands.CommandInvoker;
+import it.jnrpe.events.EventsUtil;
 import it.jnrpe.events.IJNRPEEventListener;
+import it.jnrpe.events.LogEvent;
 import it.jnrpe.utils.StreamManager;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetAddress;
@@ -37,7 +31,7 @@ import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.StreamHandler;
+import java.util.Set;
 
 import javax.net.ServerSocketFactory;
 import javax.net.ssl.KeyManagerFactory;
@@ -47,145 +41,237 @@ import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.SSLServerSocketFactory;
 
 /**
- * Thread that listen on a given IP:PORT.
- * 
+ * Thread that listen on a given IP:PORT. When a request is received, a
+ * {@link JNRPEServerThread} is created to serve it.
+ *
  * @author Massimiliano Ziccardi
  */
 class JNRPEListenerThread extends Thread implements IJNRPEListener
 {
+    /**
+     * Default time to wait before killing staled commands (milliseconds).
+     */
+    private static final int DEFAULT_COMMAND_EXECUTION_TIMEOUT = 20000;
+
+    /**
+     * The ServerSocket.
+     */
     private ServerSocket m_serverSocket = null;
-    
+
+    /**
+     * The list of all the accepted clients.
+     */
     private List<InetAddress> m_vAcceptedHosts = new ArrayList<InetAddress>();
+
+    /**
+     * The thread factory to be used to create server threads.
+     */
     private ThreadFactory m_threadFactory = null;
 
+    /**
+     * The address to bind to.
+     */
     private final String m_sBindingAddress;
+    /**
+     * The port to listen to.
+     */
     private final int m_iBindingPort;
+    /**
+     * The command invoker to be used to serve the requests.
+     */
     private final CommandInvoker m_commandInvoker;
-    
+
+    /**
+     * <code>true</code> if the connection must be encrypted.
+     */
     private boolean m_bSSL = false;
-    
-    private int m_iCommandExecutionTimeout = 20000;
-    
-    private static final String m_sKeyStoreFileName = "keys.jks";
-    private static final String m_sKeyStorePwd = "p@55w0rd";
-    
-    private List<IJNRPEEventListener> m_vEventListeners = null;
-    
-    JNRPEListenerThread(List<IJNRPEEventListener> vEventListeners, String sBindingAddress, int iBindingPort, CommandInvoker commandInvoker)
+
+    /**
+     * The command execution timeout (milliseconds).
+     */
+    private int m_iCommandExecutionTimeout = DEFAULT_COMMAND_EXECUTION_TIMEOUT;
+
+    /**
+     * The default keystore file name.
+     */
+    private static final String KEYSTORE_NAME = "keys.jks";
+    /**
+     * The default ketstore password.
+     */
+    private static final String KEYSTORE_PWD = "p@55w0rd";
+
+    /**
+     * The set of event listeners.
+     */
+    private Set<IJNRPEEventListener> m_vEventListeners = null;
+
+    /**
+     * Builds a listener thread.
+     *
+     * @param vEventListeners
+     *            The event listeners
+     * @param sBindingAddress
+     *            The address to bind to
+     * @param iBindingPort
+     *            The port to bind to
+     * @param commandInvoker
+     *            The command invoker to be used to serve the request
+     */
+    JNRPEListenerThread(final Set<IJNRPEEventListener> vEventListeners,
+            final String sBindingAddress, final int iBindingPort,
+            final CommandInvoker commandInvoker)
     {
         m_sBindingAddress = sBindingAddress;
         m_iBindingPort = iBindingPort;
         m_commandInvoker = commandInvoker;
         m_vEventListeners = vEventListeners;
-//        try
-//        {
-//            init();
-//        }
-//        catch (Exception e)
-//        {
-//            throw new BindException(e.getMessage());
-//        }
+        // try
+        // {
+        // init();
+        // }
+        // catch (Exception e)
+        // {
+        // throw new BindException(e.getMessage());
+        // }
     }
 
+    /**
+     * Enables the SSL.
+     */
     public void enableSSL()
     {
         m_bSSL = true;
     }
-    
-    
+
     /**
-     * Returns the SSL factory to be used to create the Server Socket
-     * @throws KeyStoreException 
-     * @throws IOException 
-     * @throws FileNotFoundException 
-     * @throws CertificateException 
-     * @throws UnrecoverableKeyException 
-     * @throws KeyManagementException 
-     * 
-     * @see it.intesa.fi2.client.network.ISSLObjectsFactory#getSSLSocketFactory(String, String, String)
+     * Creates an SSLServerSocketFactory.
+     *
+     * @return the newly creates SSL Server Socket Factory
+     * @throws KeyStoreException
+     * @throws CertificateException
+     * @throws IOException
+     * @throws UnrecoverableKeyException
+     * @throws KeyManagementException
      */
-    private SSLServerSocketFactory getSSLSocketFactory() throws KeyStoreException, CertificateException, FileNotFoundException, IOException, UnrecoverableKeyException, KeyManagementException 
+    private SSLServerSocketFactory getSSLSocketFactory()
+            throws KeyStoreException, CertificateException, IOException,
+            UnrecoverableKeyException, KeyManagementException
     {
 
         // Open the KeyStore Stream
         StreamManager h = new StreamManager();
-        
-        
-//        if (sKeyStoreFile == null)
-//            throw new KeyStoreException("KEYSTORE HAS NOT BEEN SPECIFIED");
-//        if (!new File(sKeyStoreFile).exists())
-//            throw new KeyStoreException("COULD NOT FIND KEYSTORE '" + sKeyStoreFile + "'");
-//
-//        if (sKeyStorePwd == null)
-//            throw new KeyStoreException("KEYSTORE PASSWORD HAS NOT BEEN SPECIFIED");
-        
+
+        // if (sKeyStoreFile == null)
+        // throw new KeyStoreException("KEYSTORE HAS NOT BEEN SPECIFIED");
+        // if (!new File(sKeyStoreFile).exists())
+        // throw new KeyStoreException("COULD NOT FIND KEYSTORE '" +
+        // sKeyStoreFile + "'");
+        //
+        // if (sKeyStorePwd == null)
+        // throw new
+        // KeyStoreException("KEYSTORE PASSWORD HAS NOT BEEN SPECIFIED");
+
         SSLContext ctx;
         KeyManagerFactory kmf;
 
         try
         {
-            InputStream ksStream = getClass().getClassLoader().getResourceAsStream("keys.jks");
+            InputStream ksStream = getClass().getClassLoader()
+                    .getResourceAsStream(KEYSTORE_NAME);
             h.handle(ksStream);
             ctx = SSLContext.getInstance("SSLv3");
-            
-            kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
-            
-            //KeyStore ks = getKeystore(sKeyStoreFile, sKeyStorePwd, sKeyStoreType);
-            //KeyStore ks = KeyStore.getInstance(sKeyStoreType);
+
+            kmf = KeyManagerFactory.getInstance(KeyManagerFactory
+                    .getDefaultAlgorithm());
+
+            // KeyStore ks = getKeystore(sKeyStoreFile, sKeyStorePwd,
+            // sKeyStoreType);
+            // KeyStore ks = KeyStore.getInstance(sKeyStoreType);
             KeyStore ks = KeyStore.getInstance("JKS");
-            char[] passphrase = m_sKeyStorePwd.toCharArray();
+            char[] passphrase = KEYSTORE_PWD.toCharArray();
             ks.load(ksStream, passphrase);
-            
+
             kmf.init(ks, passphrase);
-            ctx.init(kmf.getKeyManagers(), null, new java.security.SecureRandom());           
+            ctx.init(kmf.getKeyManagers(), null,
+                    new java.security.SecureRandom());
         }
         catch (NoSuchAlgorithmException e)
         {
-            throw new SSLException ("Unable to initialize SSLSocketFactory.\n" + e.getMessage());
+            throw new SSLException("Unable to initialize SSLSocketFactory.\n"
+                    + e.getMessage());
         }
         finally
         {
             h.closeAll();
         }
-        
+
         return ctx.getServerSocketFactory();
     }
-    
-    
-    private void init() throws IOException, KeyManagementException, KeyStoreException, CertificateException, UnrecoverableKeyException
+
+    /**
+     * Initializes the object.
+     *
+     * @throws IOException
+     * @throws KeyManagementException
+     * @throws KeyStoreException
+     * @throws CertificateException
+     * @throws UnrecoverableKeyException
+     */
+    private void init() throws IOException, KeyManagementException,
+            KeyStoreException, CertificateException, UnrecoverableKeyException
     {
         InetAddress addr = InetAddress.getByName(m_sBindingAddress);
         ServerSocketFactory sf = null;
-        
+
         if (m_bSSL)
         {
             // TODO: configurazione keystore
             sf = getSSLSocketFactory();
-            //sf = getSSLSocketFactory(m_Binding.getKeyStoreFile(), m_Binding.getKeyStorePassword(), "JKS");
+            // sf = getSSLSocketFactory(m_Binding.getKeyStoreFile(),
+            // m_Binding.getKeyStorePassword(), "JKS");
         }
         else
+        {
             sf = ServerSocketFactory.getDefault();
+        }
 
         m_serverSocket = sf.createServerSocket(m_iBindingPort, 0, addr);
         if (m_serverSocket instanceof SSLServerSocket)
-            ((SSLServerSocket)m_serverSocket).setEnabledCipherSuites(((SSLServerSocket) m_serverSocket).getSupportedCipherSuites());
-        
+        {
+            ((SSLServerSocket) m_serverSocket)
+                    .setEnabledCipherSuites(((SSLServerSocket) m_serverSocket)
+                            .getSupportedCipherSuites());
+        }
+
         // Init the thread factory
-        m_threadFactory = new ThreadFactory(m_iCommandExecutionTimeout, m_commandInvoker);
+        m_threadFactory = new ThreadFactory(m_iCommandExecutionTimeout,
+                m_commandInvoker);
     }
 
-    public void addAcceptedHosts(String sHost) throws UnknownHostException
+    /**
+     * Adds an host to the list of accepted hosts.
+     *
+     * @param sHost
+     *            The hostname or IP
+     * @throws UnknownHostException
+     *             thrown if the host name can't be translated to an IP.
+     */
+    public void addAcceptedHosts(final String sHost)
+            throws UnknownHostException
     {
         InetAddress addr = InetAddress.getByName(sHost);
         m_vAcceptedHosts.add(addr);
     }
 
+    /**
+     * Executes the thread.
+     */
     public void run()
     {
         try
         {
             init();
-            
+
             while (true)
             {
                 Socket clientSocket = m_serverSocket.accept();
@@ -195,7 +281,8 @@ class JNRPEListenerThread extends Thread implements IJNRPEListener
                     continue;
                 }
 
-                JNRPEServerThread kk = m_threadFactory.createNewThread(clientSocket);
+                JNRPEServerThread kk = m_threadFactory
+                        .createNewThread(clientSocket);
                 kk.configure(this, m_vEventListeners);
                 kk.start();
             }
@@ -207,25 +294,29 @@ class JNRPEListenerThread extends Thread implements IJNRPEListener
         }
         catch (Exception e)
         {
-            EventsUtil.sendEvent(m_vEventListeners, this, "ERROR", new Object[]{"MESSAGE", e.getMessage(), "EXCEPTION", e});
+            EventsUtil.sendEvent(m_vEventListeners, this, LogEvent.ERROR,
+                    e.getMessage(), e);
         }
 
         exit();
     }
 
+    /**
+     * Closes the listener.
+     */
     private synchronized void exit()
     {
         notify();
-        EventsUtil.sendEvent(m_vEventListeners, this, "INFO", new Object[]{"MESSAGE", "Listener Closed"});
+        EventsUtil.sendEvent(m_vEventListeners, this, LogEvent.INFO,
+                "Listener Closed");
     }
 
-    /* (non-Javadoc)
+    /**
      * @see it.jnrpe.IJNRPEListener#close()
      */
-    @Override
-    public synchronized void close()
+    public synchronized void shutdown()
     {
- 
+
         try
         {
             m_serverSocket.close();
@@ -240,7 +331,14 @@ class JNRPEListenerThread extends Thread implements IJNRPEListener
         }
     }
 
-    private boolean canAccept(InetAddress inetAddress)
+    /**
+     * Returns <code>true</code> if the request must be accepted.
+     *
+     * @param inetAddress
+     *            The client IP address
+     * @return <code>true</code> if the request must be accepted.
+     */
+    private boolean canAccept(final InetAddress inetAddress)
     {
         for (InetAddress addr : m_vAcceptedHosts)
         {
@@ -248,9 +346,10 @@ class JNRPEListenerThread extends Thread implements IJNRPEListener
                 return true;
         }
 
-        //System.out.println ("Refusing connection to " + inetAddress);
-        EventsUtil.sendEvent(m_vEventListeners, this, "INFO", new Object[]{"MESSAGE", "Connection refused from : " + inetAddress});
-        
+        // System.out.println ("Refusing connection to " + inetAddress);
+        EventsUtil.sendEvent(m_vEventListeners, this, LogEvent.INFO,
+                "Connection refused from : " + inetAddress);
+
         return false;
     }
 }

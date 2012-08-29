@@ -16,57 +16,61 @@
 package it.jnrpe.net;
 
 /**
- * This exception is thrown if the response CRC or the request CRC
- * ccould not be verified.
+ * This exception is thrown if the response CRC or the request CRC ccould not be
+ * verified.
  * 
  * @author Massimiliano Ziccardi
- *
+ * 
  */
 public class BadCRCException extends Exception
 {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -4870060988392897195L;
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -4870060988392897195L;
 
-	/**
-	 * Initialize the exception with an emtpy error message
-	 */
-	public BadCRCException()
-	{
-		super();
-	}
+    /**
+     * Initialize the exception with an emtpy error message
+     */
+    public BadCRCException()
+    {
+        super();
+    }
 
-	/**
-	 * Initialize the exception with the given error message and
-	 * the give root cause
-	 * 
-	 * @param sMsg The error message
-	 * @param thr  The root exception
-	 */
-	public BadCRCException(String sMsg, Throwable thr)
-	{
-		super(sMsg, thr);
-	}
+    /**
+     * Initialize the exception with the given error message and the give root
+     * cause
+     * 
+     * @param sMsg
+     *            The error message
+     * @param thr
+     *            The root exception
+     */
+    public BadCRCException(final String sMsg, final Throwable thr)
+    {
+        super(sMsg, thr);
+    }
 
-	/**
-	 * Initialize the exception with the given error message
-	 * 
-	 * @param sMsg The error message
-	 */
-	public BadCRCException(String sMsg)
-	{
-		super(sMsg);
-	}
+    /**
+     * Initialize the exception with the given error message
+     * 
+     * @param sMsg
+     *            The error message
+     */
+    public BadCRCException(final String sMsg)
+    {
+        super(sMsg);
+    }
 
-	/**
-	 * Initialize the exception with the given root cause
-	 * 
-	 * @param thr The root cause
-	 */
-	public BadCRCException(Throwable thr)
-	{
-		super(thr);
-	}
+    /**
+     * Initialize the exception with the given root cause
+     * 
+     * @param thr
+     *            The root cause
+     */
+    public BadCRCException(final Throwable thr)
+    {
+        super(thr);
+    }
 
 }
