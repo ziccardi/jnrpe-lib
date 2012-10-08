@@ -15,7 +15,7 @@ package it.jnrpe;
  *
  * @author Massimiliano Ziccardi
  */
-public interface IJNRPEListener
+interface IJNRPEListener
 {
     /**
      * Automatically called when the JNRPE Server shuts down.
