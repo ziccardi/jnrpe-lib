@@ -10,8 +10,6 @@
  */
 package it.jnrpe.commands;
 
-import java.util.Set;
-
 import it.jnrpe.ReturnValue;
 import it.jnrpe.Status;
 import it.jnrpe.events.EventsUtil;
@@ -20,6 +18,8 @@ import it.jnrpe.events.LogEvent;
 import it.jnrpe.net.IJNRPEConstants;
 import it.jnrpe.plugins.PluginProxy;
 import it.jnrpe.plugins.PluginRepository;
+
+import java.util.Set;
 
 /**
  * This class is used to invoke a command.
