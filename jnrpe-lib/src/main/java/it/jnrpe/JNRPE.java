@@ -70,9 +70,6 @@ public final class JNRPE
     {
         m_pluginRepository = pluginRepository;
         m_commandRepository = commandRepository;
-
-        // m_threadFactory = new ThreadFactory(20000, new
-        // CommandInvoker(pluginRepository, commandRepository));
     }
 
     /**
@@ -82,11 +79,11 @@ public final class JNRPE
      *            The address to bind to
      * @param iPort
      *            The port to bind to
-     * @return the listener
+     * @throws UnknownHostException
      */
-    public IJNRPEListener listen(final String sAddress, final int iPort)
+    public void listen(final String sAddress, final int iPort) throws UnknownHostException
     {
-        return listen(sAddress, iPort, true);
+        listen(sAddress, iPort, true);
     }
 
     /**
@@ -109,26 +106,18 @@ public final class JNRPE
      *            The listening port
      * @param bSSL
      *            <code>true</code> if an SSL socket must be created.
-     * @return Returns the newly created thread.
+     * @throws UnknownHostException
      */
-    public IJNRPEListener listen(final String sAddress, final int iPort,
-            final boolean bSSL)
+    public void listen(final String sAddress, final int iPort,
+            final boolean bSSL) throws UnknownHostException
     {
         JNRPEListenerThread bt = new JNRPEListenerThread(m_vEventListeners,
                 sAddress, iPort, new CommandInvoker(m_pluginRepository,
                         m_commandRepository, m_vEventListeners));
 
-        try
+        for (String sAddr : m_vAcceptedHosts)
         {
-            for (String sAddr : m_vAcceptedHosts)
-            {
-                bt.addAcceptedHosts(sAddr);
-            }
-        }
-        catch (UnknownHostException e)
-        {
-            // FIXME : must be handled!!
-            e.printStackTrace();
+            bt.addAcceptedHosts(sAddr);
         }
         if (bSSL)
         {
@@ -137,8 +126,6 @@ public final class JNRPE
         bt.start();
 
         m_mInstantiatedListeners.put(sAddress + iPort, bt);
-
-        return bt;
     }
 
     /**
