@@ -10,8 +10,6 @@
  */
 package it.jnrpe.net;
 
-import it.jnrpe.Status;
-
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
