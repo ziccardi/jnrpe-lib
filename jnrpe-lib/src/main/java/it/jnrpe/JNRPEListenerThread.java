@@ -272,6 +272,9 @@ class JNRPEListenerThread extends Thread implements IJNRPEListener
         {
             init();
 
+            EventsUtil.sendEvent(m_vEventListeners, this, LogEvent.INFO,
+                    "Listening on " + m_sBindingAddress + ":" + m_iBindingPort);
+            
             while (true)
             {
                 Socket clientSocket = m_serverSocket.accept();
