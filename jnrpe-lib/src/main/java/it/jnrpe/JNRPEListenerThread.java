@@ -106,6 +106,11 @@ class JNRPEListenerThread extends Thread implements IJNRPEListener
     private Set<IJNRPEEventListener> m_vEventListeners = null;
 
     /**
+     * Set to  true if the server is shutting down
+     */
+    private boolean m_bShutdown = false;
+    
+    /**
      * Builds a listener thread.
      *
      * @param vEventListeners
@@ -292,8 +297,15 @@ class JNRPEListenerThread extends Thread implements IJNRPEListener
         }
         catch (SocketException se)
         {
+            if (!m_bShutdown)
+            {
+                EventsUtil.sendEvent(m_vEventListeners, this, LogEvent.ERROR,
+                        "Unable to listen on " + m_sBindingAddress + ":" + m_iBindingPort + ": " + se.getMessage(), se);
+            }
+            
             // This exception is thrown when the server socket is closed.
             // Ignoring
+
         }
         catch (Exception e)
         {
@@ -319,7 +331,8 @@ class JNRPEListenerThread extends Thread implements IJNRPEListener
      */
     public synchronized void shutdown()
     {
-
+        m_bShutdown = true;
+        
         try
         {
             m_serverSocket.close();
