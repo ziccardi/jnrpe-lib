@@ -68,6 +68,10 @@ public final class JNRPE
     public JNRPE(final PluginRepository pluginRepository,
             final CommandRepository commandRepository)
     {
+    	if (pluginRepository == null)
+    		throw new IllegalArgumentException("Plugin repository cannot be null");
+    	if (commandRepository == null)
+    		throw new IllegalArgumentException("Command repository cannot be null");
         m_pluginRepository = pluginRepository;
         m_commandRepository = commandRepository;
     }
@@ -124,7 +128,15 @@ public final class JNRPE
             bt.enableSSL();
         }
         bt.start();
-
+        
+        try 
+        {
+        	// Give time to check if the IP/port configuration ar correctly configured
+			bt.join(3000);
+		} 
+        catch (InterruptedException e) 
+        {
+		}
         m_mInstantiatedListeners.put(sAddress + iPort, bt);
     }
 
