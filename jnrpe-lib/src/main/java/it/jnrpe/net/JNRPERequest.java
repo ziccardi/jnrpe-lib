@@ -12,6 +12,9 @@ package it.jnrpe.net;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.zip.CRC32;
+
+import org.apache.commons.lang.StringUtils;
 
 /**
  * This object represent a generic request packet.
@@ -39,4 +42,45 @@ public class JNRPERequest extends JNRPEProtocolPacket
         validate();
     }
 
+    public JNRPERequest(String sCommand, String...arguments)
+    {
+    	String sCommandBytes;
+    	
+    	if (arguments != null)
+    	{
+    		String[] ary = new String[arguments.length + 1];
+    		System.arraycopy(arguments, 0, ary, 1, arguments.length);
+    		ary[0] = sCommand;
+    		
+    		sCommandBytes = StringUtils.join(ary, '!');
+    	}
+    	else
+    		sCommandBytes = sCommand;
+    	
+    	
+    	
+    	setPacketVersion(PacketVersion.VERSION_2);
+    	super.setPacketType(PacketType.QUERY);
+    	super.initRandomBuffer();
+    	super.setDataBuffer(sCommandBytes);
+    	updateCRC();
+    }
+    
+    /**
+     * Updates the CRC value.
+     */
+    // TODO : move into base class....
+    private void updateCRC()
+    {
+        setCRC(0);
+        int iCRC = 0;
+
+        CRC32 crcAlg = new CRC32();
+        crcAlg.update(toByteArray());
+
+        iCRC = (int) crcAlg.getValue();
+
+        setCRC(iCRC);
+    }
+    
 }

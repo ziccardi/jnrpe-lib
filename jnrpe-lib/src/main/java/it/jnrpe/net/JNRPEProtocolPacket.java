@@ -15,6 +15,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Random;
 import java.util.zip.CRC32;
 
@@ -282,5 +283,13 @@ class JNRPEProtocolPacket
 
         r.nextBytes(m_vBuffer);
         r.nextBytes(m_vDummy);
+    }
+    
+    protected void setDataBuffer(String sCommand)
+    {
+    	if (sCommand == null)
+    		throw new IllegalArgumentException("Buffer can't be null");
+    	
+    	m_vBuffer = Arrays.copyOf(sCommand.getBytes(), MAX_PACKETBUFFER_LENGTH);
     }
 }

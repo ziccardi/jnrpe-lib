@@ -10,6 +10,8 @@
  */
 package it.jnrpe.net;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.zip.CRC32;
 
 /**
@@ -28,6 +30,17 @@ public final class JNRPEResponse extends JNRPEProtocolPacket
         setPacketType(PacketType.RESPONSE);
     }
 
+    public JNRPEResponse(InputStream in)
+    {
+        super();
+        try {
+			fromInputStream(in);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    }
+    
     /**
      * Updates the CRC value.
      */
