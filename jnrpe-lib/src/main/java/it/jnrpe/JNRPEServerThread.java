@@ -112,6 +112,15 @@ class JNRPEServerThread extends Thread
 
         ReturnValue ret = m_commandInvoker.invoke(sCommandName, vArgs);
 
+        if (ret == null)
+        {
+        	String args = "";
+        	if (vArgs != null)
+        		args = StringUtils.join(vArgs, ",");
+        	
+        	ret = new ReturnValue(Status.UNKNOWN, "Command [" + sCommandName + "] with args [" + args + "] returned null");
+        }
+        
         JNRPEResponse res = new JNRPEResponse();
         res.setPacketVersion(PacketVersion.VERSION_2);
 
@@ -215,6 +224,8 @@ class JNRPEServerThread extends Thread
             {
                 if (m_Socket != null && !m_Socket.isClosed())
                 {
+                	m_Socket.shutdownInput();
+                	m_Socket.shutdownOutput();
                     m_Socket.close();
                 }
             }
