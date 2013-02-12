@@ -74,7 +74,7 @@ public interface ICommandLine
      *
      * @param cOption
      *            The option short name
-     * @return
+     * @return <code>true</code> if the specified option is present
      */
     boolean hasOption(char cOption);
 
