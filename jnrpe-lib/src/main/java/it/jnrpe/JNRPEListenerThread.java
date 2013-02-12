@@ -283,6 +283,9 @@ class JNRPEListenerThread extends Thread implements IJNRPEListener
             while (true)
             {
                 Socket clientSocket = m_serverSocket.accept();
+                clientSocket.setSoLinger(false, 10);
+                clientSocket.setSoTimeout(m_iCommandExecutionTimeout);
+                
                 if (!canAccept(clientSocket.getInetAddress()))
                 {
                     clientSocket.close();
@@ -309,6 +312,13 @@ class JNRPEListenerThread extends Thread implements IJNRPEListener
         }
         catch (Exception e)
         {
+        	System.out.println ("*** DBEX2");
+            EventsUtil.sendEvent(m_vEventListeners, this, LogEvent.ERROR,
+                    e.getMessage(), e);
+        }
+        catch (Throwable e)
+        {
+        	System.out.println ("*** DBEX3");
             EventsUtil.sendEvent(m_vEventListeners, this, LogEvent.ERROR,
                     e.getMessage(), e);
         }
@@ -335,8 +345,11 @@ class JNRPEListenerThread extends Thread implements IJNRPEListener
         
         try
         {
-            m_serverSocket.close();
-            wait();
+        	if (m_serverSocket != null)
+        	{
+        		m_serverSocket.close();
+        		wait();
+        	}
         }
         catch (InterruptedException ie)
         {
