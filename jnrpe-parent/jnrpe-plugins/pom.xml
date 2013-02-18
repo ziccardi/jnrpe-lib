@@ -1,0 +1,123 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<artifactId>jnrpe-plugins</artifactId>
+	<packaging>jar</packaging>
+
+	<name>jnrpe-plugins</name>
+	<description>The JNRPE bundled plugins</description>
+
+	<licenses>
+		<license>
+			<name>The Apache Software License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+
+	<developers>
+		<developer>
+			<id>mziccardi</id>
+			<name>Massimiliano Ziccardi</name>
+			<email>massimiliano.ziccardi@gmail.com</email>
+		</developer>
+	</developers>
+
+	<scm>
+		<connection>scm:svn:https://jnrpe.svn.sourceforge.net/svnroot/jnrpe/jnrpe-plugins</connection>
+		<developerConnection>scm:svn:https://jnrpe.svn.sourceforge.net/svnroot/jnrpe/jnrpe-plugins</developerConnection>
+		<url>http://jnrpe.svn.sourceforge.net/svnroot/jnrpe/jnrpe-plugins</url>
+	</scm>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
+
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+
+				<configuration>
+					<descriptorRefs>
+						<descriptorRef>src</descriptorRef>
+						<descriptorRef>bin</descriptorRef>
+					</descriptorRefs>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<encoding>${project.build.sourceEncoding}</encoding>
+					<source>1.5</source>
+					<target>1.5</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<archive>
+						<index>true</index>
+						<manifest>
+							<addClasspath>true</addClasspath>
+							<classpathPrefix>lib/</classpathPrefix>
+							<mainClass>it.jnrpe.server.JNRPEServer</mainClass>
+						</manifest>
+						<manifestEntries>
+							<mode>development</mode>
+							<url>${project.url}</url>
+						</manifestEntries>
+					</archive>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+
+	<dependencies>
+		<dependency>
+			<groupId>net.sf.jnrpe</groupId>
+			<artifactId>jnrpe-lib</artifactId>
+			<version>1.0.1-beta-11</version>
+		</dependency>
+		<dependency>
+			<groupId>org.testng</groupId>
+			<artifactId>testng</artifactId>
+			<version>6.8</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.jnrpe</groupId>
+			<artifactId>jnrpe-server</artifactId>
+			<version>2.0.2-beta-06</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.jnrpe</groupId>
+			<artifactId>jcheck_nrpe</artifactId>
+			<version>2.0.2-beta-06</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<parent>
+		<groupId>net.sf.jnrpe</groupId>
+		<artifactId>jnrpe-parent</artifactId>
+		<version>2.0.2-beta-06</version>
+	</parent>
+</project>

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="iso-8859-1" standalone="yes" ?>
+<installation version="5.0">
+    <info>
+        <appname>${project.name}</appname>
+        <appversion>${project.version}</appversion>
+        <authors>
+            <author name="Massimiliano Ziccardi" email="massimiliano.ziccardi@gmail.com" />
+        </authors>
+        <url>http://jnrpe.sourceforge.net</url>
+        <javaversion>1.6</javaversion>
+        <requiresjdk>no</requiresjdk>
+    </info>
+ 
+    <guiprefs width="640" height="480" resizable="yes" />
+ 
+    <locale>
+        <langpack iso3="eng" />
+    </locale>
+ 
+    <resources>
+        <res id="LicencePanel.licence" src="../../src/main/izpack/LICENSE.txt"/>
+    </resources>
+ 
+    <panels>
+        <panel classname="HelloPanel" />
+        <panel classname="LicencePanel" />
+        <panel classname="TargetPanel"/>        
+        <panel classname="PacksPanel"/>
+        <panel classname="InstallPanel"/>        
+        <panel classname="FinishPanel" />
+    </panels>
+ 
+    <packs>
+        <pack name="Core" required="yes">
+            <description>Core installation files</description>
+            <fileset dir="../../target/staging/dependency" targetdir="$INSTALL_PATH/bin/lib" unpack="false">
+                <include name="*.jar" />
+                <exclude name="jnrpe-server*.jar"/>
+                <exclude name="jnrpe-plugins*.jar"/>
+            </fileset>
+            <fileset dir="../../target/staging/dependency" targetdir="$INSTALL_PATH/bin" unpack="false">
+                <include name="jnrpe-server*.jar"/>
+            </fileset>
+            
+            <file src="../../src/scripts/unix/jnrpe.sh" targetdir="$INSTALL_PATH" os="unix" unpack="false"/>
+            <parsable targetfile="$INSTALL_PATH/jnrpe.sh" os="unix" type="shell"/>
+            <executable targetfile="$INSTALL_PATH/jnrpe.sh" stage="never" os="unix"/>
+            <file src="../../src/config/log4j.properties" targetdir="$INSTALL_PATH" unpack="false"/>
+            <parsable targetfile="$INSTALL_PATH/log4j.properties" type="javaprop"/>
+        </pack>       
+        <pack name="Sample Config" required="yes">
+            <description>Sample configuration file</description>
+            <file src="../../src/config/jnrpe.ini" targetdir="$INSTALL_PATH" unpack="false"/>
+            <parsable targetfile="$INSTALL_PATH/jnrpe.ini" type="shell"/>
+        </pack>
+        <pack name="Base Plugins" required="no">
+            <description>The plugins provided with JNRPE</description>
+            <fileset dir="../../target/staging/dependency" targetdir="$INSTALL_PATH/plugins/base" unpack="false">
+                <include name="jnrpe-plugins*.jar"/>
+            </fileset>
+        </pack>
+        <pack name="Windows Service" required="no" os="windows">
+            <description>Register the server as Window Service</description>
+            <fileset dir="../../src/wrapper/native/windows" targetdir="$INSTALL_PATH/native" unpack="false">
+                <include name="*"/>
+            </fileset>
+            <file src="../../src/wrapper/jnrpeservice.log" targetdir="$INSTALL_PATH/logs" unpack="false"/>
+            <file src="../../src/wrapper/wrapper.conf" targetdir="$INSTALL_PATH" unpack="false"/>
+            <file src="../../src/wrapper/wrapper.jar" targetdir="$INSTALL_PATH/bin/lib" unpack="false"/>
+            <parsable targetfile="$INSTALL_PATH/wrapper.conf" type="plain"/>
+            <file src="../../src/wrapper/fixconf.bat" targetdir="$INSTALL_PATH" unpack="false" os="windows"/>
+            <parsable targetfile="$INSTALL_PATH/fixconf.bat" type="plain"/>
+            <executable targetfile="$INSTALL_PATH/fixconf.bat" stage="postinstall" os="windows" keep="false"/>
+            <executable targetfile="$INSTALL_PATH/native/wrapper.exe" stage="postinstall" os="windows" keep="true">
+                <args>
+                    <arg value="-i"/>
+                    <arg value="$INSTALL_PATH/wrapper.conf"/>
+                </args>
+            </executable>
+            
+        </pack>
+    </packs>
+ 
+</installation>

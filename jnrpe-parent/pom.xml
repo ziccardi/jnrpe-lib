@@ -1,0 +1,143 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>net.sf.jnrpe</groupId>
+	<artifactId>jnrpe-parent</artifactId>
+	<version>2.0.2-beta-06</version>
+	<packaging>pom</packaging>
+
+	<name>Jnrpe Package</name>
+	<description>The JNRPE app</description>
+	<url>http://jnrpe.sourceforge.net</url>
+
+	<licenses>
+		<license>
+			<name>The Apache Software License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+
+	<issueManagement>
+		<system>Mantis</system>
+		<url>http://sourceforge.net/apps/mantisbt/jnrpe/</url>
+	</issueManagement>
+
+	<mailingLists>
+		<mailingList>
+			<name>User List</name>
+			<subscribe>https://lists.sourceforge.net/lists/listinfo/jnrpe-users</subscribe>
+			<unsubscribe>https://lists.sourceforge.net/lists/listinfo/jnrpe-users</unsubscribe>
+			<post>jnrpe-users@lists.sourceforge.net</post>
+			<archive>http://sourceforge.net/mailarchive/forum.php?forum_name=jnrpe-users</archive>
+		</mailingList>
+		<mailingList>
+			<name>Development List</name>
+			<subscribe>https://lists.sourceforge.net/lists/listinfo/jnrpe-devel</subscribe>
+			<unsubscribe>https://lists.sourceforge.net/lists/listinfo/jnrpe-devel</unsubscribe>
+			<post>jnrpe-devel@lists.sourceforge.net</post>
+			<archive>http://sourceforge.net/mailarchive/forum.php?forum_name=jnrpe-devel</archive>
+		</mailingList>
+		<mailingList>
+			<name>Announce List</name>
+			<subscribe>https://lists.sourceforge.net/lists/listinfo/jnrpe-announce</subscribe>
+			<unsubscribe>https://lists.sourceforge.net/lists/listinfo/jnrpe-announce</unsubscribe>
+			<post>jnrpe-announce@lists.sourceforge.net</post>
+			<archive>http://sourceforge.net/mailarchive/forum.php?forum_name=jnrpe-announce</archive>
+		</mailingList>
+	</mailingLists>
+
+	<developers>
+		<developer>
+			<id>mziccardi</id>
+			<name>Massimiliano Ziccardi</name>
+			<email>massimiliano.ziccardi@gmail.com</email>
+		</developer>
+	</developers>
+
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-site-plugin</artifactId>
+				<version>3.2</version>
+				<dependencies>
+					<dependency><!-- add support for ssh/scp -->
+						<groupId>org.apache.maven.wagon</groupId>
+						<artifactId>wagon-ssh</artifactId>
+						<version>1.0</version>
+					</dependency>
+				</dependencies>
+				<configuration>
+					<siteDirectory>${project.basedir}/src/site</siteDirectory>
+				</configuration>
+			</plugin>
+		</plugins>
+
+	</build>
+
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-project-info-reports-plugin</artifactId>
+				<version>2.4</version>
+				<reportSets>
+					<reportSet>
+						<reports>
+							<report>dependencies</report>
+							<report>issue-tracking</report>
+							<report>index</report>
+							<report>project-team</report>
+							<report>modules</report>
+							<report>mailing-list</report>
+							<report>summary</report>
+							<report>license</report>
+							<report>scm</report>
+						</reports>
+					</reportSet>
+				</reportSets>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.9</version>
+				<configuration>
+					<show>public</show>
+				</configuration>
+				<reportSets>
+					<reportSet>
+						<reports>
+							<report>javadoc</report>
+						</reports>
+					</reportSet>
+				</reportSets>
+			</plugin>
+		</plugins>
+	</reporting>
+
+	<distributionManagement>
+		<site>
+			<id>jnrpe-web</id>
+			<url>scp://shell.sourceforge.net/home/project-web/jnrpe/htdocs</url>
+		</site>
+	</distributionManagement>
+	<modules>
+		<module>jnrpe-server</module>
+		<module>jnrpe-lib</module>
+		<module>jnrpe-plugins</module>
+		<module>jnrpe-install</module>
+		<module>jcheck_nrpe</module>
+	</modules>
+	<parent>
+		<groupId>org.sonatype.oss</groupId>
+		<version>7</version>
+		<artifactId>oss-parent</artifactId>
+	</parent>
+</project>

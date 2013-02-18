@@ -1,0 +1,114 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>jnrpe-install-module</artifactId>
+	<packaging>jar</packaging>
+	<name>JNRPE Installation</name>
+
+	<dependencies>
+
+		<dependency>
+			<groupId>org.codehaus.plexus</groupId>
+			<artifactId>plexus-utils</artifactId>
+			<version>1.5.6</version>
+		</dependency>
+
+		<dependency>
+			<groupId>net.sf.jnrpe</groupId>
+			<artifactId>jnrpe-server</artifactId>
+			<version>2.0.2-beta-06</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>net.sf.jnrpe</groupId>
+			<artifactId>jnrpe-plugins</artifactId>
+			<version>2.0.2-beta-06</version>
+		</dependency>
+		
+	</dependencies>
+
+	<build>
+
+		<defaultGoal>package</defaultGoal>
+
+		<finalName>${project.artifactId}</finalName>
+
+		<resources>
+			<resource>
+				<directory>${basedir}/src/main/izpack</directory>
+				<targetPath>${staging.dir}</targetPath>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
+
+		<plugins>
+
+			<!-- configure the compiler to use 1.5 -->
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<encoding>${project.build.sourceEncoding}</encoding>
+					<source>1.5</source>
+					<target>1.5</target>
+				</configuration>
+			</plugin>
+
+			<!-- prepare dependencies so that izpack jar tag to pickup at compile 
+				time -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>2.0</version>
+				<executions>
+					<execution>
+						<id>standard-installer</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<stripVersion>false</stripVersion>
+							<excludeGroupIds>org.codehaus.izpack</excludeGroupIds> <!-- dont want standalone compiler -->
+							<outputDirectory>${staging.dir}/dependency</outputDirectory>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- see install.xml to see how MyHelloPanel is used -->
+			<plugin>
+				<groupId>org.codehaus.izpack</groupId>
+				<artifactId>izpack-maven-plugin</artifactId>
+				<version>5.0.0-beta11</version>
+				<configuration>
+					<basedir>${staging.dir}</basedir>
+					<installFile>${staging.dir}/install.xml</installFile>
+					<customPanelDirectory>${staging.dir}</customPanelDirectory>
+				</configuration>
+				<executions>
+					<execution>
+						<id>standard-installer</id>
+						<phase>package</phase>
+						<goals>
+							<goal>izpack</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+		</plugins>
+
+	</build>
+
+	<properties>
+		<staging.dir>${project.build.directory}/staging</staging.dir>
+	</properties>
+
+
+	<parent>
+		<groupId>net.sf.jnrpe</groupId>
+		<artifactId>jnrpe-parent</artifactId>
+		<version>2.0.2-beta-06</version>
+	</parent>
+	<description>The JNRPE Server installation package</description>
+</project>
