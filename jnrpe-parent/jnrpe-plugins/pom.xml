@@ -24,11 +24,6 @@
 		</developer>
 	</developers>
 
-	<scm>
-		<connection>scm:svn:https://jnrpe.svn.sourceforge.net/svnroot/jnrpe/jnrpe-plugins</connection>
-		<developerConnection>scm:svn:https://jnrpe.svn.sourceforge.net/svnroot/jnrpe/jnrpe-plugins</developerConnection>
-		<url>http://jnrpe.svn.sourceforge.net/svnroot/jnrpe/jnrpe-plugins</url>
-	</scm>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

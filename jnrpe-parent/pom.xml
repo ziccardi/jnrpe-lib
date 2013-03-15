@@ -8,7 +8,9 @@
 	<packaging>pom</packaging>
 
 	<name>Jnrpe Package</name>
-	<description>The JNRPE app</description>
+	<description>JNRPE is a Nagios addon that makes simple the implementation of Nagios plugins using the Java Language.
+
+It is fully compatible with check_nrpe and can be used to execute both old native Nagios plugins and the new Java Nagios Plugins.</description>
 	<url>http://jnrpe.sourceforge.net</url>
 
 	<licenses>
@@ -20,8 +22,8 @@
 	</licenses>
 
 	<issueManagement>
-		<system>Mantis</system>
-		<url>http://sourceforge.net/apps/mantisbt/jnrpe/</url>
+		<system>sourceforge</system>
+		<url>http://sourceforge.net/p/jnrpe/_list/tickets</url>
 	</issueManagement>
 
 	<mailingLists>
@@ -140,4 +142,9 @@
 		<version>7</version>
 		<artifactId>oss-parent</artifactId>
 	</parent>
+	<scm>
+		<connection>scm:git:https://github.com/ziccardi/jnrpe-lib.git</connection>
+		<url>http://github.com/ziccardi/jnrpe-lib/tree/master/jnrpe-parent</url>
+		<developerConnection>scm:git:git@github.com:ziccardi/jnrpe-lib.git</developerConnection>
+	</scm>
 </project>

@@ -95,7 +95,7 @@ public class CCheckFile implements IPluginInterface
             String sCriticalThreshold = cl.getOptionValue("critical");
             
             if (ThresholdUtil.isValueInRange(sCriticalThreshold, lAge))
-                return updateRes(res, new ReturnValue(Status.CRITICAL, "FILE CRITICAL - File '" + f.getName() + "' is older than " + sCriticalThreshold + " seconds"));
+                return updateRes(res, new ReturnValue(Status.CRITICAL, "FILE CRITICAL - File age : " + lAge + " seconds"));
         }
 
         if (cl.hasOption("warning"))
@@ -106,7 +106,7 @@ public class CCheckFile implements IPluginInterface
             String sWarningThreshold = cl.getOptionValue("warning");
             
             if (ThresholdUtil.isValueInRange(sWarningThreshold, lAge))
-                return updateRes(res, new ReturnValue(Status.WARNING, "FILE WARNING - '" + f.getName() + "' is older than " + sWarningThreshold + " seconds"));
+                return updateRes(res, new ReturnValue(Status.WARNING, "FILE WARNING - File age : " + lAge + " seconds"));
         }
         
         return updateRes(res, new ReturnValue(Status.OK, "FILE OK"));
@@ -120,7 +120,7 @@ public class CCheckFile implements IPluginInterface
             BigDecimal bdSize = new BigDecimal("" + f.length());
             
             if (ThresholdUtil.isValueInRange(sCriticalThreshold, bdSize))
-                return updateRes(res, new ReturnValue(Status.CRITICAL, "FILE CRITICAL - '" + f.getName() + "' is shorter than " + sCriticalThreshold + " bytes"));
+                return updateRes(res, new ReturnValue(Status.CRITICAL, "FILE CRITICAL - File size : " + bdSize + " bytes"));
         }
 
 
@@ -130,7 +130,7 @@ public class CCheckFile implements IPluginInterface
             BigDecimal bdSize = new BigDecimal("" + f.length());
             
             if (ThresholdUtil.isValueInRange(sWarningThreshold, bdSize))
-                return updateRes(res, new ReturnValue(Status.WARNING, "FILE WARNING - '" + f.getName() + "' is shorter than " + sWarningThreshold + " bytes"));
+                return updateRes(res, new ReturnValue(Status.WARNING, "FILE WARNING  - File size : " + bdSize + " bytes"));
         }
 
         return updateRes(res, new ReturnValue(Status.OK, "FILE OK"));

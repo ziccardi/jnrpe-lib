@@ -83,7 +83,8 @@ public class CCheckJMX
         if (cl.hasOption("password"))
             setPassword(cl.getOptionValue("password"));
         
-        setVerbatim(4);
+        setVerbatim(2);
+        //setVerbatim(4);
         
         try
         {
@@ -99,7 +100,10 @@ public class CCheckJMX
         catch(Exception ex)
         {
             ByteArrayOutputStream bout = new ByteArrayOutputStream();
-            Status status = report(ex, System.out);
+            PrintStream ps = new PrintStream(bout);
+            Status status = report(ex, ps);
+            ps.flush();
+            ps.close();
             return new ReturnValue(status, new String(bout.toByteArray()));
         }
 

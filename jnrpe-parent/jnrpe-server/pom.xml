@@ -16,10 +16,6 @@
 		</license>
 	</licenses>
 
-	<issueManagement>
-		<system>Mantis</system>
-		<url>http://sourceforge.net/apps/mantisbt/jnrpe/</url>
-	</issueManagement>
 
 	<mailingLists>
 		<mailingList>
@@ -53,11 +49,6 @@
 		</developer>
 	</developers>
 
-	<scm>
-		<connection>scm:git:https://github.com/ziccardi/jnrpe-server.git</connection>
-		<developerConnection>scm:git:https://github.com/ziccardi/jnrpe-server.git</developerConnection>
-		<url>http://github.com/ziccardi/jnrpe-server</url>
-	</scm>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

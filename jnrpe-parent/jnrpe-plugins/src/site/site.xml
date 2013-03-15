@@ -3,9 +3,14 @@
 	
 
 	<body>
-
+		<menu name="User Guide">
+			<item name="The CHECK_JMX plugin" href="plugins/check_jmx.html" />
+			<item name="The CHECK_ORACLE plugin" href="plugins/check_oracle.html" />
+			<item name="The CHECK_DISK plugin" href="plugins/check_disk.html" />
+			<item name="The CHECK_FILE plugin" href="plugins/check_file.html" />
+			<item name="The EXEC plugin" href="plugins/exec.html" />
+		</menu>
 		<menu ref="reports"/>
-
 	</body>
 	<skin>
 		<groupId>org.apache.maven.skins</groupId>
