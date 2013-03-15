@@ -102,6 +102,9 @@ public final class PluginProxy extends PluginBase
             {
                 ((IPluginInterfaceEx) m_plugin).addListeners(getListeners());
             }
+            
+            Thread.currentThread().setContextClassLoader(m_plugin.getClass().getClassLoader());
+            
             return m_plugin.execute(new PluginCommandLine(cl));
         }
         catch (ParseException e)

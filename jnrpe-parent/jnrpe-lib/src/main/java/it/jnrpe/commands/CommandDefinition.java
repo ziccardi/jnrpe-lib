@@ -161,7 +161,7 @@ public final class CommandDefinition
      */
     private static String[] split(final String sCommandLine)
     {
-    	String regex = "[\"|']([^\"']*)[\"|']|([^\\!]+)";
+    	String regex = "[\"|']([^\"']*)[\"|']|([^ ]+)";
 
     	List<String> res = new ArrayList<String>();
     	
