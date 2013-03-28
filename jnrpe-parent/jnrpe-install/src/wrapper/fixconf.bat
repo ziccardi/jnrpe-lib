@@ -2,15 +2,12 @@
 setlocal enableextensions enabledelayedexpansion
 set /A count=0
 
-FOR /R "$INSTALL_PATH\bin\lib" %%G IN (*.*) DO (
+@echo off
+FOR /f %%G IN ('dir "$INSTALL_PATH/lib" /b') DO (
   set /A count+=1
-  echo wrapper.java.classpath.!count!=%%G >> "$INSTALL_PATH\wrapper.conf"
+  echo wrapper.java.classpath.!count!=lib/%%G >> "$INSTALL_PATH\wrapper\etc\wrapper.conf"
 )
 
-FOR %%G IN ("$INSTALL_PATH\bin\"*.jar) DO (
-  set /A count+=1
-  echo wrapper.java.classpath.!count!=%%G >> "$INSTALL_PATH\wrapper.conf"
-)
 
 set /A count+=1
-echo wrapper.java.classpath.!count!=$INSTALL_PATH >> "$INSTALL_PATH\wrapper.conf"
+echo wrapper.java.classpath.!count!=etc >> "$INSTALL_PATH\wrapper\etc\wrapper.conf"
