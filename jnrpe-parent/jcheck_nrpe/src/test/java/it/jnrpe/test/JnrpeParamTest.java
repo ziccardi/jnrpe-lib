@@ -141,7 +141,7 @@ public class JnrpeParamTest {
 	@Test
 	public void testBadCommand() throws Exception
 	{
-		JNRPEClient client = new JNRPEClient("127.0.0.1", 5667);
+		JNRPEClient client = new JNRPEClient("127.0.0.1", 5667, false);
 		ReturnValue ret = client.sendCommand("BADCOMMAND", "-t", "pippo");
 
 		Assert.assertEquals(ret.getStatus(), Status.UNKNOWN);
@@ -151,7 +151,7 @@ public class JnrpeParamTest {
 	@Test
 	public void testCommandNullPointerException() throws Exception
 	{
-		JNRPEClient client = new JNRPEClient("127.0.0.1", 5667);
+		JNRPEClient client = new JNRPEClient("127.0.0.1", 5667, false);
 		ReturnValue ret = client.sendCommand("TESTCOMMAND", "NullPointerException");
 		
 		Assert.assertEquals(ret.getStatus(), Status.UNKNOWN);
@@ -161,7 +161,7 @@ public class JnrpeParamTest {
 	@Test
 	public void testCommandReturnNull() throws Exception
 	{
-		JNRPEClient client = new JNRPEClient("127.0.0.1", 5667);
+		JNRPEClient client = new JNRPEClient("127.0.0.1", 5667, false);
 		ReturnValue ret = client.sendCommand("TESTCOMMAND", "ReturnNull");
 		Assert.assertEquals(ret.getStatus(), Status.UNKNOWN);
 		Assert.assertEquals(ret.getMessage().contains("returned null"), true, "Expected 'Command [XXX] with args [YYY] returned null' but got : " + ret.getMessage());
@@ -170,7 +170,7 @@ public class JnrpeParamTest {
 	@Test
 	public void testThrowRuntimeException() throws Exception
 	{
-		JNRPEClient client = new JNRPEClient("127.0.0.1", 5667);
+		JNRPEClient client = new JNRPEClient("127.0.0.1", 5667, false);
 		ReturnValue ret = client.sendCommand("TESTCOMMAND", "ThrowRuntimeException");
 		Assert.assertEquals(ret.getStatus(), Status.UNKNOWN);
 		Assert.assertEquals(ret.getMessage().contains("Plugin execution error: Thrown RuntimeException as requested"), true);
