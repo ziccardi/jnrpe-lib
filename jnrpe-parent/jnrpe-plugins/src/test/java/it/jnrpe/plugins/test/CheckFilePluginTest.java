@@ -128,7 +128,7 @@ public class CheckFilePluginTest implements Constants{
 					.addArgument(new CommandOption("file", "$ARG1$"))
 				);
 		
-		JNRPEClient client = new JNRPEClient(BIND_ADDRESS, JNRPE_PORT);
+		JNRPEClient client = new JNRPEClient(BIND_ADDRESS, JNRPE_PORT, false);
 		ReturnValue ret = client.sendCommand("CHECK_FILE_EXISTS", m_testFile.getAbsolutePath());
 		
 		Assert.assertEquals(ret.getStatus(), Status.OK);
@@ -144,7 +144,7 @@ public class CheckFilePluginTest implements Constants{
 					.addArgument(new CommandOption("file", "$ARG1$"))
 				);
 		
-		JNRPEClient client = new JNRPEClient(BIND_ADDRESS, JNRPE_PORT);
+		JNRPEClient client = new JNRPEClient(BIND_ADDRESS, JNRPE_PORT, false);
 		ReturnValue ret = client.sendCommand("CHECK_FILE_EXISTS", "pippo");
 		
 		Assert.assertEquals(ret.getStatus(), Status.CRITICAL);
@@ -160,7 +160,7 @@ public class CheckFilePluginTest implements Constants{
 					.addArgument(new CommandOption("FILE", "$ARG1$"))
 				);
 		
-		JNRPEClient client = new JNRPEClient(BIND_ADDRESS, JNRPE_PORT);
+		JNRPEClient client = new JNRPEClient(BIND_ADDRESS, JNRPE_PORT, false);
 		ReturnValue ret = client.sendCommand("CHECK_FILE_NOT_EXISTS", "PIPPO");
 		
 		Assert.assertEquals(ret.getStatus(), Status.OK);
@@ -176,7 +176,7 @@ public class CheckFilePluginTest implements Constants{
 					.addArgument(new CommandOption("FILE", "$ARG1$"))
 				);
 		
-		JNRPEClient client = new JNRPEClient(BIND_ADDRESS, JNRPE_PORT);
+		JNRPEClient client = new JNRPEClient(BIND_ADDRESS, JNRPE_PORT, false);
 		ReturnValue ret = client.sendCommand("CHECK_FILE_NOT_EXISTS", m_testFile.getAbsolutePath());
 		
 		Assert.assertEquals(ret.getStatus(), Status.CRITICAL);
@@ -193,7 +193,7 @@ public class CheckFilePluginTest implements Constants{
 					.addArgument(new CommandOption("notcontains", "$ARG2$"))
 				);
 		
-		JNRPEClient client = new JNRPEClient(BIND_ADDRESS, JNRPE_PORT);
+		JNRPEClient client = new JNRPEClient(BIND_ADDRESS, JNRPE_PORT, false);
 		ReturnValue ret = client.sendCommand("CHECK_FILE_NOT_CONTAIN", m_testFile.getAbsolutePath(), "notexistentstring");
 		
 		Assert.assertEquals(ret.getStatus(), Status.OK);
@@ -210,7 +210,7 @@ public class CheckFilePluginTest implements Constants{
 					.addArgument(new CommandOption("notcontains", "$ARG2$"))
 				);
 		
-		JNRPEClient client = new JNRPEClient(BIND_ADDRESS, JNRPE_PORT);
+		JNRPEClient client = new JNRPEClient(BIND_ADDRESS, JNRPE_PORT, false);
 		ReturnValue ret = client.sendCommand("CHECK_FILE_NOT_CONTAIN", m_testFile.getAbsolutePath(), "verso");
 		
 		Assert.assertEquals(ret.getStatus(), Status.CRITICAL);
@@ -227,7 +227,7 @@ public class CheckFilePluginTest implements Constants{
 					.addArgument(new CommandOption("contains", "$ARG2$"))
 				);
 		
-		JNRPEClient client = new JNRPEClient(BIND_ADDRESS, JNRPE_PORT);
+		JNRPEClient client = new JNRPEClient(BIND_ADDRESS, JNRPE_PORT, false);
 		ReturnValue ret = client.sendCommand("CHECK_FILE_CONTAIN", m_testFile.getAbsolutePath(), "verso,0:2,2:5");
 		
 		Assert.assertEquals(ret.getStatus(), Status.OK);
@@ -244,7 +244,7 @@ public class CheckFilePluginTest implements Constants{
 					.addArgument(new CommandOption("contains", "$ARG2$"))
 				);
 		
-		JNRPEClient client = new JNRPEClient(BIND_ADDRESS, JNRPE_PORT);
+		JNRPEClient client = new JNRPEClient(BIND_ADDRESS, JNRPE_PORT, false);
 		ReturnValue ret = client.sendCommand("CHECK_FILE_CONTAIN", m_testFile.getAbsolutePath(), "verso,2:,0:2");
 		
 		Assert.assertEquals(ret.getStatus(), Status.WARNING);
@@ -261,7 +261,7 @@ public class CheckFilePluginTest implements Constants{
 					.addArgument(new CommandOption("contains", "$ARG2$"))
 				);
 		
-		JNRPEClient client = new JNRPEClient(BIND_ADDRESS, JNRPE_PORT);
+		JNRPEClient client = new JNRPEClient(BIND_ADDRESS, JNRPE_PORT, false);
 		ReturnValue ret = client.sendCommand("CHECK_FILE_CONTAIN", m_testFile.getAbsolutePath(), "verso,2:4,4:");
 		
 		Assert.assertEquals(ret.getStatus(), Status.CRITICAL);

@@ -55,7 +55,7 @@ public class TestPluginTest implements Constants{
 	@Test
 	public void testStateCritical() throws Exception
 	{
-		JNRPEClient client = new JNRPEClient(BIND_ADDRESS, JNRPE_PORT);
+		JNRPEClient client = new JNRPEClient(BIND_ADDRESS, JNRPE_PORT, false);
 		ReturnValue ret = client.sendCommand("TESTCOMMAND", "Hello World", "critical");
 		
 		Assert.assertEquals(ret.getStatus(), Status.CRITICAL);
@@ -65,7 +65,7 @@ public class TestPluginTest implements Constants{
 	@Test
 	public void testStateWarning() throws Exception
 	{
-		JNRPEClient client = new JNRPEClient(BIND_ADDRESS, JNRPE_PORT);
+		JNRPEClient client = new JNRPEClient(BIND_ADDRESS, JNRPE_PORT, false);
 		ReturnValue ret = client.sendCommand("TESTCOMMAND", "Hello World!", "warning");
 		
 		Assert.assertEquals(ret.getStatus(), Status.WARNING);
@@ -75,7 +75,7 @@ public class TestPluginTest implements Constants{
 	@Test
 	public void testStateOk() throws Exception
 	{
-		JNRPEClient client = new JNRPEClient(BIND_ADDRESS, JNRPE_PORT);
+		JNRPEClient client = new JNRPEClient(BIND_ADDRESS, JNRPE_PORT, false);
 		ReturnValue ret = client.sendCommand("TESTCOMMAND", "Hello World!!!", "ok");
 		
 		Assert.assertEquals(ret.getStatus(), Status.OK);
@@ -85,7 +85,7 @@ public class TestPluginTest implements Constants{
 	@Test
 	public void testStateUnknown() throws Exception
 	{
-		JNRPEClient client = new JNRPEClient(BIND_ADDRESS, JNRPE_PORT);
+		JNRPEClient client = new JNRPEClient(BIND_ADDRESS, JNRPE_PORT, false);
 		ReturnValue ret = client.sendCommand("TESTCOMMAND", "Hello World!!!!!", "unknown");
 		
 		Assert.assertEquals(ret.getStatus(), Status.UNKNOWN);

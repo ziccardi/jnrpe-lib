@@ -145,7 +145,7 @@
             WARNING: THIS PLUGIN, REQUIRES JDK 1.5 OR GREATER!
             This plugin is used to test JMX values. It's based on 'jmxquery' (http://code.google.com/p/jmxquery/)
             Follows an example. For easiness, the parameters are shown as you would pass them on the command line.
-            EXAMPLE (to monitor JBOSS memory usage):
+            EXAMPLE (to monitor pre 7.1 version JBOSS memory usage):
             -U service:jmx:rmi://127.0.0.1/jndi/rmi://127.0.0.1:1090/jmxconnector -O jboss.system:type=ServerInfo -A TotalMemory -w 731847066: -c 1045495808 
         ]]>
         </description>    
