@@ -6,7 +6,53 @@
  2013/02/19
  -----
 
-JNRPE Server Configuration
+Running the server
+
+  When you explode the JNRPE server archive, you'll find the following directory structure:
+  
+-----------------------------------------------------
+   jnrpe-server-xxx
+         |-bin
+         |-etc
+         |-lib
+         |-docs
+         |-logs
+         |-plugins
+-----------------------------------------------------
+  
+  Inside the bin directory you'll find a couple of scripts:
+  
+  * jnrpe : the script to run on a unix system
+  
+  * jnrpe.bat : the script to run on a windows system
+  
+  []
+  
+  The etc directory contains the jnrpe configurations: one jnrpe.ini and a log4j configuration file.
+  The libs directory contains all the jar needed by JNRPE server to run.
+  The logs directory will contain all the JNRPE server logs
+  The plugins directory will contain all the JNRPE plugin package you will want to install.
+  
+  The JNRPE server command line is very simple, and accepts the following parameters:
+  
+  * -c,--conf <file> : tells to JNRPE where is the JNRPE configuration file. This option is REQUIRED.
+  
+  * -l,--list : lists all the plugin installed inside the JNRPE server
+  
+  * -v,--version : shows the server version
+  
+  []
+  
+  As soon as you have exploded the archive, you are ready to run JNRPE:
+  
++------------------------------+
+  cd $JNRPE_HOME/bin
+  ./jnrpe -c ../etc/jnrpe.ini
++------------------------------+
+
+  Since you still didn't install any plugin, you won't be able to do much...
+
+Configuring the server
 
   The first operation to perform as soon as JNRPE has been installed, is a propert configuration.
   While with the previous versions of JNRPE you were forced to write
@@ -70,14 +116,16 @@ JNRPE Server Configuration
 	[COMMAND_NAME] : [PLUGIN_NAME] [COMMAND_LINE]
 +----------+
 
-  Where:
+     Where:
   
-  * <<[COMMAND_NAME]>> is the name you want to associate to this command definition
+     * <<[COMMAND_NAME]>> is the name you want to associate to this command definition
   
-  * <<[PLUGIN_NAME]>> is the plugin that must is execute the command
+     * <<[PLUGIN_NAME]>> is the plugin that must is execute the command
   
-  * <<COMMAND_LINE>> is the command line to be passed to the plugin. Any $ARG?$ macro will be replaced with the
-  arguments received by check_nrpe (-a flag) if accept-params is true.
+     * <<COMMAND_LINE>> is the command line to be passed to the plugin. Any $ARG?$ macro will be replaced with the
+     arguments received by check_nrpe (-a flag) if accept-params is true.
+    
+    []
     
  The two configured command could be invoked like this:
  

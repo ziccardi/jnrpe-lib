@@ -11,7 +11,6 @@
 			<item name="Usage Scenario" href="usage_scenario.html" />
 			<item name="Getting Started" href="getting_started.html" />
 		</menu>
-		<menu ref="reports" />
 	</body>
 	<skin>
 		<groupId>org.apache.maven.skins</groupId>
