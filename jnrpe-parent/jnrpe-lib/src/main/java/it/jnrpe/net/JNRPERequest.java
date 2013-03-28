@@ -42,30 +42,83 @@ public class JNRPERequest extends JNRPEProtocolPacket
         validate();
     }
 
+//    public JNRPERequest(String sCommand, String...arguments)
+//    {
+//    	String sCommandBytes;
+//    	
+//    	if (arguments != null)
+//    	{
+//    		String[] ary = new String[arguments.length + 1];
+//    		
+//    		for (int i = 0; i < arguments.length; i++)
+//    		{
+//    			if (arguments[i].indexOf('!') == -1)
+//    				ary[i+1] = arguments[i];
+//    			else
+//    				ary[i+1] = "'" + arguments[i] + "'";
+//    		}
+//    		//System.arraycopy(arguments, 0, ary, 1, arguments.length);
+//    		ary[0] = sCommand;
+//    		
+//    		sCommandBytes = StringUtils.join(ary, '!');
+//    	}
+//    	else
+//    		sCommandBytes = sCommand;
+//    	
+//    	
+//    	
+//    	setPacketVersion(PacketVersion.VERSION_2);
+//    	super.setPacketType(PacketType.QUERY);
+//    	super.initRandomBuffer();
+//    	super.setDataBuffer(sCommandBytes);
+//    	updateCRC();
+//    }
+    
     public JNRPERequest(String sCommand, String...arguments)
+    {
+    	init (sCommand, arguments);
+    }
+    
+    JNRPERequest(String sCommand, String sArguments)
+    {
+    	init(sCommand, sArguments);
+    }
+    
+    private void init(String sCommand, String ...arguments)
     {
     	String sCommandBytes;
     	
     	if (arguments != null)
     	{
-    		String[] ary = new String[arguments.length + 1];
+    		String[] ary = new String[arguments.length];
     		
     		for (int i = 0; i < arguments.length; i++)
     		{
     			if (arguments[i].indexOf('!') == -1)
-    				ary[i+1] = arguments[i];
+    				ary[i] = arguments[i];
     			else
-    				ary[i+1] = "'" + arguments[i] + "'";
+    				ary[i] = "'" + arguments[i] + "'";
     		}
-    		//System.arraycopy(arguments, 0, ary, 1, arguments.length);
-    		ary[0] = sCommand;
-    		
-    		sCommandBytes = StringUtils.join(ary, '!');
+    		//sCommandBytes = StringUtils.join(ary, '!');
+    		init(sCommand, StringUtils.join(ary, '!'));
+    	}
+    	else
+    		init(sCommand, (String) null);
+    }
+    
+    private void init(String sCommand, String sArguments)
+    {
+    	String sCommandBytes;
+
+    	if (sArguments != null && sArguments.startsWith("!"))
+    		sArguments = sArguments.substring(1);
+    	
+    	if (!StringUtils.isBlank(sArguments))
+    	{
+    		sCommandBytes = sCommand + "!" + sArguments;
     	}
     	else
     		sCommandBytes = sCommand;
-    	
-    	
     	
     	setPacketVersion(PacketVersion.VERSION_2);
     	super.setPacketType(PacketType.QUERY);

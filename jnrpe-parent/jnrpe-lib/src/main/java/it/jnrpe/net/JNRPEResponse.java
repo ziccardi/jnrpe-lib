@@ -30,15 +30,10 @@ public final class JNRPEResponse extends JNRPEProtocolPacket
         setPacketType(PacketType.RESPONSE);
     }
 
-    public JNRPEResponse(InputStream in)
+    public JNRPEResponse(InputStream in) throws IOException
     {
         super();
-        try {
-			fromInputStream(in);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		fromInputStream(in);
     }
     
     /**

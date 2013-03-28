@@ -3,9 +3,10 @@
 	
 
 	<body>
-
-		<menu ref="reports"/>
-
+		<menu name="JNRPE Library">
+			<item name="Overview" href="index.html" />
+			<item name="Download" href="download.html" />
+		</menu>
 	</body>
 	<skin>
 		<groupId>org.apache.maven.skins</groupId>
