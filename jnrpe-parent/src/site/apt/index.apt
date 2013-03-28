@@ -22,13 +22,13 @@ Welcome to the JNRPE package
   * {{{./jnrpe-lib/index.html}JNRPE Library}} : it is the core of JNRPE and implements all the logic of instantiating and executing plugins in response
     of check_nrpe queries. It can be embedded inside your own application to allow you to easily answer to check_nrpe queries.
   
-  * {{{./jcheck_nrpe/index.html}jCHECK_NRPE}} : it is a java implementation of the check_nrpe utils. It can be used to invoke both JNRPE and NRPE.
+  * {{{./jcheck_nrpe/index.html}jCheck NRPE}} : it is a java implementation of the check_nrpe utils. It can be used to invoke both JNRPE and NRPE.
     You can embed it inside your application to call NRPE or JNRPE.
   
-  * {{{./jnrpe-plugins/index.html}JNRPE_PLUGINS}} : it is a package containing some JAVA plugin you can get out of the box with JNRPE. These plugins are
+  * {{{./jnrpe-plugins/index.html}JNRPE Plugins}} : it is a package containing some JAVA plugin you can get out of the box with JNRPE. These plugins are
     full java, so you don't have to bother issues about operating systems, hardware architecture, recompiling from sources, etc.
   
-  * {{{./jnrpe-install/install.html}JNRPE_INSTALL}} : it is a graphical user interface that allows you to easily install JNRPE on both windows and linux/unix.
+  * {{{./jnrpe-install/index.html}JNRPE Install}} : it is a graphical user interface that allows you to easily install JNRPE on both windows and linux/unix.
   
 * How to Get Support
 
