@@ -6,6 +6,7 @@
 		<menu name="JNRPE Library">
 			<item name="Overview" href="index.html" />
 			<item name="Download" href="download.html" />
+			<item name="Getting Started" href="embedding.html" />
 		</menu>
 	</body>
 	<skin>

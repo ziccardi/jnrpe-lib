@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>net.sf.jnrpe</groupId>
 		<artifactId>jnrpe-parent</artifactId>
-		<version>2.0.2-beta-06</version>
+		<version>2.0.3-beta-01</version>
 	</parent>
 
 	<artifactId>jnrpe-lib</artifactId>
@@ -131,4 +131,11 @@
 			</plugin>
 		</plugins>
 	</build>
+
+	<contributors>
+		<contributor>
+			<name>Athou</name>
+			<url>https://github.com/Athou</url>
+		</contributor>
+	</contributors>
 </project>
