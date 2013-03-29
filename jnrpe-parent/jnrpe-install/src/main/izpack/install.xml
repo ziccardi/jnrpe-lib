@@ -92,6 +92,10 @@
 			<file src="../../src/scripts/unix/jnrpe" targetdir="$INSTALL_PATH/bin"
 				os="unix" unpack="false" />
 			<executable targetfile="$INSTALL_PATH/bin/jnrpe" os="unix" />
+			
+			<file src="../../src/scripts/windows/jnrpe.bat" targetdir="$INSTALL_PATH/bin"
+				os="windows" unpack="false" />
+			
 			<file src="../../src/config/log4j.properties" targetdir="$INSTALL_PATH/etc"
 				unpack="false" />
 				

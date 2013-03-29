@@ -1,0 +1,65 @@
+ -----
+ JNRPE Package
+ -----
+ Massimiliano Ziccardi
+ -----
+ 2013/02/18
+ -----
+
+JNRPE Installation package
+ 
+   To JNRPE installation package is an application that will guide you through the process of installing
+   the JNRPE Server.
+
+   To run the application you must have a JVM 1.5+ installed.
+
+   The installer can be used on both unix and windows and will perform the following steps:
+   
+     * Install the JNRPE server
+     
+     * Install a sample jnrpe.ini configuration file
+     
+     * Configure the JNRPE server logging
+     
+     * Install the JNRPE bundled plugins (Optional)
+     
+     * Install JNRPE as Windows Service (Optional. Only on Windows operating systems)
+     
+     * Install JNRPE as Unix Daemon (Optional. Only on unix operating systems. The user that runs the installer must have write permission on /etc/init.d)
+   
+     * Creates an uninstaller to completely remote JNRPE (Optional)
+     
+* Run the installer
+   
+   Running the installer is very easy:
+   
++--------------------------------------------------+
+
+java -jar jnrpe-install.jar
+
++--------------------------------------------------+
+   
+   The GUI will guide you through the installation process.
+   
+* The installed directory structure
+
+  When the installer will end, you'll find the following structure inside the JNRPE directory:
+  
+------------------------------------------------
+
+  JNRPE
+    |- bin				----> Contains the script to be used to run JNRPE
+    |- etc				----> Contains the JNRPE configuration files
+    |- lib				----> Contains the libraries required by JNRPE
+    |- plugins			----> Contains all the plugin packages
+    |     |
+    |     |- base		----> Contains the plugin package bundled with JNRPE
+    |- Uninstaller		----> Contains the generated uninstaller
+    |- wrapper			----> Contains the YAJSW binaries
+          |- etc		----> Contains the YAJSW configuration
+          |- lib        ----> Contains the YAJSW dependencies
+
+------------------------------------------------
+
+  On windows you will find a Service called JNRPE Server, while on unix you will find a script named jnrpe inside
+  the /etc/init.d directory.

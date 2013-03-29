@@ -3,7 +3,10 @@
 	
 
 	<body>
-
+		<menu name="JNRPE Plugins">
+			<item name="Overview" href="index.html" />
+			<item name="Download" href="download.html" />
+		</menu>
 	</body>
 	<skin>
 		<groupId>org.apache.maven.skins</groupId>
