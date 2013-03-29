@@ -9,7 +9,7 @@
 		</menu>
 		<menu name="User Guide">
 			<item name="Command Line" href="command_line.html" />
-			<item name="Embedding" href="embedding.html" />
+<!-- 			<item name="Embedding" href="embedding.html" /> -->
 		</menu>
 	</body>
 	<skin>
