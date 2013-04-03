@@ -5,7 +5,7 @@
 	<packaging>jar</packaging>
 	<name>JNRPE Installation</name>
 	<description>The JNRPE Server installation package</description>
-	
+
 	<parent>
 		<groupId>net.sf.jnrpe</groupId>
 		<artifactId>jnrpe-parent</artifactId>
@@ -29,13 +29,13 @@
 			<artifactId>jnrpe-server</artifactId>
 			<version>2.0.3-beta-01</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>net.sf.jnrpe</groupId>
 			<artifactId>jnrpe-plugins</artifactId>
 			<version>0.7.2-beta-02</version>
 		</dependency>
-		
+
 	</dependencies>
 
 	<build>
@@ -84,6 +84,26 @@
 						</configuration>
 					</execution>
 				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.3.2</version>
+				<configuration>
+					<finalName>utility</finalName>
+					<archive>
+						<index>true</index>
+						<manifest>
+							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+							<addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+						</manifest>
+						<manifestEntries>
+							<mode>development</mode>
+							<url>${project.url}</url>
+						</manifestEntries>
+					</archive>
+				</configuration>
 			</plugin>
 
 			<!-- see install.xml to see how MyHelloPanel is used -->

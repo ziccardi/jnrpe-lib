@@ -91,7 +91,12 @@ then
   REPO="$BASEDIR"/lib
 fi
 
-CLASSPATH=$CLASSPATH_PREFIX:"$BASEDIR"/etc:"$REPO"/commons-lang-2.6.jar:"$REPO"/commons-cli-1.2.jar:"$REPO"/commons-digester-1.8.1.jar:"$REPO"/commons-beanutils-1.8.0.jar:"$REPO"/commons-logging-1.1.1.jar:"$REPO"/commons-configuration-1.7.jar:"$REPO"/commons-collections-3.2.1.jar:"$REPO"/slf4j-api-1.6.4.jar:"$REPO"/slf4j-jcl-1.6.4.jar:"$REPO"/log4j-1.2.16.jar:"$REPO"/jnrpe-lib-1.0.1-beta-11.jar:"$REPO"/jnrpe-server-2.0.2-beta-06.jar
+CLASSPATH=$CLASSPATH_PREFIX:"$BASEDIR"/etc
+
+for jnrpelib in `find "$REPO" -name *.jar -printf "%f\n"` 
+do 
+	CLASSPATH=$CLASSPATH:"$REPO"/$jnrpelib
+done
 
 # For Cygwin, switch paths to Windows format before running java
 if $cygwin; then

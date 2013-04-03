@@ -21,6 +21,8 @@
 		<res id="LicencePanel.licence" src="../../src/main/izpack/LICENSE.txt" />
 	</resources>
 
+	<jar src="../../target/utility.jar" stage="install"/>
+
 	<panels>
 		<panel classname="HelloPanel" />
 		<panel classname="LicencePanel" />
@@ -34,6 +36,7 @@
 		<condition type="packselection" id="windowServiceSelected">
 			<name>Windows Service</name>
 		</condition>
+
 		<condition type="packselection" id="unixDaemonSelected">
 			<name>Unix Daemon</name>
 		</condition>
@@ -46,10 +49,19 @@
 		<condition type="empty" id="localeAppDataIsEmpty">
 			<string>${ENV[LOCALAPPDATA]}</string>
 		</condition>
-		
+
 		<condition type="not" id="localeAppDataIsNotEmpty">
 			<condition type="ref" refid="localeAppDataIsEmpty" />
 		</condition>
+
+		<condition type="java" id="isRoot">
+			<java>
+				<class>it.jnrpe.installer.InstallerUtil</class>
+				<field>ROOT</field>
+			</java>
+			<returnvalue type="boolean">true</returnvalue>
+		</condition>
+
 	</conditions>
 
 	<dynamicvariables>
@@ -60,22 +72,23 @@
 		<variable name="LOGDIR" condition="localeAppDataIsNotEmpty">
 			<value>${ENV[LOCALAPPDATA]}/JNRPE/log</value>
 		</variable>
-		
+
 		<variable name="WRAPPER_JNATMP" condition="localeAppDataIsEmpty">
 			<value>$INSTALL_PATH/wrapper</value>
 		</variable>
-		
+
 		<variable name="WRAPPER_JNATMP" condition="localeAppDataIsNotEmpty">
 			<value>${ENV[LOCALAPPDATA]}/JNRPE</value>
 		</variable>
-		
-		<variable name="SERVICE_NAME" os="windows">
+
+		<variable name="SERVICE_NAME" condition="izpack.windowsinstall">
 			<value>JNRPE Server</value>
 		</variable>
-		
-		<variable name="SERVICE_NAME" os="unix">
+
+		<variable name="SERVICE_NAME" condition="izpack.linuxinstall">
 			<value>jnrpe</value>
 		</variable>
+
 	</dynamicvariables>
 
 	<packs>
@@ -89,16 +102,16 @@
 				<exclude name="jnrpe-plugins*.jar" />
 			</fileset>
 
-			<file src="../../src/scripts/unix/jnrpe" targetdir="$INSTALL_PATH/bin"
+			<file src="../../../jnrpe-server/target/appassembler/bin/jnrpe" targetdir="$INSTALL_PATH/bin"
 				os="unix" unpack="false" />
 			<executable targetfile="$INSTALL_PATH/bin/jnrpe" os="unix" />
-			
-			<file src="../../src/scripts/windows/jnrpe.bat" targetdir="$INSTALL_PATH/bin"
+
+			<file src="../../../jnrpe-server/target/appassembler/bin/jnrpe.bat" targetdir="$INSTALL_PATH/bin"
 				os="windows" unpack="false" />
-			
+
 			<file src="../../src/config/log4j.properties" targetdir="$INSTALL_PATH/etc"
 				unpack="false" />
-				
+
 			<parsable targetfile="$INSTALL_PATH/etc/log4j.properties"
 				type="javaprop" />
 		</pack>
@@ -135,32 +148,34 @@
 				<include name="**/*" />
 			</fileset>
 
-			<fileset dir="../../src/wrapper/unix_deps" targetdir="$INSTALL_PATH/wrapper/lib" os="unix"
-				unpack="false">
+			<fileset dir="../../src/wrapper/unix_deps" targetdir="$INSTALL_PATH/wrapper/lib"
+				os="unix" unpack="false">
 				<include name="**/*" />
 			</fileset>
 
-			<fileset dir="../../src/wrapper/templates" targetdir="$INSTALL_PATH/wrapper/templates" os="unix"
-				unpack="false">
+			<fileset dir="../../src/wrapper/templates" targetdir="$INSTALL_PATH/wrapper/templates"
+				os="unix" unpack="false">
 				<include name="**/*" />
 			</fileset>
 
 			<parsable targetfile="$INSTALL_PATH/wrapper/etc/wrapper.conf"
 				type="javaprop" />
-				
-			<executable targetfile="$JAVA_HOME/bin/java" stage="postinstall" keep="true">
+
+			<executable targetfile="$JAVA_HOME/bin/java" stage="postinstall"
+				keep="true">
 				<args>
 					<arg value="-jar" />
-					<arg value="$INSTALL_PATH/wrapper/wrapper.jar"/>
+					<arg value="$INSTALL_PATH/wrapper/wrapper.jar" />
 					<arg value="-i" />
 					<arg value="$INSTALL_PATH/wrapper/etc/wrapper.conf" />
 				</args>
 			</executable>
 
-			<executable targetfile="$JAVA_HOME/bin/java" stage="uninstall" keep="true">
+			<executable targetfile="$JAVA_HOME/bin/java" stage="uninstall"
+				keep="true">
 				<args>
 					<arg value="-jar" />
-					<arg value="$INSTALL_PATH/wrapper/wrapper.jar"/>
+					<arg value="$INSTALL_PATH/wrapper/wrapper.jar" />
 					<arg value="-r" />
 					<arg value="$INSTALL_PATH/wrapper/etc/wrapper.conf" />
 				</args>
@@ -177,20 +192,9 @@
 				os="windows" />
 			<executable targetfile="$INSTALL_PATH/fixconf.bat" stage="postinstall"
 				os="windows" keep="false" />
-
-
-			<executable targetfile="$JAVA_HOME/bin/java" stage="postinstall" keep="true">
-				<args>
-					<arg value="-jar" />
-					<arg value="$INSTALL_PATH/wrapper/wrapper.jar"/>
-					<arg value="-i" />
-					<arg value="$INSTALL_PATH/wrapper/etc/wrapper.conf" />
-				</args>
-			</executable>
-			
 		</pack>
 
-		<pack name="Unix Daemon" required="no" os="unix">
+		<pack name="Unix Daemon" required="no" os="unix" condition="isRoot">
 			<description>Installs JNRPE as a unix daemon</description>
 
 			<file src="../../src/wrapper/fixconf.sh" targetdir="$INSTALL_PATH"

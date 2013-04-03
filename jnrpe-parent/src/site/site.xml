@@ -19,6 +19,7 @@
 
 		<menu name="Main" inherit="top">
 			<item name="Welcome" href="index.html" />
+			<item name="Download" href="download.html" />
 		</menu>
 
 		<links>
