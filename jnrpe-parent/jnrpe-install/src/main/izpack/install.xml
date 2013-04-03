@@ -195,7 +195,7 @@
 		</pack>
 
 		<pack name="Unix Daemon" required="no" os="unix" condition="isRoot">
-			<description>Installs JNRPE as a unix daemon</description>
+			<description>Installs JNRPE as a unix daemon. Requires root permissions</description>
 
 			<file src="../../src/wrapper/fixconf.sh" targetdir="$INSTALL_PATH"
 				unpack="false" />
