@@ -26,4 +26,7 @@ JNRPE Plugin package
    * TestPlugin : a simple test plugin that can be used to check the JNRPE is correctly 
    installed.
    
+   * CheckUsers : checks the the number of users currently logged in on the local
+   system and generates an error if the number exceeds the thresholds specified.
+   
    

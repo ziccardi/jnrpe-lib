@@ -1,23 +1,24 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <project name="JNRPE Plugins">
-	
+    
 
-	<body>
-		<menu name="JNRPE Plugins">
-			<item name="Overview" href="index.html" />
-			<item name="Download" href="download.html" />
-		</menu>
-		<menu name="User Guide">
-			<item name="The CHECK_JMX plugin" href="plugins/check_jmx.html" />
-			<item name="The CHECK_ORACLE plugin" href="plugins/check_oracle.html" />
-			<item name="The CHECK_DISK plugin" href="plugins/check_disk.html" />
-			<item name="The CHECK_FILE plugin" href="plugins/check_file.html" />
-			<item name="The EXEC plugin" href="plugins/exec.html" />
-		</menu>
-	</body>
-	<skin>
-		<groupId>org.apache.maven.skins</groupId>
-		<artifactId>maven-stylus-skin</artifactId>
-		<version>1.2</version>
-	</skin>
+    <body>
+        <menu name="JNRPE Plugins">
+            <item name="Overview" href="index.html" />
+            <item name="Download" href="download.html" />
+        </menu>
+        <menu name="User Guide">
+            <item name="The CHECK_JMX plugin" href="plugins/check_jmx.html" />
+            <item name="The CHECK_ORACLE plugin" href="plugins/check_oracle.html" />
+            <item name="The CHECK_DISK plugin" href="plugins/check_disk.html" />
+            <item name="The CHECK_FILE plugin" href="plugins/check_file.html" />
+            <item name="The EXEC plugin" href="plugins/exec.html" />
+            <item name="The CHECK_USERS plugin" href="plugins/check_users.html" />
+        </menu>
+    </body>
+    <skin>
+        <groupId>org.apache.maven.skins</groupId>
+        <artifactId>maven-stylus-skin</artifactId>
+        <version>1.2</version>
+    </skin>
 </project>
