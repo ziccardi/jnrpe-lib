@@ -213,9 +213,10 @@
         </description>
         <command-line>
             <options>
-                <option shortName="w" longName="warning" description="Set WARNING status if more than INTEGER users are logged in" required="true" hasArgs="true" argName="range" optionalArgs="false"/> 
-                <option shortName="c" longName="critical" description="Set CRITICAL status if more than INTEGER users are logged in" required="true" hasArgs="true" argName="range" optionalArgs="false"/>
+                <option shortName="w" longName="warning" description="Set WARNING status if more than INTEGER users are logged in" required="true" hasArgs="true" argName="warning" optionalArgs="false"/> 
+                <option shortName="c" longName="critical" description="Set CRITICAL status if more than INTEGER users are logged in" required="true" hasArgs="true" argName="critical" optionalArgs="false"/>
             </options>
         </command-line>
     </plugin>    
+    
 </plugins>
