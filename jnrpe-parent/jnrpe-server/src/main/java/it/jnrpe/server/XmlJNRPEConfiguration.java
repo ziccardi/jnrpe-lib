@@ -33,7 +33,7 @@ class XmlJNRPEConfiguration extends JNRPEConfiguration
         {
             XMLConfiguration confParser = new XMLConfiguration(confFile);
 
-            List<String> vBindAddresses = confParser.getList("server.bind[@address]");
+            List<Object> vBindAddresses =  confParser.getList("server.bind[@address]");
             int iBindListSize = vBindAddresses.size();
             
             for (int i = 0; i < iBindListSize; i++)
@@ -52,12 +52,12 @@ class XmlJNRPEConfiguration extends JNRPEConfiguration
 
             serverConf.setPluginPath(confParser.getString("server.plugin[@path]", "."));
 
-            List<String> vAllowedAddresses = confParser.getList("server.allow[@ip]");
+            List<Object> vAllowedAddresses = confParser.getList("server.allow[@ip]");
             if (vAllowedAddresses != null)
             {
-                for (String sAddress : vAllowedAddresses)
+                for (Object address : vAllowedAddresses)
                 {
-                    serverConf.addAllowedAddress(sAddress);
+                    serverConf.addAllowedAddress((String)address);
                 }
             }
 

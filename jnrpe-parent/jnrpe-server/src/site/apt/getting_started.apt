@@ -99,9 +99,9 @@ Configuring the server
   * <<bind-address>> : 127.0.0.1:5666 - means we want JNRPE to listen on the 127.0.0.1 IP 
    at port 5666. You can repeat this setting to instruct JNRPE to 
    listen to many addresses/ports. If you want the comunication between check_nrpe and JNRPE to be
-   encrypted (check_nrpe default), add a ',ssl' at the end of the row:
+   encrypted (check_nrpe default), write the address as 'SSL/IPADDRESS:PORT':
    
-      bind-address : 127.0.0.1:5666,ssl
+      bind-address : SSL/127.0.0.1:5666
  
   * <<plugin-path>> : /usr/local/jnrpe/plugins - means that in '/usr/local/jnrpe/plugins' 
    JNRPE will find all the installed plugins.

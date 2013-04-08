@@ -18,7 +18,8 @@ package it.jnrpe.plugin;
 import it.jnrpe.ICommandLine;
 import it.jnrpe.ReturnValue;
 import it.jnrpe.Status;
-import it.jnrpe.plugins.IPluginInterface;
+import it.jnrpe.events.LogEvent;
+import it.jnrpe.plugins.PluginBase;
 import it.jnrpe.utils.StreamManager;
 import it.jnrpe.utils.ThresholdUtil;
 
@@ -54,7 +55,7 @@ import java.math.BigDecimal;
  *  
  * @author Massimiliano Ziccardi
  */
-public class CCheckFile implements IPluginInterface
+public class CCheckFile extends PluginBase
 {
     private ReturnValue updateRes(ReturnValue res, ReturnValue newVal)
     {
@@ -179,6 +180,7 @@ public class CCheckFile implements IPluginInterface
         }
         catch (Exception e)
         {
+            sendEvent(LogEvent.WARNING, "Plugin Execution error : " + e.getMessage(), e);
             return updateRes(res, new ReturnValue(Status.UNKNOWN, "FILE UNKNOWN - " + e.getMessage()) );        
         }
         finally
@@ -212,6 +214,7 @@ public class CCheckFile implements IPluginInterface
         }
         catch (Exception e)
         {
+            sendEvent(LogEvent.WARNING, "Plugin Execution error : " + e.getMessage(), e);
             return updateRes(res, new ReturnValue(Status.UNKNOWN, "FILE UNKNOWN - " + e.getMessage()) );        
         }
         finally
@@ -245,7 +248,7 @@ public class CCheckFile implements IPluginInterface
 //        if (!f.exists())
 //            return new ReturnValue(Status.CRITICAL, "File '" + f.getName() + "' not found");
         
-        // Verifico che il file esista
+        // Check that the file exists...
         if (res == null || res.getStatus() != Status.CRITICAL)
             res = checkFileExists(f, res);
         

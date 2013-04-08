@@ -18,7 +18,8 @@ package it.jnrpe.plugin;
 import it.jnrpe.ICommandLine;
 import it.jnrpe.ReturnValue;
 import it.jnrpe.Status;
-import it.jnrpe.plugins.IPluginInterface;
+import it.jnrpe.events.LogEvent;
+import it.jnrpe.plugins.PluginBase;
 import it.jnrpe.utils.ThresholdUtil;
 
 import java.math.BigDecimal;
@@ -36,7 +37,7 @@ import java.text.MessageFormat;
  * @author Massimiliano Ziccardi
  * 
  */
-public class CCheckOracle implements IPluginInterface
+public class CCheckOracle extends PluginBase
 {
     public CCheckOracle()
     {
@@ -60,9 +61,8 @@ public class CCheckOracle implements IPluginInterface
                 ((Driver) Class.forName("oracle.jdbc.driver.OracleDriver")
                         .newInstance());
         
-//        m_Logger.debug("GETTING CONNECTION TO " + cl.getOptionValue("db")
-//                + "@" + cl.getOptionValue("server"));
-
+        sendEvent(LogEvent.DEBUG, "Connecting to " + cl.getOptionValue("db")
+                + "@" + cl.getOptionValue("server"));
         
         Connection conn = DriverManager.getConnection("jdbc:oracle:thin:@"
                 + cl.getOptionValue("server") + ":"
@@ -207,6 +207,7 @@ public class CCheckOracle implements IPluginInterface
         }
         catch (Exception e)
         {
+            sendEvent(LogEvent.WARNING, "Error during CHECK_ORACLE execution " + e.getMessage(), e);
             return new ReturnValue(Status.CRITICAL,
                     "CHECK_ORACLE : CRITICAL - " + e.getMessage());
         }
@@ -299,6 +300,7 @@ public class CCheckOracle implements IPluginInterface
         }
         catch (Exception e)
         {
+            sendEvent(LogEvent.WARNING, "Error during CHECK_ORACLE execution " + e.getMessage(), e);
             return new ReturnValue(Status.CRITICAL,
                     "CHECK_ORACLE : CRITICAL - " + e.getMessage());
         }
@@ -341,20 +343,22 @@ public class CCheckOracle implements IPluginInterface
         }
         catch (ClassNotFoundException cnfe)
         {
-//            m_Logger
-//                    .error("ORACLE DRIVER LIBRARY IS NOT IN THE CLASSPATH. (PUT IT IN THE SAME DIRECTORY OF THIS PLUGIN)");
+            sendEvent(LogEvent.ERROR, "Oracle driver library not found into the classpath: download and put it in the same directory of this plugin");
             return new ReturnValue(Status.UNKNOWN,
                     cnfe.getMessage());
         }
         catch (SQLException sqle)
         {
+            sendEvent(LogEvent.ERROR, "Error communicating with database.", sqle);
+            
 //            m_Logger.info("Error communicating with database.", sqle);
             return new ReturnValue(Status.CRITICAL,
                     sqle.getMessage()); 
         }
         catch (Exception e)
         {
-//            m_Logger.fatal("Error communicating with database.", e);
+            sendEvent(LogEvent.FATAL, "Error communicating with database.", e);
+            
             return new ReturnValue(Status.UNKNOWN,
                     e.getMessage());
         }
@@ -368,6 +372,7 @@ public class CCheckOracle implements IPluginInterface
                 }
                 catch (Exception e)
                 {
+                    sendEvent(LogEvent.WARNING, "Error closing the DB connection.", e);
 //                    m_Logger.warn("ERROR CLOSING DB CONNECTION.", e);
                 }
             }

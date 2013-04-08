@@ -18,6 +18,7 @@ package it.jnrpe.plugin.jmx;
 import it.jnrpe.ICommandLine;
 import it.jnrpe.ReturnValue;
 import it.jnrpe.Status;
+import it.jnrpe.events.LogEvent;
 import it.jnrpe.plugins.IPluginInterface;
 
 import java.io.ByteArrayOutputStream;
@@ -99,6 +100,7 @@ public class CCheckJMX
         }
         catch(Exception ex)
         {
+            sendEvent(LogEvent.WARNING, "An error has occurred during execution of the CHECK_JMX plugin : " + ex.getMessage(), ex);
             ByteArrayOutputStream bout = new ByteArrayOutputStream();
             PrintStream ps = new PrintStream(bout);
             Status status = report(ex, ps);
@@ -112,6 +114,7 @@ public class CCheckJMX
             try {
                 disconnect();
             } catch (IOException e) {
+                sendEvent(LogEvent.WARNING, "An error has occurred during execution of the CHECK_JMX plugin : " + e.getMessage(), e);
                 ByteArrayOutputStream bout = new ByteArrayOutputStream();
                 PrintStream ps = new PrintStream(bout);
                 

@@ -1,6 +1,7 @@
 package it.jnrpe.plugin.jmx;
 
 import it.jnrpe.Status;
+import it.jnrpe.plugins.PluginBase;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -27,7 +28,7 @@ import javax.management.remote.JMXServiceURL;
  * Look method main for description how it can be invoked.
  * 
  */
-public class JMXQuery 
+public abstract class JMXQuery extends PluginBase
 {
 
     private String url;
@@ -72,30 +73,30 @@ public class JMXQuery
     }
     
     
-    /**
-     * @param args
-     */
-    public static void main(String[] args) {
-        
-            JMXQuery query = new JMXQuery();
-            Status status;
-            try{
-                query.parse(args);
-                query.connect();
-                query.execute();
-                status = query.report(System.out);
-
-            }catch(Exception ex){
-                status = query.report(ex, System.out);
-            }finally{
-                try {
-                    query.disconnect();
-                } catch (IOException e) {
-                    status = query.report(e, System.out);                   
-                }
-            }   
-            System.exit(status.intValue());
-        }
+//    /**
+//     * @param args
+//     */
+//    public static void main(String[] args) {
+//        
+//            JMXQuery query = new JMXQuery();
+//            Status status;
+//            try{
+//                query.parse(args);
+//                query.connect();
+//                query.execute();
+//                status = query.report(System.out);
+//
+//            }catch(Exception ex){
+//                status = query.report(ex, System.out);
+//            }finally{
+//                try {
+//                    query.disconnect();
+//                } catch (IOException e) {
+//                    status = query.report(e, System.out);                   
+//                }
+//            }   
+//            System.exit(status.intValue());
+//        }
 
     protected Status report(Exception ex, PrintStream out)
     {

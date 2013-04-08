@@ -74,7 +74,7 @@
 		<dependency>
 			<groupId>commons-configuration</groupId>
 			<artifactId>commons-configuration</artifactId>
-			<version>1.7</version>
+			<version>1.9</version>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -94,7 +94,7 @@
 		<dependency>
 			<groupId>net.sf.jnrpe</groupId>
 			<artifactId>jnrpe-lib</artifactId>
-			<version>1.0.1-beta-11</version>
+			<version>1.0.1-beta-13-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 

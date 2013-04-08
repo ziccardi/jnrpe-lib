@@ -33,16 +33,27 @@ public class ServerSection
     
     void addBindAddress(final String sBindAddress)
     {
-        String sAddress = sBindAddress;
-        String sSSL = "false";
+
+        boolean ssl = sBindAddress.toUpperCase().startsWith("SSL/");
+
+        String sAddress;
         
-        if (sBindAddress.indexOf(',') != -1)
+        if (ssl)
         {
-            String[] vParts = sBindAddress.split(",");
-            sAddress = vParts[0];
-            sSSL = vParts[1].toLowerCase();
+            sAddress = sBindAddress.substring("SSL/".length());
         }
-        addBindAddress(sAddress, sSSL.equals("ssl"));
+        else
+        {
+            sAddress = sBindAddress;
+        }
+        
+//        if (sBindAddress.indexOf(',') != -1)
+//        {
+//            String[] vParts = sBindAddress.split(",");
+//            sAddress = vParts[0];
+//            sSSL = vParts[1].toLowerCase();
+//        }
+        addBindAddress(sAddress, ssl);
     }
 
     void addBindAddress(String sBindAddress, boolean bSSL)

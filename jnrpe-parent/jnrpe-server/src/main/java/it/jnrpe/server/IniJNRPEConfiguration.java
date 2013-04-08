@@ -42,12 +42,12 @@ class IniJNRPEConfiguration extends JNRPEConfiguration
         {
             HierarchicalINIConfiguration confParser = new HierarchicalINIConfiguration(confFile);
             
-            List<String> vBindAddresses = confParser.getList("server.bind-address");
+            List<Object> vBindAddresses = confParser.getList("server.bind-address");
             if (vBindAddresses != null)
             {
-                for (String sAddress : vBindAddresses)
+                for (Object address : vBindAddresses)
                 {
-                    serverConf.addBindAddress(sAddress);
+                    serverConf.addBindAddress((String) address);
                 }
             }
             
@@ -56,12 +56,12 @@ class IniJNRPEConfiguration extends JNRPEConfiguration
             serverConf.setAcceptParams(sAcceptParams.equalsIgnoreCase("true") || sAcceptParams.equalsIgnoreCase("yes"));
             serverConf.setPluginPath(confParser.getString("server.plugin-path", "."));
 
-            List<String> vAllowedAddresses = confParser.getList("server.allow-address");
+            List<Object> vAllowedAddresses = confParser.getList("server.allow-address");
             if (vAllowedAddresses != null)
             {
-                for (String sAddress : vAllowedAddresses)
+                for (Object address : vAllowedAddresses)
                 {
-                    serverConf.addAllowedAddress(sAddress);
+                    serverConf.addAllowedAddress((String) address);
                 }
             }
             

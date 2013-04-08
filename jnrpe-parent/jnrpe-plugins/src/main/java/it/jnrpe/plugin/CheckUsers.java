@@ -18,7 +18,8 @@ package it.jnrpe.plugin;
 import it.jnrpe.ICommandLine;
 import it.jnrpe.ReturnValue;
 import it.jnrpe.Status;
-import it.jnrpe.plugins.IPluginInterface;
+import it.jnrpe.events.LogEvent;
+import it.jnrpe.plugins.PluginBase;
 import it.jnrpe.utils.ThresholdUtil;
 
 import java.io.BufferedReader;
@@ -36,7 +37,7 @@ import java.util.List;
  * @author Frederico Campos
  *
  */
-public class CheckUsers implements IPluginInterface {
+public class CheckUsers extends PluginBase {
 
 	/* (non-Javadoc)System.getProperty("os.name")
 	 * @see it.jnrpe.plugins.IPluginInterface#execute(it.jnrpe.ICommandLine)
@@ -55,8 +56,8 @@ public class CheckUsers implements IPluginInterface {
 	        	totalLoggedIn = getWindowsLoggedInUsers();
 	        }
         }catch(IOException e){
-        	e.printStackTrace();
-        	// return some error?
+        	sendEvent(LogEvent.WARNING, "CheckUser plugin execution error: " + e.getMessage(), e);
+        	return new ReturnValue(Status.UNKNOWN, "CHECK_USER - UNKNOWN: An error has occurred : " + e.getMessage());
         }
         
         if (ThresholdUtil.isValueInRange(critical, totalLoggedIn)){

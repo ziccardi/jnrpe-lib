@@ -18,7 +18,8 @@ package it.jnrpe.plugin;
 import it.jnrpe.ICommandLine;
 import it.jnrpe.ReturnValue;
 import it.jnrpe.Status;
-import it.jnrpe.plugins.IPluginInterface;
+import it.jnrpe.events.LogEvent;
+import it.jnrpe.plugins.PluginBase;
 import it.jnrpe.utils.StreamManager;
 import it.jnrpe.utils.StringUtils;
 
@@ -32,7 +33,7 @@ import java.io.InputStreamReader;
  * @author Massimiliano Ziccardi
  *
  */
-public class CNativePlugin implements IPluginInterface
+public class CNativePlugin extends PluginBase
 {
 	
 	public CNativePlugin()
@@ -73,6 +74,7 @@ public class CNativePlugin implements IPluginInterface
 		}
 		catch (Exception e)
 		{
+		    sendEvent(LogEvent.WARNING, "Error executing the native plugin : " + e.getMessage(), e);
 			return new ReturnValue(Status.UNKNOWN, "Could not exec executable : " + fProcessFile.getName() + " - ERROR : " + e.getMessage());
 		}
 		finally
