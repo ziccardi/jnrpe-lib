@@ -12,7 +12,7 @@ package it.jnrpe.events;
 
 /**
  * This class represent the interface an object must implement to be able to
- * receive events from JNRPE
+ * receive events from JNRPE.
  *
  * @author Massimiliano Ziccardi
  */

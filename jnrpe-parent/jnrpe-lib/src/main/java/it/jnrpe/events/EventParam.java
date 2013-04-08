@@ -24,16 +24,16 @@ package it.jnrpe.events;
 public class EventParam
 {
     /**
-     * The parameters name
+     * The parameters name.
      */
     private final String m_sParamName;
     /**
-     * The parameter value
+     * The parameter value.
      */
     private final Object m_paramValue;
     
     /**
-     * Builds and initializes an event parameter
+     * Builds and initializes an event parameter.
      * @param sName The parameter name
      * @param value The parameter value
      */
@@ -44,7 +44,7 @@ public class EventParam
     }
     
     /**
-     * Returns the parameter name
+     * Returns the parameter name.
      * @return The parameter name
      */
     public final String getName()
@@ -53,7 +53,7 @@ public class EventParam
     }
 
     /**
-     * Returns the parameter value
+     * Returns the parameter value.
      * @return The parameter value
      */
     public final Object getValue()

@@ -28,7 +28,7 @@ import java.math.BigDecimal;
  * endpoints)
  * </ul>
  * start and ":" is not required if start=0.
- *
+ * 
  * @author Massimiliano Ziccardi
  */
 public final class ThresholdUtil
@@ -42,9 +42,9 @@ public final class ThresholdUtil
     }
 
     /**
-     * Returns <code>true</code> if the value <code>iValue</code> falls into the.
-     * range <code>sRange</code>.
-     *
+     * Returns <code>true</code> if the value <code>iValue</code> falls into
+     * the range <code>sRange</code>.
+     * 
      * @param sRange
      *            The range
      * @param iValue
@@ -57,14 +57,15 @@ public final class ThresholdUtil
     }
 
     /**
-     * Returns <code>true</code> if the value <code>dalue</code> falls into the.
+     * Returns <code>true</code> if the value <code>dalue</code> falls into the
      * range <code>sRange</code>.
-     *
+     * 
      * @param sRange
      *            The range
      * @param value
      *            The value
-     * @return <code>true</code> if the value <code>dalue</code> falls into the
+     * @return <code>true</code> if the value <code>value</code> falls into the
+     * given range
      */
     public static boolean isValueInRange(final String sRange,
             final BigDecimal value)

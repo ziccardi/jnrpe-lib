@@ -14,7 +14,7 @@ import it.jnrpe.ICommandLine;
 import it.jnrpe.ReturnValue;
 
 /**
- * This is the interface that all the JAVA plugins must implement
+ * This is the interface that all the JAVA plugins must implement.
  *
  * @author Massimiliano Ziccardi
  *

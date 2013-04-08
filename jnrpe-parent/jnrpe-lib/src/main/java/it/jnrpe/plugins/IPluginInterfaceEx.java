@@ -38,7 +38,7 @@ public interface IPluginInterfaceEx extends IPluginInterface
     /**
      * Adds a whole collection of listeners to the plugin.
      *
-     * @param listeners
+     * @param listeners The list of listeners
      */
     void addListeners(Collection<IJNRPEEventListener> listeners);
 }

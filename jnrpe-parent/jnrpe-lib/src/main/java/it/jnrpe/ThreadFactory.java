@@ -24,22 +24,22 @@ import java.net.Socket;
 class ThreadFactory
 {
     /**
-     * How many milliseconds to wait for a thread to stop
+     * How many milliseconds to wait for a thread to stop.
      */
     private static final int     DEFAULT_THREAD_STOP_TIMEOUT = 5000;
 
     /**
-     * Timeout handler
+     * Timeout handler.
      */
     private ThreadTimeoutWatcher m_watchDog                  = null;
 
     /**
-     * The invoker object
+     * The invoker object.
      */
     private final CommandInvoker m_commandInvoker;
 
     /**
-     * Constructs a new thread factory
+     * Constructs a new thread factory.
      * 
      * @param iThreadTimeout
      *            The thread timeout
@@ -72,7 +72,7 @@ class ThreadFactory
     }
 
     /**
-     * Stops all the created threads and stops the timeout watcher
+     * Stops all the created threads and stops the timeout watcher.
      */
     public void shutdown()
     {

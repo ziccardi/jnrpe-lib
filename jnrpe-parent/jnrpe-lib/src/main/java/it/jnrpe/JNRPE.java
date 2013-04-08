@@ -32,6 +32,11 @@ import it.jnrpe.plugins.PluginRepository;
 public final class JNRPE
 {
     /**
+     * How many ms to wait for joining a thread.
+     */
+    private static final int THREAD_JOIN_TIMEOUT = 3000;
+
+    /**
      * The plugin repository to be used to find the requested plugin.
      */
     private final PluginRepository m_pluginRepository;
@@ -49,13 +54,13 @@ public final class JNRPE
      * All the listeners.
      */
     private Map<String, IJNRPEListener> m_mInstantiatedListeners
-                            = new HashMap<String, IJNRPEListener>();
+            = new HashMap<String, IJNRPEListener>();
 
     /**
      * All the listeners.
      */
     private Set<IJNRPEEventListener> m_vEventListeners
-                            = new HashSet<IJNRPEEventListener>();
+            = new HashSet<IJNRPEEventListener>();
 
     /**
      * Initializes the JNRPE worker.
@@ -68,10 +73,17 @@ public final class JNRPE
     public JNRPE(final PluginRepository pluginRepository,
             final CommandRepository commandRepository)
     {
-    	if (pluginRepository == null)
-    		throw new IllegalArgumentException("Plugin repository cannot be null");
-    	if (commandRepository == null)
-    		throw new IllegalArgumentException("Command repository cannot be null");
+        if (pluginRepository == null)
+        {
+            throw new IllegalArgumentException(
+                    "Plugin repository cannot be null");
+        }
+                    
+        if (commandRepository == null)
+        {
+            throw new IllegalArgumentException(
+                    "Command repository cannot be null");
+        }
         m_pluginRepository = pluginRepository;
         m_commandRepository = commandRepository;
     }
@@ -85,7 +97,8 @@ public final class JNRPE
      *            The port to bind to
      * @throws UnknownHostException
      */
-    public void listen(final String sAddress, final int iPort) throws UnknownHostException
+    public void listen(final String sAddress, final int iPort)
+            throws UnknownHostException
     {
         listen(sAddress, iPort, true);
     }
@@ -93,7 +106,8 @@ public final class JNRPE
     /**
      * Adds a new event listener.
      *
-     * @param listener The event listener to be added
+     * @param listener
+     *            The event listener to be added
      */
     public void addEventListener(final IJNRPEEventListener listener)
     {
@@ -128,15 +142,16 @@ public final class JNRPE
             bt.enableSSL();
         }
         bt.start();
-        
-        try 
+
+        try
         {
-        	// Give time to check if the IP/port configuration ar correctly configured
-			bt.join(3000);
-		} 
-        catch (InterruptedException e) 
+            // Give time to check if the IP/port configuration ar correctly
+            // configured
+            bt.join(THREAD_JOIN_TIMEOUT);
+        }
+        catch (InterruptedException e)
         {
-		}
+        }
         m_mInstantiatedListeners.put(sAddress + iPort, bt);
     }
 
@@ -156,8 +171,10 @@ public final class JNRPE
      */
     public void shutdown()
     {
-        if (m_mInstantiatedListeners.isEmpty())
+        if (m_mInstantiatedListeners.isEmpty()) 
+        {
             return;
+        }
 
         for (IJNRPEListener listener : m_mInstantiatedListeners.values())
         {

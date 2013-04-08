@@ -36,6 +36,23 @@ public enum Status
     UNKNOWN(3);
 
     /**
+     * Integer constant for the OK status.
+     */
+    private static final int OK_STATUS = 0;
+    /**
+     * Integer constant for the WARNING status.
+     */
+    private static final int WARNING_STATUS = 1;
+    /**
+     * Integer constant for the CRITICAL status.
+     */
+    private static final int CRITICAL_STATUS = 2;
+    /**
+     * Integer constant for the UNKNOWN status.
+     */
+    private static final int UNKNOWN_STATUS = 3;
+
+    /**
      * The enumeration int value.
      */
     private final int m_iIntValue;
@@ -67,16 +84,15 @@ public enum Status
     {
         switch (iIntValue)
         {
-            case 0:
+            case OK_STATUS:
                 return OK;
-            case 1:
+            case WARNING_STATUS:
                 return WARNING;
-            case 2:
+            case CRITICAL_STATUS:
                 return CRITICAL;
-            case 3:
+            case UNKNOWN_STATUS:
             default:
                 return UNKNOWN;
         }
     }
-    
 }

@@ -16,7 +16,7 @@ import org.apache.commons.cli.CommandLine;
 
 /**
  * Incapsulate the commons cli CommandLine object, so that the plugins have no
- * dependencies against the command line parsing library
+ * dependencies against the command line parsing library.
  *
  * @author Massimiliano Ziccardi
  *

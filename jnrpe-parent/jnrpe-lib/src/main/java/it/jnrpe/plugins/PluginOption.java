@@ -202,6 +202,7 @@ public final class PluginOption
     /**
      * Sets the name of the argument of this option.
      *
+     * @param sArgName The argument name
      * @return this
      */
     public PluginOption setArgName(final String sArgName)

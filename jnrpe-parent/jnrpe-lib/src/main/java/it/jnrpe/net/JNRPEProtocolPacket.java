@@ -285,10 +285,17 @@ class JNRPEProtocolPacket
         r.nextBytes(m_vDummy);
     }
     
-    protected void setDataBuffer(String sCommand)
+    /**
+     * Write the command name inside the JNRPE packet.
+     * 
+     * @param sCommand The command name
+     */
+    protected void setDataBuffer(final String sCommand)
     {
     	if (sCommand == null)
+    	{
     		throw new IllegalArgumentException("Buffer can't be null");
+    	}
     	
     	m_vBuffer = Arrays.copyOf(sCommand.getBytes(), MAX_PACKETBUFFER_LENGTH);
     }

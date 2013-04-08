@@ -35,7 +35,7 @@ import org.apache.commons.lang.StringUtils;
 
 /**
  * Thread used to server client request.
- *
+ * 
  * @author Massimiliano Ziccardi
  */
 class JNRPEServerThread extends Thread
@@ -68,7 +68,7 @@ class JNRPEServerThread extends Thread
 
     /**
      * Builds and initializes a new server thread.
-     *
+     * 
      * @param socket
      *            The socket to be used to read and write
      * @param commandInvoker
@@ -84,7 +84,7 @@ class JNRPEServerThread extends Thread
 
     /**
      * Configures this server thread.
-     *
+     * 
      * @param listenerThread
      *            The listener that received the request
      * @param vListeners
@@ -98,34 +98,40 @@ class JNRPEServerThread extends Thread
     }
 
     /**
-     * Utility method that splits using the '!' character and
-     * handling quoting by "'" and '"'
-     * @param sCommandLine The command line string
+     * Utility method that splits using the '!' character and handling quoting
+     * by "'" and '"'.
+     * 
+     * @param sCommandLine
+     *            The command line string
      * @return The splitted string
      */
-    private String[] split(String sCommandLine)
+    private String[] split(final String sCommandLine)
     {
-    	String regex = "[\"|']([^\"']*)[\"|']|([^\\!]+)";
+        String regex = "[\"|']([^\"']*)[\"|']|([^\\!]+)";
 
-    	List<String> res = new ArrayList<String>();
-    	
-	    Matcher m = Pattern.compile(regex).matcher(sCommandLine);
-	    while (m.find()) {
-	        if (m.group(1) != null) {
-	        	// Quoted string
-	            res.add(m.group(1));
-	        } else {
-	        	// Not quoted
-	        	res.add(m.group(2));
-	        }
-	    }
-	    
-	    return res.toArray(new String[0]);
+        List<String> res = new ArrayList<String>();
+
+        Matcher m = Pattern.compile(regex).matcher(sCommandLine);
+        while (m.find())
+        {
+            if (m.group(1) != null)
+            {
+                // Quoted string
+                res.add(m.group(1));
+            }
+            else
+            {
+                // Not quoted
+                res.add(m.group(2));
+            }
+        }
+
+        return res.toArray(new String[0]);
     }
-    
+
     /**
      * Serve the request.
-     *
+     * 
      * @param req
      *            The request
      * @return The Response
@@ -134,7 +140,7 @@ class JNRPEServerThread extends Thread
     {
         // extracting command name and params
         String[] vParts = split(req.getStringMessage());
-        
+
         String sCommandName = vParts[0];
         String[] vArgs = new String[vParts.length - 1];
 
@@ -144,13 +150,16 @@ class JNRPEServerThread extends Thread
 
         if (ret == null)
         {
-        	String args = "";
-        	if (vArgs != null)
-        		args = StringUtils.join(vArgs, ",");
-        	
-        	ret = new ReturnValue(Status.UNKNOWN, "Command [" + sCommandName + "] with args [" + args + "] returned null");
+            String args = "";
+            if (vArgs != null) 
+            {
+                args = StringUtils.join(vArgs, ",");
+            }
+
+            ret = new ReturnValue(Status.UNKNOWN, "Command [" + sCommandName
+                    + "] with args [" + args + "] returned null");
         }
-        
+
         JNRPEResponse res = new JNRPEResponse();
         res.setPacketVersion(PacketVersion.VERSION_2);
 
@@ -158,10 +167,10 @@ class JNRPEServerThread extends Thread
         res.setMessage(ret.getMessage());
         res.updateCRC();
 
-        String sMessageInvokedLog = MessageFormat
-                .format("Invoked command {0} - Status : "
-                        + "{1} - Return Message : ''{2}''",
-                        sCommandName, ret.getStatus().name(), ret.getMessage());
+        String sMessageInvokedLog = MessageFormat.format(
+                "Invoked command {0} - Status : "
+                        + "{1} - Return Message : ''{2}''", sCommandName, ret
+                        .getStatus().name(), ret.getMessage());
         String sParamTraceLog = MessageFormat.format("Arguments : ''{0}''",
                 argsToString(vArgs));
 
@@ -175,7 +184,7 @@ class JNRPEServerThread extends Thread
 
     /**
      * Utility to convert the arguments to a printable string.
-     *
+     * 
      * @param vArgs
      *            The arguments array
      * @return The printable string
@@ -208,15 +217,15 @@ class JNRPEServerThread extends Thread
 
                 switch (req.getPacketType())
                 {
-                    case QUERY:
-                        res = handleRequest(req);
-                        break;
-                    default:
-                        res = new JNRPEResponse();
-                        res.setPacketVersion(req.getPacketVersion());
-                        res.setResultCode(Status.UNKNOWN.intValue());
-                        res.setMessage("Invalid Packet Type");
-                        res.updateCRC();
+                case QUERY:
+                    res = handleRequest(req);
+                    break;
+                default:
+                    res = new JNRPEResponse();
+                    res.setPacketVersion(req.getPacketVersion());
+                    res.setResultCode(Status.UNKNOWN.intValue());
+                    res.setMessage("Invalid Packet Type");
+                    res.updateCRC();
 
                 }
 
@@ -254,8 +263,8 @@ class JNRPEServerThread extends Thread
             {
                 if (m_Socket != null && !m_Socket.isClosed())
                 {
-                	m_Socket.shutdownInput();
-                	m_Socket.shutdownOutput();
+                    m_Socket.shutdownInput();
+                    m_Socket.shutdownOutput();
                     m_Socket.close();
                 }
             }

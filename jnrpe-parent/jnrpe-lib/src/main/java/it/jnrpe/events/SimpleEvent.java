@@ -81,6 +81,7 @@ class SimpleEvent implements IJNRPEEvent
 
     /**
      * Returns the event name.
+     * @return The event name
      */
     public String getEventName()
     {
@@ -94,7 +95,7 @@ class SimpleEvent implements IJNRPEEvent
     /**
      * Returns the LogEvent type (<code>null</code> if it is not a log event).
      *
-     * @return
+     * @return The LogEvent type
      */
     LogEvent getLogEvent()
     {
@@ -103,6 +104,7 @@ class SimpleEvent implements IJNRPEEvent
 
     /**
      * Returns the event parameters.
+     * @return The event parameters
      */
     public Map<String, Object> getEventParams()
     {

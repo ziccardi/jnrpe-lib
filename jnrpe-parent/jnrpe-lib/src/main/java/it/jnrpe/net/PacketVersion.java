@@ -54,7 +54,7 @@ public enum PacketVersion
      * @param iIntValue The int value to be converted
      * @return A {@link PacketVersion} enum. Null if not found
      */
-    public static PacketVersion fromIntValue(int iIntValue)
+    public static PacketVersion fromIntValue(final int iIntValue)
     {
         switch (iIntValue)
         {

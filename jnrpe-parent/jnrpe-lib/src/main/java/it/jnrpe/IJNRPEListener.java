@@ -11,7 +11,7 @@
 package it.jnrpe;
 
 /**
- * The interface that must be implemented by the JNRPE listeners
+ * The interface that must be implemented by the JNRPE listeners.
  *
  * @author Massimiliano Ziccardi
  */

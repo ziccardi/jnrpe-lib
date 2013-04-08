@@ -22,7 +22,7 @@ import java.util.List;
 public final class PluginDefinition
 {
     /**
-     * The name of the plugin (as parsed from the XML file)
+     * The name of the plugin (as parsed from the XML file).
      */
     private final String m_sName;
     /**
@@ -36,19 +36,19 @@ public final class PluginDefinition
     private final IPluginInterface m_pluginInterface;
 
     /**
-     * The plugin description (as parsed from the XML file)
+     * The plugin description (as parsed from the XML file).
      */
     private final String m_sDescription;
 
     /**
-     * All the options this plugin supports (as parsed from the XML file)
+     * All the options this plugin supports (as parsed from the XML file).
      */
     private List<PluginOption> m_vPluginOptions = new ArrayList<PluginOption>();
 
     /**
-     *Initializes the plugin definition specifying the Class object that.
-     *represent the plugin. This constructor is used, for example, by JNRPE.
-     *server where all the plugins are described in an XML file and are loaded.
+     * Initializes the plugin definition specifying the Class object that
+     * represent the plugin. This constructor is used, for example, by JNRPE
+     * server where all the plugins are described in an XML file and are loaded
      * with potentially different class loaders.
      *
      * @param sName

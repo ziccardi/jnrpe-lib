@@ -26,9 +26,9 @@ import org.apache.commons.cli.PosixParser;
 /**
  * This class was intended to abstract the kind of plugin to execute. Hides
  * command line parsing from command invoker.
- *
+ * 
  * @author Massimiliano Ziccardi
- *
+ * 
  */
 public final class PluginProxy extends PluginBase
 {
@@ -55,7 +55,7 @@ public final class PluginProxy extends PluginBase
 
     /**
      * Instantiate a new plugin proxy.
-     *
+     * 
      * @param plugin
      *            The plugin to be proxied
      * @param pluginDef
@@ -76,7 +76,7 @@ public final class PluginProxy extends PluginBase
 
     /**
      * Returns a collection of all the options accepted by this plugin.
-     *
+     * 
      * @return a collection of plugin options.
      */
     public Collection<PluginOption> getOptions()
@@ -86,7 +86,7 @@ public final class PluginProxy extends PluginBase
 
     /**
      * Executes the proxied plugin passing the received arguments as parameters.
-     *
+     * 
      * @param args
      *            The parameters to be passed to the plugin
      * @return The return value of the plugin.
@@ -102,17 +102,17 @@ public final class PluginProxy extends PluginBase
             {
                 ((IPluginInterfaceEx) m_plugin).addListeners(getListeners());
             }
-            
-            Thread.currentThread().setContextClassLoader(m_plugin.getClass().getClassLoader());
-            
+
+            Thread.currentThread().setContextClassLoader(
+                    m_plugin.getClass().getClassLoader());
+
             return m_plugin.execute(new PluginCommandLine(cl));
         }
         catch (ParseException e)
         {
             // m_Logger.error("ERROR PARSING PLUGIN ARGUMENTS", e);
 
-            return new ReturnValue(Status.UNKNOWN,
-                    e.getMessage());
+            return new ReturnValue(Status.UNKNOWN, e.getMessage());
         }
     }
 
@@ -132,7 +132,9 @@ public final class PluginProxy extends PluginBase
 
     /**
      * Not used.
-     * @param cl Not used
+     * 
+     * @param cl
+     *            Not used
      * @return null.
      */
     public ReturnValue execute(final ICommandLine cl)

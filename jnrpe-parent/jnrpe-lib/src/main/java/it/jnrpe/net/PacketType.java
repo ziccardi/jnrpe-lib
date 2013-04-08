@@ -49,7 +49,14 @@ public enum PacketType
         return m_iIntValue;
     }
 
-    public static PacketType fromIntValue(int iIntValue)
+    /**
+     * Converts from the protocol int value representing the 
+     * state to the enumeration constant.
+     * 
+     * @param iIntValue The int value state
+     * @return The Enumeration
+     */
+    public static PacketType fromIntValue(final int iIntValue)
     {
         switch (iIntValue)
         {

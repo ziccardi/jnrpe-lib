@@ -24,7 +24,7 @@ package it.jnrpe.events;
 public class EventMessageParam extends EventParam
 {
     /**
-     * Builds and initializes the message parameter
+     * Builds and initializes the message parameter.
      * @param sMessage The message
      */
     public EventMessageParam(final String sMessage)

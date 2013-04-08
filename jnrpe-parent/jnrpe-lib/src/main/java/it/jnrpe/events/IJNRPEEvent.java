@@ -13,7 +13,7 @@ package it.jnrpe.events;
 import java.util.Map;
 
 /**
- * The interface that all the events must implement
+ * The interface that all the events must implement.
  *
  * @author Massimiliano Ziccardi
  */

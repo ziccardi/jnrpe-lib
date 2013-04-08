@@ -43,11 +43,17 @@ import javax.net.ssl.SSLServerSocketFactory;
 /**
  * Thread that listen on a given IP:PORT. When a request is received, a
  * {@link JNRPEServerThread} is created to serve it.
- *
+ * 
  * @author Massimiliano Ziccardi
  */
 class JNRPEListenerThread extends Thread implements IJNRPEListener
 {
+
+    /**
+     * The default So Linger timeout (in seconds).
+     */
+    private static final int SOLINGER_TIMEOUT = 10;
+
     /**
      * Default time to wait before killing staled commands (milliseconds).
      */
@@ -106,13 +112,13 @@ class JNRPEListenerThread extends Thread implements IJNRPEListener
     private Set<IJNRPEEventListener> m_vEventListeners = null;
 
     /**
-     * Set to  true if the server is shutting down
+     * Set to true if the server is shutting down.
      */
     private boolean m_bShutdown = false;
-    
+
     /**
      * Builds a listener thread.
-     *
+     * 
      * @param vEventListeners
      *            The event listeners
      * @param sBindingAddress
@@ -150,7 +156,7 @@ class JNRPEListenerThread extends Thread implements IJNRPEListener
 
     /**
      * Creates an SSLServerSocketFactory.
-     *
+     * 
      * @return the newly creates SSL Server Socket Factory
      * @throws KeyStoreException
      * @throws CertificateException
@@ -166,16 +172,6 @@ class JNRPEListenerThread extends Thread implements IJNRPEListener
         // Open the KeyStore Stream
         StreamManager h = new StreamManager();
 
-        // if (sKeyStoreFile == null)
-        // throw new KeyStoreException("KEYSTORE HAS NOT BEEN SPECIFIED");
-        // if (!new File(sKeyStoreFile).exists())
-        // throw new KeyStoreException("COULD NOT FIND KEYSTORE '" +
-        // sKeyStoreFile + "'");
-        //
-        // if (sKeyStorePwd == null)
-        // throw new
-        // KeyStoreException("KEYSTORE PASSWORD HAS NOT BEEN SPECIFIED");
-
         SSLContext ctx;
         KeyManagerFactory kmf;
 
@@ -189,9 +185,6 @@ class JNRPEListenerThread extends Thread implements IJNRPEListener
             kmf = KeyManagerFactory.getInstance(KeyManagerFactory
                     .getDefaultAlgorithm());
 
-            // KeyStore ks = getKeystore(sKeyStoreFile, sKeyStorePwd,
-            // sKeyStoreType);
-            // KeyStore ks = KeyStore.getInstance(sKeyStoreType);
             KeyStore ks = KeyStore.getInstance("JKS");
             char[] passphrase = KEYSTORE_PWD.toCharArray();
             ks.load(ksStream, passphrase);
@@ -215,7 +208,7 @@ class JNRPEListenerThread extends Thread implements IJNRPEListener
 
     /**
      * Initializes the object.
-     *
+     * 
      * @throws IOException
      * @throws KeyManagementException
      * @throws KeyStoreException
@@ -255,7 +248,7 @@ class JNRPEListenerThread extends Thread implements IJNRPEListener
 
     /**
      * Adds an host to the list of accepted hosts.
-     *
+     * 
      * @param sHost
      *            The hostname or IP
      * @throws UnknownHostException
@@ -277,15 +270,26 @@ class JNRPEListenerThread extends Thread implements IJNRPEListener
         {
             init();
 
-            EventsUtil.sendEvent(m_vEventListeners, this, LogEvent.INFO,
-                    "Listening on " + m_sBindingAddress + ":" + m_iBindingPort);
+            StringBuffer msg = new StringBuffer("Listening on ");
             
+            if (m_bSSL)
+            {
+                msg = msg.append("SSL/");
+            }
+            
+            msg = msg.append(m_sBindingAddress)
+                .append(":")
+                .append(m_iBindingPort);
+            
+            EventsUtil.sendEvent(m_vEventListeners, this, LogEvent.INFO,
+                    msg.toString());
+
             while (true)
             {
                 Socket clientSocket = m_serverSocket.accept();
-                clientSocket.setSoLinger(false, 10);
+                clientSocket.setSoLinger(false, SOLINGER_TIMEOUT);
                 clientSocket.setSoTimeout(m_iCommandExecutionTimeout);
-                
+
                 if (!canAccept(clientSocket.getInetAddress()))
                 {
                     clientSocket.close();
@@ -303,24 +307,23 @@ class JNRPEListenerThread extends Thread implements IJNRPEListener
             if (!m_bShutdown)
             {
                 EventsUtil.sendEvent(m_vEventListeners, this, LogEvent.ERROR,
-                        "Unable to listen on " + m_sBindingAddress + ":" + m_iBindingPort + ": " + se.getMessage(), se);
+                        "Unable to listen on " + m_sBindingAddress + ":"
+                                + m_iBindingPort + ": " + se.getMessage(), se);
             }
-            
+
             // This exception is thrown when the server socket is closed.
             // Ignoring
 
         }
         catch (Exception e)
         {
-        	System.out.println ("*** DBEX2");
-            EventsUtil.sendEvent(m_vEventListeners, this, LogEvent.ERROR,
-                    e.getMessage(), e);
+            EventsUtil.sendEvent(m_vEventListeners, this, LogEvent.ERROR, e
+                    .getMessage(), e);
         }
         catch (Throwable e)
         {
-        	System.out.println ("*** DBEX3");
-            EventsUtil.sendEvent(m_vEventListeners, this, LogEvent.ERROR,
-                    e.getMessage(), e);
+            EventsUtil.sendEvent(m_vEventListeners, this, LogEvent.ERROR, e
+                    .getMessage(), e);
         }
 
         exit();
@@ -342,14 +345,14 @@ class JNRPEListenerThread extends Thread implements IJNRPEListener
     public synchronized void shutdown()
     {
         m_bShutdown = true;
-        
+
         try
         {
-        	if (m_serverSocket != null)
-        	{
-        		m_serverSocket.close();
-        		wait();
-        	}
+            if (m_serverSocket != null)
+            {
+                m_serverSocket.close();
+                wait();
+            }
         }
         catch (InterruptedException ie)
         {
@@ -362,7 +365,7 @@ class JNRPEListenerThread extends Thread implements IJNRPEListener
 
     /**
      * Returns <code>true</code> if the request must be accepted.
-     *
+     * 
      * @param inetAddress
      *            The client IP address
      * @return <code>true</code> if the request must be accepted.
@@ -371,8 +374,10 @@ class JNRPEListenerThread extends Thread implements IJNRPEListener
     {
         for (InetAddress addr : m_vAcceptedHosts)
         {
-            if (addr.equals(inetAddress))
+            if (addr.equals(inetAddress)) 
+            {
                 return true;
+            }
         }
 
         // System.out.println ("Refusing connection to " + inetAddress);

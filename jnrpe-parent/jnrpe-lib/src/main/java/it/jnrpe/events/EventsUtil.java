@@ -131,6 +131,8 @@ public final class EventsUtil
         SimpleEvent se = new SimpleEvent(sCustomEvtType, vParams);
 
         for (IJNRPEEventListener listener : vListeners)
+        {
             listener.receive(sender, se);
+        }
     }
 }

@@ -11,7 +11,7 @@
 package it.jnrpe.net;
 
 /**
- * In this interface are initialized all needed constants
+ * In this interface are initialized all needed constants.
  *
  * @author Massimiliano Ziccardi
  * @deprecated

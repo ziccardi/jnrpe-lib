@@ -39,8 +39,8 @@ public final class CommandOption
     }
 
     /**
-     * Initializes an option and its value. The value can be an $ARG?$ macro. If.
-     * that's the case (and if the server is configured to accept macros), it's.
+     * Initializes an option and its value. The value can be an $ARG?$ macro. If
+     * that's the case (and if the server is configured to accept macros), it's
      * value is received by check_nrpe.
      *
      * @param sOptionName

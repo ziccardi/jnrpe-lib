@@ -25,7 +25,7 @@ package it.jnrpe.events;
 public class EventExceptionParam extends EventParam
 {
     /**
-     * Builds and initializes the exception parameter
+     * Builds and initializes the exception parameter.
      * @param exc The exception.
      */
     public EventExceptionParam(final Throwable exc)

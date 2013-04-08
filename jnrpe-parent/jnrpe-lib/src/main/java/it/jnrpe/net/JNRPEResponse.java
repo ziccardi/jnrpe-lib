@@ -30,7 +30,13 @@ public final class JNRPEResponse extends JNRPEProtocolPacket
         setPacketType(PacketType.RESPONSE);
     }
 
-    public JNRPEResponse(InputStream in) throws IOException
+    /**
+     * Builds a JNRPE response reading the content from an InputStream.
+     * 
+     * @param in The InputStream to read from
+     * @throws IOException on any io exception
+     */
+    public JNRPEResponse(final InputStream in) throws IOException
     {
         super();
 		fromInputStream(in);

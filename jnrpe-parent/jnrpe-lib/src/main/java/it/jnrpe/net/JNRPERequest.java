@@ -18,15 +18,15 @@ import org.apache.commons.lang.StringUtils;
 
 /**
  * This object represent a generic request packet.
- *
+ * 
  * @author Massimiliano Ziccardi
  */
 public class JNRPERequest extends JNRPEProtocolPacket
 {
     /**
-     * This constructor initializes the object with the data read from the given.
-     * input stream.
-     *
+     * This constructor initializes the object with the data read from the
+     * given input stream.
+     * 
      * @param in
      *            The stream containing the data to be parsed
      * @throws IOException
@@ -42,91 +42,108 @@ public class JNRPERequest extends JNRPEProtocolPacket
         validate();
     }
 
-//    public JNRPERequest(String sCommand, String...arguments)
-//    {
-//    	String sCommandBytes;
-//    	
-//    	if (arguments != null)
-//    	{
-//    		String[] ary = new String[arguments.length + 1];
-//    		
-//    		for (int i = 0; i < arguments.length; i++)
-//    		{
-//    			if (arguments[i].indexOf('!') == -1)
-//    				ary[i+1] = arguments[i];
-//    			else
-//    				ary[i+1] = "'" + arguments[i] + "'";
-//    		}
-//    		//System.arraycopy(arguments, 0, ary, 1, arguments.length);
-//    		ary[0] = sCommand;
-//    		
-//    		sCommandBytes = StringUtils.join(ary, '!');
-//    	}
-//    	else
-//    		sCommandBytes = sCommand;
-//    	
-//    	
-//    	
-//    	setPacketVersion(PacketVersion.VERSION_2);
-//    	super.setPacketType(PacketType.QUERY);
-//    	super.initRandomBuffer();
-//    	super.setDataBuffer(sCommandBytes);
-//    	updateCRC();
-//    }
-    
-    public JNRPERequest(String sCommand, String...arguments)
+    /**
+     * Inizialize the request with the supplied command and command arguments.
+     * 
+     * @param sCommand
+     *            The command
+     * @param arguments
+     *            The arguments
+     */
+    public JNRPERequest(final String sCommand, final String... arguments)
     {
-    	init (sCommand, arguments);
+        init(sCommand, arguments);
     }
-    
-    JNRPERequest(String sCommand, String sArguments)
-    {
-    	init(sCommand, sArguments);
-    }
-    
-    private void init(String sCommand, String ...arguments)
-    {
-    	String sCommandBytes;
-    	
-    	if (arguments != null)
-    	{
-    		String[] ary = new String[arguments.length];
-    		
-    		for (int i = 0; i < arguments.length; i++)
-    		{
-    			if (arguments[i].indexOf('!') == -1)
-    				ary[i] = arguments[i];
-    			else
-    				ary[i] = "'" + arguments[i] + "'";
-    		}
-    		//sCommandBytes = StringUtils.join(ary, '!');
-    		init(sCommand, StringUtils.join(ary, '!'));
-    	}
-    	else
-    		init(sCommand, (String) null);
-    }
-    
-    private void init(String sCommand, String sArguments)
-    {
-    	String sCommandBytes;
 
-    	if (sArguments != null && sArguments.startsWith("!"))
-    		sArguments = sArguments.substring(1);
-    	
-    	if (!StringUtils.isBlank(sArguments))
-    	{
-    		sCommandBytes = sCommand + "!" + sArguments;
-    	}
-    	else
-    		sCommandBytes = sCommand;
-    	
-    	setPacketVersion(PacketVersion.VERSION_2);
-    	super.setPacketType(PacketType.QUERY);
-    	super.initRandomBuffer();
-    	super.setDataBuffer(sCommandBytes);
-    	updateCRC();
+    /**
+     * Inizialize the request with the supplied command and command arguments.
+     * The arguments must be separated by an exclamation mark ('!')
+     * 
+     * @param sCommand
+     *            The command
+     * @param sArguments
+     *            The arguments
+     */
+    JNRPERequest(final String sCommand, final String sArguments)
+    {
+        init(sCommand, sArguments);
     }
-    
+
+    /**
+     * Initializes the object with the given command and the given arguments.
+     * 
+     * The arguments gets quoted if they contains '!' and are then joined using
+     * the '!' as separator.
+     * 
+     * @param sCommand
+     *            The command
+     * @param arguments
+     *            The arguments
+     */
+    private void init(final String sCommand, final String... arguments)
+    {
+        String sCommandBytes;
+
+        if (arguments != null)
+        {
+            String[] ary = new String[arguments.length];
+
+            for (int i = 0; i < arguments.length; i++)
+            {
+                if (arguments[i].indexOf('!') == -1)
+                {
+                    ary[i] = arguments[i];
+                }
+                else 
+                {
+                    ary[i] = "'" + arguments[i] + "'";
+                }
+            }
+            // sCommandBytes = StringUtils.join(ary, '!');
+            init(sCommand, StringUtils.join(ary, '!'));
+        }
+        else 
+        {
+            init(sCommand, (String) null);
+        }
+    }
+
+    /**
+     * Initializes the object with the given command and the given list of '!'
+     * separated list of arguments.
+     * 
+     * @param sCommand
+     *            The command
+     * @param sArguments
+     *            The arguments
+     */
+    private void init(final String sCommand, final String sArguments)
+    {
+        String sCommandBytes;
+
+        String sTmpArgs = sArguments;
+        
+        if (sTmpArgs != null && sTmpArgs.startsWith("!"))
+        {
+            sTmpArgs = sTmpArgs.substring(1);
+        }
+
+        if (!StringUtils.isBlank(sTmpArgs))
+        {
+            sCommandBytes = sCommand + "!" + sTmpArgs;
+        }
+        else 
+        {
+            sCommandBytes = sCommand;
+        }
+
+        setPacketVersion(PacketVersion.VERSION_2);
+        super.setPacketType(PacketType.QUERY);
+        super.initRandomBuffer();
+        super.setDataBuffer(sCommandBytes);
+        updateCRC();
+    }
+
     /**
      * Updates the CRC value.
      */
@@ -143,5 +160,5 @@ public class JNRPERequest extends JNRPEProtocolPacket
 
         setCRC(iCRC);
     }
-    
+
 }

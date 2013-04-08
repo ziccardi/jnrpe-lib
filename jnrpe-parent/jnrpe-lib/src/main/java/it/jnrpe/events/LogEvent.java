@@ -11,7 +11,7 @@
 package it.jnrpe.events;
 
 /**
- * All the accepted Log Event types
+ * All the accepted Log Event types.
  *
  * @author Massimiliano Ziccardi
  */

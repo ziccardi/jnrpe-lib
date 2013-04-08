@@ -18,12 +18,12 @@ package it.jnrpe.net;
 public final class JNRPECommand
 {
     /**
-     * Contains the name of the command
+     * Contains the name of the command.
      */
     private final String   m_sCommandName;
 
     /**
-     * Contains the splitted list of arguments
+     * Contains the splitted list of arguments.
      */
     private final String[] m_vArgs;
 
@@ -42,7 +42,7 @@ public final class JNRPECommand
     }
 
     /**
-     * Returns the command that should satisfy the received request
+     * Returns the command that should satisfy the received request.
      * 
      * @param req
      *            The request
@@ -62,7 +62,7 @@ public final class JNRPECommand
     }
 
     /**
-     * Returns the command name
+     * Returns the command name.
      * 
      * @return The command name
      */
@@ -72,7 +72,7 @@ public final class JNRPECommand
     }
 
     /**
-     * Returns the command arguments
+     * Returns the command arguments.
      * 
      * @return The command arguments
      */

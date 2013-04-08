@@ -22,7 +22,7 @@ import java.util.Set;
 /**
  * If your plugin needs to send events and you don't mind extending this class,
  * you can save some coding using this as a base.
- *
+ * 
  * @author Massimiliano Ziccardi
  */
 public abstract class PluginBase implements IPluginInterfaceEx
@@ -30,12 +30,13 @@ public abstract class PluginBase implements IPluginInterfaceEx
     /**
      * The list of listener registered for the events raised by this plugin.
      */
-    private Set<IJNRPEEventListener> m_vListeners = new HashSet<IJNRPEEventListener>();
+    private Set<IJNRPEEventListener> m_vListeners 
+        = new HashSet<IJNRPEEventListener>();
 
     /**
-     * Adds a new listener to the list of objects that will receive the messages.
-     * sent by this class.
-     *
+     * Adds a new listener to the list of objects that will receive the
+     * messages sent by this class.
+     * 
      * @param listener
      *            The new listener
      */
@@ -46,7 +47,7 @@ public abstract class PluginBase implements IPluginInterfaceEx
 
     /**
      * Adds a new collection of listeners.
-     *
+     * 
      * @param listeners
      *            The collection of listeners to be added
      */
@@ -63,7 +64,7 @@ public abstract class PluginBase implements IPluginInterfaceEx
 
     /**
      * Sends an event.
-     *
+     * 
      * @param evt
      *            The event type
      * @param sMessage
@@ -76,7 +77,7 @@ public abstract class PluginBase implements IPluginInterfaceEx
 
     /**
      * Sends an event.
-     *
+     * 
      * @param evt
      *            The event type
      * @param sMessage
@@ -92,7 +93,7 @@ public abstract class PluginBase implements IPluginInterfaceEx
 
     /**
      * Sends a custom event.
-     *
+     * 
      * @param sCustomEvent
      *            The custom event identifier
      * @param vParams
@@ -106,7 +107,7 @@ public abstract class PluginBase implements IPluginInterfaceEx
 
     /**
      * Returns all the registered listeners.
-     *
+     * 
      * @return All the listeners
      */
     protected final Set<IJNRPEEventListener> getListeners()

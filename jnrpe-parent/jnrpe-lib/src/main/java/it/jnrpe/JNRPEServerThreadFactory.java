@@ -57,7 +57,8 @@ final class JNRPEServerThreadFactory
 
     /**
      * Return an instance of the system level thread factory.
-     *
+     * 
+     * @param commandInvoker The command Invoker instance.
      * @return The thread factory
      */
     public static JNRPEServerThreadFactory getInstance(

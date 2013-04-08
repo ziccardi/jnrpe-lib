@@ -30,7 +30,7 @@ public class BadCRCException extends Exception
     private static final long serialVersionUID = -4870060988392897195L;
 
     /**
-     * Initialize the exception with an emtpy error message
+     * Initialize the exception with an emtpy error message.
      */
     public BadCRCException()
     {
@@ -39,7 +39,7 @@ public class BadCRCException extends Exception
 
     /**
      * Initialize the exception with the given error message and the give root
-     * cause
+     * cause.
      * 
      * @param sMsg
      *            The error message
@@ -52,7 +52,7 @@ public class BadCRCException extends Exception
     }
 
     /**
-     * Initialize the exception with the given error message
+     * Initialize the exception with the given error message.
      * 
      * @param sMsg
      *            The error message
@@ -63,7 +63,7 @@ public class BadCRCException extends Exception
     }
 
     /**
-     * Initialize the exception with the given root cause
+     * Initialize the exception with the given root cause.
      * 
      * @param thr
      *            The root cause
