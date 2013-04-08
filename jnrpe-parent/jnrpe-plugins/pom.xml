@@ -116,4 +116,15 @@
 		<version>2.0.3-beta-01</version>
 	</parent>
 	<version>0.7.2-beta-02</version>
+	
+	<contributors>
+		<contributor>
+			<name>Frederico Campos</name>
+			<url>https://github.com/fredcampos</url>
+			<email>frederico.campos82@gmail.com</email>
+			<roles>
+		        <role>developer</role>
+      		</roles>
+		</contributor>
+	</contributors>
 </project>
