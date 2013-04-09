@@ -26,7 +26,7 @@ public class XMLPluginOption extends XMLOption
         return new PluginOption()
             .setArgName(getArgName())
             .setArgsCount(getArgsCount())
-            .setArgsOptional(getArgsOptional())
+            .setArgsOptional(getArgsOptional() == null ? true : getArgsOptional())
             .setDescription(getDescription())
             .setHasArgs(hasArgs())
             .setLongOpt(getLongOpt())

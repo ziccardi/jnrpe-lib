@@ -10,9 +10,9 @@
  */
 package it.jnrpe.plugins;
 
-import it.jnrpe.ICommandLine;
+import org.apache.commons.cli2.CommandLine;
 
-import org.apache.commons.cli.CommandLine;
+import it.jnrpe.ICommandLine;
 
 /**
  * Incapsulate the commons cli CommandLine object, so that the plugins have no
@@ -44,7 +44,7 @@ class PluginCommandLine implements ICommandLine
      */
     public String getOptionValue(final String sOptionName)
     {
-        return m_CommandLine.getOptionValue(sOptionName);
+        return (String) m_CommandLine.getValue("--" + sOptionName);
     }
 
     /**
@@ -54,7 +54,7 @@ class PluginCommandLine implements ICommandLine
     public String getOptionValue(final String sOptionName,
             final String sDefaultValue)
     {
-        return m_CommandLine.getOptionValue(sOptionName, sDefaultValue);
+        return (String) m_CommandLine.getValue("--" + sOptionName, sDefaultValue);
     }
 
     /**
@@ -62,7 +62,7 @@ class PluginCommandLine implements ICommandLine
      */
     public String getOptionValue(final char cOption)
     {
-        return m_CommandLine.getOptionValue(cOption);
+        return (String)m_CommandLine.getValue("-" + cOption);
     }
 
     /**
@@ -70,7 +70,7 @@ class PluginCommandLine implements ICommandLine
      */
     public String getOptionValue(final char cOption, final String sDefaultValue)
     {
-        return m_CommandLine.getOptionValue(cOption, sDefaultValue);
+        return (String)m_CommandLine.getValue("-" + cOption, sDefaultValue);
     }
 
     /**
@@ -78,7 +78,7 @@ class PluginCommandLine implements ICommandLine
      */
     public boolean hasOption(final String sOptionName)
     {
-        return m_CommandLine.hasOption(sOptionName);
+        return m_CommandLine.hasOption("--" + sOptionName);
     }
 
     /**
@@ -86,6 +86,6 @@ class PluginCommandLine implements ICommandLine
      */
     public boolean hasOption(final char cOption)
     {
-        return m_CommandLine.hasOption(cOption);
+        return m_CommandLine.hasOption("-" + cOption);
     }
 }

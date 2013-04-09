@@ -10,7 +10,10 @@
  */
 package it.jnrpe.plugins;
 
-import org.apache.commons.cli.Option;
+import org.apache.commons.cli2.Option;
+import org.apache.commons.cli2.builder.ArgumentBuilder;
+import org.apache.commons.cli2.builder.DefaultOptionBuilder;
+
 
 /**
  * This class describes a plugin option.
@@ -42,7 +45,7 @@ public final class PluginOption
     /**
      * If the argument is optional.
      */
-    private Boolean m_bArgsOptional = null;
+    private boolean m_bArgsOptional = true;
 
     /**
      * The name of the argument.
@@ -307,46 +310,53 @@ public final class PluginOption
      */
     Option toOption()
     {
-        Option ret = new Option(m_sOption, m_sDescription);
+        DefaultOptionBuilder oBuilder = new DefaultOptionBuilder();
+        
+        oBuilder
+          .withShortName(m_sOption)
+          .withDescription(m_sDescription)
+          .withRequired(m_bRequired)
+          ;
+        
+        if (m_sLongOpt != null)
+            oBuilder.withLongName(m_sLongOpt);
+        
+        //        DefaultOption ret = oBuilder
+//                                .withLongName(m_sOption)
+//                                .withDescription(m_sDescription);
+        
+        //Option ret = new Option(m_sOption, m_sDescription);
 
-        if (m_bArgsOptional != null)
-        {
-            ret.setOptionalArg(m_bArgsOptional.booleanValue());
-        }
+//        if (m_bArgsOptional != null)
+//        {
+//            ret.setOptionalArg(m_bArgsOptional.booleanValue());
+//        }
 
         if (m_bHasArgs)
         {
-            if (m_iArgsCount == null)
+            ArgumentBuilder aBuilder = new ArgumentBuilder();
+            
+            if (m_sArgName != null)
+                aBuilder.withName(m_sArgName);
+            
+            if (m_bArgsOptional)
+                aBuilder.withMinimum(0);
+            
+            if (m_iArgsCount != null)
             {
-                ret.setArgs(Option.UNLIMITED_VALUES);
+                aBuilder.withMaximum(m_iArgsCount);
             }
-        }
-
-        ret.setRequired(m_bRequired);
-        if (m_iArgsCount != null)
-        {
-            ret.setArgs(m_iArgsCount.intValue());
-        }
-
-        if (m_sArgName != null)
-        {
-            if (m_iArgsCount == null)
+            else
+                aBuilder.withMaximum(1);
+            
+            if (m_sValueSeparator != null && m_sValueSeparator.length() != 0)
             {
-                ret.setArgs(Option.UNLIMITED_VALUES);
+                aBuilder.withInitialSeparator(m_sValueSeparator.charAt(0));
+                aBuilder.withSubsequentSeparator(m_sValueSeparator.charAt(0));
             }
-            ret.setArgName(m_sArgName);
+            oBuilder.withArgument(aBuilder.create());
         }
 
-        if (m_sLongOpt != null)
-        {
-            ret.setLongOpt(m_sLongOpt);
-        }
-
-        if (m_sValueSeparator != null && m_sValueSeparator.length() != 0)
-        {
-            ret.setValueSeparator(m_sValueSeparator.charAt(0));
-        }
-
-        return ret;
+        return oBuilder.create();
     }
 }

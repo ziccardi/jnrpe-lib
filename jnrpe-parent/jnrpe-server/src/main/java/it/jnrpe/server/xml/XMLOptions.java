@@ -19,7 +19,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.commons.cli.Options;
+import org.apache.commons.cli2.Option;
+import org.apache.commons.cli2.builder.GroupBuilder;
 
 /**
  * This object exists for the sole purpose of being used
@@ -60,14 +61,15 @@ public class XMLOptions
 	 * 
 	 * @return The commons cli command line definition.
 	 */
-	public Options toOptions()
+	public Option toOptions()
 	{
-		Options opts = new Options();
+		GroupBuilder gBuilder = new GroupBuilder();
+	    //Options opts = new Options();
 		
 		for (XMLOption opt: m_vOptions)
-			opts.addOption(opt.toOption());
+			gBuilder = gBuilder.withOption(opt.toOption());
 		
-		return opts;
+		return gBuilder.create();
 	}
     
     /**

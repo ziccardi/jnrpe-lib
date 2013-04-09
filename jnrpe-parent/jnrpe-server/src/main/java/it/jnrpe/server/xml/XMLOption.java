@@ -15,7 +15,9 @@
  */
 package it.jnrpe.server.xml;
 
-import org.apache.commons.cli.Option;
+import org.apache.commons.cli2.Option;
+import org.apache.commons.cli2.builder.ArgumentBuilder;
+import org.apache.commons.cli2.builder.DefaultOptionBuilder;
 
 /**
  * This object represent the in-memory representation of
@@ -147,34 +149,48 @@ public class XMLOption
 	
 	Option toOption()
 	{
-		Option ret = new Option(m_sOption, m_sDescription);
-		
-		if (m_bArgsOptional != null)
-			ret.setOptionalArg(m_bArgsOptional.booleanValue());
-		
-		if (m_bHasArgs)
-		{
-			if (m_iArgsCount == null)
-				ret.setArgs(Option.UNLIMITED_VALUES);
-		}
-		
-		ret.setRequired(m_bRequired);
-		if (m_iArgsCount != null)
-			ret.setArgs(m_iArgsCount.intValue());
-		
-		if (m_sArgName != null)
-		{
-			if (m_iArgsCount == null)
-				ret.setArgs(Option.UNLIMITED_VALUES);
-			ret.setArgName(m_sArgName);
-		}
-		
-		if (m_sLongOpt != null)
-			ret.setLongOpt(m_sLongOpt);
-		
-		if (m_sValueSeparator != null && m_sValueSeparator.length() != 0)
-			ret.setValueSeparator(m_sValueSeparator.charAt(0));
-		
-		return ret;
+DefaultOptionBuilder oBuilder = new DefaultOptionBuilder();
+        
+        oBuilder = oBuilder
+          .withShortName(m_sOption)
+          .withDescription(m_sDescription)
+          .withRequired(m_bRequired)
+          ;
+        
+        //        DefaultOption ret = oBuilder
+//                                .withLongName(m_sOption)
+//                                .withDescription(m_sDescription);
+        
+        //Option ret = new Option(m_sOption, m_sDescription);
+
+//        if (m_bArgsOptional != null)
+//        {
+//            ret.setOptionalArg(m_bArgsOptional.booleanValue());
+//        }
+
+        if (m_bHasArgs)
+        {
+            ArgumentBuilder aBuilder = new ArgumentBuilder();
+            
+            if (m_sArgName != null)
+                aBuilder = aBuilder.withName(m_sArgName);
+            
+            if (m_bArgsOptional)
+                aBuilder = aBuilder.withMinimum(0);
+            
+            if (m_iArgsCount != null)
+            {
+                aBuilder.withMaximum(m_iArgsCount);
+            }
+            
+            if (m_sValueSeparator != null && m_sValueSeparator.length() != 0)
+            {
+                aBuilder.withInitialSeparator(m_sValueSeparator.charAt(0));
+                aBuilder.withSubsequentSeparator(m_sValueSeparator.charAt(0));
+            }
+            oBuilder = oBuilder.withArgument(aBuilder.create());
+        }
+
+        return oBuilder.create();
 	}
 }

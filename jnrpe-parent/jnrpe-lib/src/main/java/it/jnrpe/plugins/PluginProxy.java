@@ -14,14 +14,15 @@ import it.jnrpe.ICommandLine;
 import it.jnrpe.ReturnValue;
 import it.jnrpe.Status;
 
+import java.text.ParseException;
 import java.util.Collection;
 
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
-import org.apache.commons.cli.PosixParser;
+import org.apache.commons.cli2.CommandLine;
+import org.apache.commons.cli2.Group;
+import org.apache.commons.cli2.OptionException;
+import org.apache.commons.cli2.builder.GroupBuilder;
+import org.apache.commons.cli2.commandline.Parser;
+import org.apache.commons.cli2.util.HelpFormatter;
 
 /**
  * This class was intended to abstract the kind of plugin to execute. Hides
@@ -46,7 +47,7 @@ public final class PluginProxy extends PluginBase
      * The command line definition as requested by the Apache commons cli.
      * library.
      */
-    private Options m_Options = new Options();
+    private Group m_MainOptionsGroup = null;
 
     /**
      * The proxied plugin description.
@@ -68,10 +69,14 @@ public final class PluginProxy extends PluginBase
         m_pluginDef = pluginDef;
         m_sDescription = m_pluginDef.getDescription();
 
+        GroupBuilder gBuilder = new GroupBuilder();
+        
         for (PluginOption po : pluginDef.getOptions())
         {
-            m_Options.addOption(po.toOption());
+            gBuilder = gBuilder.withOption(po.toOption());
         }
+        
+        m_MainOptionsGroup = gBuilder.create();
     }
 
     /**
@@ -93,10 +98,16 @@ public final class PluginProxy extends PluginBase
      */
     public ReturnValue execute(final String[] args)
     {
-        CommandLineParser clp = new PosixParser();
+        //CommandLineParser clp = new PosixParser();
         try
         {
-            CommandLine cl = clp.parse(m_Options, args);
+            HelpFormatter hf = new HelpFormatter();
+
+            // configure a parser
+            Parser p = new Parser();
+            p.setGroup(m_MainOptionsGroup);
+            p.setHelpFormatter(hf);
+            CommandLine cl = p.parse(args);
             if (getListeners() != null
                     && m_plugin instanceof IPluginInterfaceEx)
             {
@@ -108,7 +119,7 @@ public final class PluginProxy extends PluginBase
 
             return m_plugin.execute(new PluginCommandLine(cl));
         }
-        catch (ParseException e)
+        catch (OptionException e)
         {
             // m_Logger.error("ERROR PARSING PLUGIN ARGUMENTS", e);
 
@@ -121,13 +132,22 @@ public final class PluginProxy extends PluginBase
      */
     public void printHelp()
     {
+        String sDivider = "================================================================================";
+        System.out.println (sDivider);
+        System.out.println ("PLUGIN NAME : " + m_pluginDef.getName());
         if (m_sDescription != null && m_sDescription.trim().length() != 0)
         {
+            System.out.println (sDivider);
             System.out.println("Description : ");
+            System.out.println();
             System.out.println(m_sDescription);
         }
         HelpFormatter hf = new HelpFormatter();
-        hf.printHelp(m_pluginDef.getName(), m_Options);
+        hf.setGroup(m_MainOptionsGroup);
+        //hf.setHeader(m_pluginDef.getName());
+        hf.setDivider(sDivider);
+        hf.print();
+        //hf.printHelp(m_pluginDef.getName(), m_Options);
     }
 
     /**
