@@ -44,6 +44,8 @@ class PluginCommandLine implements ICommandLine
      */
     public String getOptionValue(final String sOptionName)
     {
+        if (sOptionName.length() == 1)
+            return getOptionValue(sOptionName.charAt(0));
         return (String) m_CommandLine.getValue("--" + sOptionName);
     }
 
@@ -54,6 +56,8 @@ class PluginCommandLine implements ICommandLine
     public String getOptionValue(final String sOptionName,
             final String sDefaultValue)
     {
+        if (sOptionName.length() == 1)
+            return getOptionValue(sOptionName.charAt(0), sDefaultValue);
         return (String) m_CommandLine.getValue("--" + sOptionName, sDefaultValue);
     }
 
@@ -78,6 +82,8 @@ class PluginCommandLine implements ICommandLine
      */
     public boolean hasOption(final String sOptionName)
     {
+        if (sOptionName.length() == 1)
+            return hasOption(sOptionName.charAt(0));
         return m_CommandLine.hasOption("--" + sOptionName);
     }
 
