@@ -30,6 +30,7 @@ import org.apache.commons.cli2.CommandLine;
 import org.apache.commons.cli2.DisplaySetting;
 import org.apache.commons.cli2.Group;
 import org.apache.commons.cli2.Option;
+import org.apache.commons.cli2.OptionException;
 import org.apache.commons.cli2.builder.ArgumentBuilder;
 import org.apache.commons.cli2.builder.DefaultOptionBuilder;
 import org.apache.commons.cli2.builder.GroupBuilder;
@@ -117,11 +118,15 @@ public class JNRPEServer
             p.setGroup(opts);
             p.setHelpFormatter(hf);
             // p.setHelpTrigger("--help");
-            CommandLine cl = p.parseAndHelp(vsArgs);
+            CommandLine cl = p.parse(vsArgs);
 
             return cl;
             // CommandLineParser clp = new PosixParser();
             // return clp.parse(m_Options, vsArgs);
+        }
+        catch (OptionException oe)
+        {
+            printUsage(oe);
         }
         catch (Exception e)
         {
@@ -247,7 +252,11 @@ public class JNRPEServer
                 printUsage(null);
         }
 
-        if (cl.hasOption("--version")) printVersion();
+        if (cl.hasOption("--version")) 
+        {   
+            printVersion();
+            System.exit(0);
+        }
 
         JNRPEConfiguration conf = loadConfiguration((String) cl
                 .getValue("--conf"));
