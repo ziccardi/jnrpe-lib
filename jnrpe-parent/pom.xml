@@ -155,4 +155,28 @@ It is fully compatible with check_nrpe and can be used to execute both old nativ
 		<url>http://github.com/ziccardi/jnrpe-lib/tree/master/jnrpe-parent</url>
 		<developerConnection>scm:git:git@github.com:ziccardi/jnrpe-lib.git</developerConnection>
 	</scm>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>net.sf.jnrpe</groupId>
+				<artifactId>jnrpe-lib</artifactId>
+				<version>1.0.1-beta-13-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>net.sf.jnrpe</groupId>
+				<artifactId>jnrpe-server</artifactId>
+				<version>2.0.3-beta-04-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>net.sf.jnrpe</groupId>
+				<artifactId>jnrpe-plugins</artifactId>
+				<version>0.7.2-beta-04-SNAPSHOT</version>
+			</dependency>
+			<dependency>
+				<groupId>net.sf.jnrpe</groupId>
+				<artifactId>jcheck_nrpe</artifactId>
+				<version>2.0.3-beta-04-SNAPSHOT</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 </project>
