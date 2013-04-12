@@ -15,6 +15,10 @@
  */
 package it.jnrpe.server.plugins;
 
+import it.jnrpe.server.plugins.xml.CommandLineType;
+import it.jnrpe.server.plugins.xml.OptionType;
+import it.jnrpe.server.plugins.xml.PluginType;
+import it.jnrpe.server.plugins.xml.XMLPluginOption;
 import it.jnrpe.server.plugins.xml.XMLPluginOptions;
 
 import java.io.BufferedReader;
@@ -36,12 +40,26 @@ public class XMLPluginDefinition
 	private XMLPluginOptions m_Options = null;
 	private String m_sDecription = null;
 	
-	public XMLPluginDefinition()
+	XMLPluginDefinition(PluginType plugin)
 	{
-		
+		init(plugin);
 	}
 	
-	public void setName(String sName)
+	private void init(PluginType plugin)
+	{
+	    m_sPluginName = plugin.getName();
+	    m_sPluginClass = plugin.getClazz();
+	    m_sDecription = plugin.getDescription();
+	    
+	    m_Options = new XMLPluginOptions();
+	    CommandLineType clt = plugin.getCommandLine();
+	    for (OptionType ot : clt.getOptions().getOption())
+	    {
+	        m_Options.addOption( new XMLPluginOption(ot));
+	    }
+	}
+	
+	void setName(String sName)
 	{
 		m_sPluginName = sName;
 	}
@@ -54,7 +72,7 @@ public class XMLPluginDefinition
 		return m_sPluginName;
 	}
 
-	public void setPluginClass(String sClassName)
+	void setPluginClass(String sClassName)
 	{
 		m_sPluginClass = sClassName;
 	}
@@ -67,7 +85,7 @@ public class XMLPluginDefinition
 		return m_sPluginClass;
 	}
 	
-	public void setOptions(XMLPluginOptions opts)
+	void setOptions(XMLPluginOptions opts)
 	{
 		m_Options = opts;
 	}
@@ -104,7 +122,7 @@ public class XMLPluginDefinition
         return new String (bout.toByteArray());
     }
 	
-	public void setDescription(String sDesc)
+	void setDescription(String sDesc)
     {
         m_sDecription = cleanDesc(sDesc);
     }

@@ -15,7 +15,26 @@
  */
 package it.jnrpe.server.plugins.xml;
 
+import org.apache.commons.cli2.Group;
+import org.apache.commons.cli2.builder.GroupBuilder;
+
+import it.jnrpe.server.xml.XMLOption;
 import it.jnrpe.server.xml.XMLOptions;
 
 public class XMLPluginOptions extends XMLOptions
-{}
+{
+    
+    public Group toGroup()
+    {
+        GroupBuilder gb = new GroupBuilder();
+        
+        for (XMLOption opt1 : this.getOptions())
+        {
+            XMLPluginOption opt = (XMLPluginOption) opt1;
+            gb.withOption(opt.toOption());
+        }
+        
+        return gb.create();
+    }
+    
+}

@@ -15,6 +15,11 @@
  */
 package it.jnrpe.server.plugins;
 
+import it.jnrpe.server.plugins.xml.PluginType;
+import it.jnrpe.server.plugins.xml.PluginsType;
+import it.jnrpe.server.plugins.xml.XMLPluginParser;
+
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,12 +33,21 @@ public class XMLPluginPackage
 {
 	private List<XMLPluginDefinition> m_vPluginDefinitions = new ArrayList<XMLPluginDefinition>();
 	
-	public XMLPluginPackage()
+	private XMLPluginPackage(PluginsType pt)
 	{
-		
+		init(pt);
 	}
 	
-	public void addPluginDefinition(XMLPluginDefinition def)
+	private void init(PluginsType pt)
+    {
+        // TODO Auto-generated method stub
+	    for (PluginType plugin : pt.getPlugin())
+        {
+            m_vPluginDefinitions.add(new XMLPluginDefinition(plugin));
+        }
+    }
+
+    private void addPluginDefinition(XMLPluginDefinition def)
 	{
 		m_vPluginDefinitions.add(def);
 	}
@@ -41,5 +55,21 @@ public class XMLPluginPackage
 	public List<XMLPluginDefinition> getPluginDefinitions()
 	{
 		return m_vPluginDefinitions;
+	}
+	
+	public static XMLPluginPackage getInstance(InputStream in)
+	{
+	    try
+        {
+            PluginsType pt = XMLPluginParser.parseDocument(in);
+            
+            return new XMLPluginPackage(pt);
+        }
+        catch (Exception e)
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+	    return null;
 	}
 }

@@ -155,30 +155,9 @@ public class DynaPluginRepository extends PluginRepository
 
     private XMLPluginPackage parsePluginXmlFile(InputStream in, ClassLoader cl) throws IOException, SAXException
     {
-        StreamManager streamMgr = new StreamManager();
+        XMLPluginPackage oConf = XMLPluginPackage.getInstance(in);
         
-//        m_Logger.trace("PARSING FILE plugin.xml IN JAR FILE.");
-
-        Digester digester = DigesterLoader
-                .createDigester(new InputSource(
-                 streamMgr.handle(
-                 DynaPluginRepository.class.getResourceAsStream("plugin-digester.xml"))));
-        XMLPluginPackage oConf = (XMLPluginPackage) digester.parse(in);
-
         return oConf;
-        
-//        List vPluginDefs = oConf.getPluginDefinitions();
-//
-//        //for (CPluginDefinition pluginDef : vPluginDefs)
-//        for (Iterator iter = vPluginDefs.iterator(); iter.hasNext(); )
-//        {
-//            XMLPluginDefinition pluginDef = (XMLPluginDefinition) iter.next();
-////            m_Logger.debug("FOUND PLUGIN "
-////                    + pluginDef.getName()
-////                    + " IMPLEMENTED BY CLASS "
-////                    + pluginDef.getPluginClass());
-//            m_mPlugins.put(pluginDef.getName(), new CPluginData(pluginDef.getName(), pluginDef.getDescription(), pluginDef.getPluginClass(), cl, pluginDef.getOptions()));
-//        }
     }    
     
     public void load(File fDirectory)

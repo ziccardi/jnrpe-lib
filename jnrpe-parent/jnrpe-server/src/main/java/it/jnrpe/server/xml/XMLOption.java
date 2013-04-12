@@ -15,6 +15,8 @@
  */
 package it.jnrpe.server.xml;
 
+import it.jnrpe.server.plugins.xml.OptionType;
+
 import org.apache.commons.cli2.Option;
 import org.apache.commons.cli2.builder.ArgumentBuilder;
 import org.apache.commons.cli2.builder.DefaultOptionBuilder;
@@ -42,12 +44,27 @@ public class XMLOption
 	private String m_sValueSeparator = null;
 	private String m_sDescription = null;
 	
-	public XMLOption()
+	public XMLOption(OptionType ot)
 	{
-		
+		init(ot);
 	}
 	
-	public String getOption()
+	private void init(OptionType ot)
+    {
+        m_sOption = ot.getShortName();
+        m_bHasArgs = ot.isHasArgs();
+        //m_iArgsCount = ot.  //TODO : manage args count
+        m_bRequired = ot.isRequired();
+        m_bArgsOptional = ot.isOptionalArgs();
+        m_sArgName = ot.getArgName();
+        m_sLongOpt = ot.getLongName();
+        // m_sType = ot.getT // TODO : manage type
+        // m_sValueSeparator = ot.getV // TODO : manage value separator
+        m_sDescription = ot.getDescription();
+        
+    }
+
+    public String getOption()
 	{
 		return m_sOption;
 	}
@@ -156,6 +173,9 @@ DefaultOptionBuilder oBuilder = new DefaultOptionBuilder();
           .withDescription(m_sDescription)
           .withRequired(m_bRequired)
           ;
+        
+        if (m_sLongOpt != null)
+            oBuilder.withLongName(m_sLongOpt);
         
         //        DefaultOption ret = oBuilder
 //                                .withLongName(m_sOption)

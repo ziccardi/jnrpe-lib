@@ -1,4 +1,5 @@
-<plugins>
+<plugins xmlns="http://jnrpe.sourceforge.net/plugins" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://jnrpe.sourceforge.net/plugins plugin.xsd">
     <plugin name="TEST" class="it.jnrpe.plugin.test.CTestPlugin">
         <description>
         <![CDATA[
