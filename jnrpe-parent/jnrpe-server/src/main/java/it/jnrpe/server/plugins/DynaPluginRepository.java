@@ -15,37 +15,29 @@
  */
 package it.jnrpe.server.plugins;
 
-import it.jnrpe.plugins.PluginDefinition;
+import it.jnrpe.plugins.PluginConfigurationException;
 import it.jnrpe.plugins.PluginRepository;
-import it.jnrpe.server.plugins.xml.XMLPluginOption;
-import it.jnrpe.server.xml.XMLOption;
-import it.jnrpe.server.xml.XMLOptions;
+import it.jnrpe.utils.PluginRepositoryUtil;
 import it.jnrpe.utils.StreamManager;
 
 import java.io.File;
 import java.io.FileFilter;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
-import org.apache.commons.digester.Digester;
-import org.apache.commons.digester.xmlrules.DigesterLoader;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DynaPluginRepository extends PluginRepository
 {
+    private final static Logger LOG = LoggerFactory.getLogger(DynaPluginRepository.class);
     
-    private void configurePlugins(File fDir)
+    private void configurePlugins(File fDir) throws PluginConfigurationException
     {
-//        m_Logger.trace("READING PLUGIN CONFIGURATION FROM DIRECTORY " + fDir.getName());
+        LOG.trace("READING PLUGIN CONFIGURATION FROM DIRECTORY " + fDir.getName());
         StreamManager streamMgr = new StreamManager();
         File[] vfJars = fDir.listFiles(new FileFilter()
         {
@@ -61,7 +53,6 @@ public class DynaPluginRepository extends PluginRepository
             return;
         
         // Initializing classloader
-        //URL[] urls = new URL[vfJars.length];
         List<URL> vUrls = new ArrayList<URL>(vfJars.length);
         
         ClassLoader ul = null;
@@ -79,88 +70,27 @@ public class DynaPluginRepository extends PluginRepository
             }
         }
 
-        //ul = URLClassLoader.newInstance(urls, getClass().getClassLoader());
-        //ul = new JNRPEClassLoader(getClass().getClassLoader(), URLClassLoader.newInstance(urls, null), false);
-        
         ul = new JNRPEClassLoader(vUrls);
-    
-        for (int i = 0; i < vfJars.length; i++)
+        
+        try
         {
-            File file = vfJars[i];
+            InputStream in = streamMgr.handle(ul.getResourceAsStream("plugin.xml"));
+            if (in == null)
+            {
+                // Error : No plugin.xml
+                // TODO : must throw an exception
+                return;
+            }
             
-            
-            try
-            {
-//                m_Logger.info("READING PLUGINS DATA IN FILE '" + file.getName() + "'");
-                
-                ZipInputStream jin = (ZipInputStream) streamMgr.handle(new ZipInputStream(new FileInputStream(file)));
-                ZipEntry ze = null;
-
-                while ((ze = jin.getNextEntry()) != null)
-                {
-                    if (ze.getName().equals("plugin.xml"))
-                    {
-                        XMLPluginPackage xmlPluginPackage = parsePluginXmlFile(jin, ul);
-                        
-                        for (XMLPluginDefinition pluginDefs : xmlPluginPackage.getPluginDefinitions())
-                        {
-                            // load the plugin class
-                            Class c = ul.loadClass(pluginDefs.getPluginClass());
-                            PluginDefinition pd = new PluginDefinition(pluginDefs.getName(), pluginDefs.getDescription(), c);
-                            loadOpts(pd, pluginDefs);
-                            
-                            
-                            addPluginDefinition(pd);
-                        }
-                        
-
-                        
-                        break;
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                e.printStackTrace();
-//                m_Logger.error("UNABLE TO READ DATA FROM FILE '"
-//                        + file.getName() + "'. THE FILE WILL BE IGNORED.", e);
-            }
-            finally
-            {
-                streamMgr.closeAll();
-            }
-
+            PluginRepositoryUtil.loadFromXmlPluginPackageDefinitions(this, ul, in);
+        }
+        finally
+        {
+            streamMgr.closeAll();
         }
     }
     
-    private void loadOpts(PluginDefinition pd, XMLPluginDefinition pluginDefs)
-    {
-        XMLOptions opts = pluginDefs.getOptions();
-        if (opts != null)
-        {
-            Collection<XMLOption> vOpts = opts.getOptions();
-            if (vOpts != null)
-            {
-                for (XMLOption xmlOpt : vOpts)
-                {
-                    pd.addOption(
-                            ((XMLPluginOption)xmlOpt).toPluginOption()
-                    );
-                }
-            }
-        }
-
-        
-    }
-
-    private XMLPluginPackage parsePluginXmlFile(InputStream in, ClassLoader cl) throws IOException, SAXException
-    {
-        XMLPluginPackage oConf = XMLPluginPackage.getInstance(in);
-        
-        return oConf;
-    }    
-    
-    public void load(File fDirectory)
+    public void load(File fDirectory) throws PluginConfigurationException
     {
         File[] vFiles = fDirectory.listFiles();
         if (vFiles != null)
