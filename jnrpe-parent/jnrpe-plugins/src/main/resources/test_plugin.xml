@@ -1,0 +1,35 @@
+<plugin name="TEST" class="it.jnrpe.plugin.test.CTestPlugin">
+	<description>
+<![CDATA[
+    This is just a test plugin. Invoke it passing the String you want to get back and,
+    optionally, the status you want.
+    Return:
+    If you don't specify the status parameters, the return code is 'OK'.
+    The returned message is always the text you pass as parameter (-t/--text) 
+    
+    Example Command Definition (inside the server configuration, in the command section)
+    
+    check_test : TEST --text $ARG1$ --status $ARG2$
+    
+    or, using the XML:
+    
+    <command name="test" plugin_name="TEST">
+    	<arg name="text" value="$ARG1$"/>
+    	<arg name="status" value="$ARG2$"/>
+    </command>
+    
+    Example invocation:
+
+    ./check_nrpe -n -H myjnrpeserver -c check_test -a 'Hello!critical'
+]]>
+	</description>
+	<command-line>
+		<options>
+			<option shortName="t" longName="text" description="the message to print"
+				required="true" hasArgs="true" argName="text" optionalArgs="false" />
+			<option shortName="s" longName="status"
+				description="the status to return (ok, warning, critical, unknown)"
+				required="false" hasArgs="true" argName="statcode" optionalArgs="false" />
+		</options>
+	</command-line>
+</plugin>

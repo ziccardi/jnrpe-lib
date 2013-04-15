@@ -1,0 +1,41 @@
+<plugin name="CHECK_FILE" class="it.jnrpe.plugin.CCheckFile">
+	<description>
+<![CDATA[
+	This plugin is used to perform various check against files:
+	
+	* checks that a file exists (-f)
+	* checks that a file does not exists (-F)
+	* check file age (requires -f)
+	* check file size (requires -f)
+	* check how many lines of a file contains the given string. You can specify the warning and the critical range. (requires -f)
+	  EXAMPLE: -f /path/to/your/file --contains MyString,0:10,11:
+	* check that a string is not inside the file (requires -f)
+]]>
+	</description>
+	<command-line>
+		<options>
+			<option shortName="F" longName="FILE" hasArgs="true" argName="path"
+				required="false" description="The path of the file the must not exist" />
+			<option shortName="f" longName="file" hasArgs="true" argName="path"
+				required="false" description="The path to the file to check" />
+			<option shortName="w" longName="warning" hasArgs="true"
+				argName="age threshold" required="false"
+				description="The max age (in seconds) before a warning is rised" />
+			<option shortName="c" longName="critical" hasArgs="true"
+				argName="age threshold" required="false"
+				description="The max age (in seconds) before a critical is rised" />
+			<option shortName="W" longName="sizewarning" hasArgs="true"
+				argName="size threshold" required="false"
+				description="The min file size (in bytes) before a warning is rised" />
+			<option shortName="C" longName="sizecritical" hasArgs="true"
+				argName="size threshold" required="false"
+				description="The min file size (in bytes) before a critical is rised" />
+			<option shortName="O" longName="contains" hasArgs="true"
+				argName="string to check" required="false"
+				description="The string that must be found inside the file in the format STRING,WARNING_RANGE,CRITICAL_RANGE." />
+			<option shortName="N" longName="notcontains" hasArgs="true"
+				argName="string to check" required="false"
+				description="The string that must not be found inside the file" />
+		</options>
+	</command-line>
+</plugin>
