@@ -20,9 +20,8 @@ import it.jnrpe.Status;
 import it.jnrpe.client.JNRPEClient;
 import it.jnrpe.commands.CommandDefinition;
 import it.jnrpe.commands.CommandOption;
-import it.jnrpe.plugin.test.CTestPlugin;
 import it.jnrpe.plugins.PluginDefinition;
-import it.jnrpe.plugins.PluginOption;
+import it.jnrpe.utils.PluginRepositoryUtil;
 
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
@@ -36,18 +35,15 @@ public class TestPluginTest implements Constants{
 	}
 	
 	@BeforeTest
-	public void setup()
-	{
-		PluginDefinition pd = new PluginDefinition("TESTPLUGIN",
-				"This is a test plugin", new CTestPlugin()).addOption(
-				new PluginOption().setRequired(true).setOption("t")
-						.setLongOpt("text").setHasArgs(true)).addOption(
-				new PluginOption().setRequired(false).setOption("s")
-						.setLongOpt("status").setHasArgs(true));
+    public void setup()  throws Exception {
+        ClassLoader cl = TestPluginTest.class.getClassLoader();
+        
+        PluginDefinition pd = PluginRepositoryUtil.parseXmlPluginDefinition(cl, cl.getResourceAsStream("test_plugin.xml"));
+        
 		SetupTest.getPluginRepository().addPluginDefinition(pd);
 
 		CommandDefinition cd = new CommandDefinition("TESTCOMMAND",
-				"TESTPLUGIN").addArgument(new CommandOption("text", "$ARG1$"))
+				"TEST").addArgument(new CommandOption("text", "$ARG1$"))
 				.addArgument(new CommandOption("status", "$ARG2$"));
 		SetupTest.getCommandRepository().addCommandDefinition(cd);
 	}

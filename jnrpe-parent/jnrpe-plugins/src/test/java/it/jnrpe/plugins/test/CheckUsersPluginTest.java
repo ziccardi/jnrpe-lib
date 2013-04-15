@@ -21,9 +21,8 @@ import it.jnrpe.client.JNRPEClient;
 import it.jnrpe.commands.CommandDefinition;
 import it.jnrpe.commands.CommandOption;
 import it.jnrpe.commands.CommandRepository;
-import it.jnrpe.plugin.CheckUsers;
 import it.jnrpe.plugins.PluginDefinition;
-import it.jnrpe.plugins.PluginOption;
+import it.jnrpe.utils.PluginRepositoryUtil;
 
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
@@ -38,25 +37,11 @@ import org.testng.annotations.Test;
 public class CheckUsersPluginTest implements Constants{
 
 	@BeforeTest
-	public void setup()	{
-		PluginDefinition checkUsers = new PluginDefinition("CHECK_USERS", "Checks logged in users", new CheckUsers())
-		.addOption(
-				new PluginOption()
-				.setOption("w")
-				.setLongOpt("warning")
-				.setHasArgs(true)
-				.setArgName("range")
-				.setRequired(true)
-				.setDescription("Set WARNING status if more than INTEGER users are logged in"))
-		.addOption(new PluginOption()					
-				.setOption("c")
-				.setLongOpt("critical")
-				.setHasArgs(true)
-				.setArgName("range")
-				.setRequired(true)
-				.setDescription("Set CRITICAL status if more than INTEGER users are logged in"));
-		
-		System.out.println("Running?");
+	public void setup()	 throws Exception {
+	    ClassLoader cl = CheckFilePluginTest.class.getClassLoader();
+        
+        PluginDefinition checkUsers = PluginRepositoryUtil.parseXmlPluginDefinition(cl, cl.getResourceAsStream("check_users_plugin.xml"));
+        
 		SetupTest.getPluginRepository().addPluginDefinition(checkUsers);
 	}
 	

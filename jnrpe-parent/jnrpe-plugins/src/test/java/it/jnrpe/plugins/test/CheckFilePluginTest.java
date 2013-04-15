@@ -21,9 +21,8 @@ import it.jnrpe.client.JNRPEClient;
 import it.jnrpe.commands.CommandDefinition;
 import it.jnrpe.commands.CommandOption;
 import it.jnrpe.commands.CommandRepository;
-import it.jnrpe.plugin.CCheckFile;
 import it.jnrpe.plugins.PluginDefinition;
-import it.jnrpe.plugins.PluginOption;
+import it.jnrpe.utils.PluginRepositoryUtil;
 
 import java.io.File;
 
@@ -36,85 +35,12 @@ public class CheckFilePluginTest implements Constants{
 	private final static File m_testFile = new File("src/test/resources/check_file/testfile.txt");
 	
 	@BeforeTest
-	public void setup()
+	public void setup() throws Exception
 	{
-		PluginDefinition checkFile = new PluginDefinition("CHECK_FILE", "Checks a file", new CCheckFile())
-			.addOption(
-					new PluginOption()
-						.setOption("F")
-						.setLongOpt("FILE")
-						.setHasArgs(true)
-						.setArgName("path")
-						.setRequired(false)
-						.setDescription("The path of the file the must not exist")
-					)
-			.addOption(
-					new PluginOption()
-						.setOption("f")
-						.setLongOpt("file")
-						.setHasArgs(true)
-						.setArgName("path")
-						.setRequired(false)
-						.setDescription("The path to the file to check")
-					)
-			.addOption(
-					new PluginOption()
-						.setOption("w")
-						.setLongOpt("warning")
-						.setHasArgs(true)
-						.setArgName("age threshold")
-						.setRequired(false)
-						.setDescription("The age threshold for a warning to be raised")
-					)
-			.addOption(
-					new PluginOption()
-						.setOption("c")
-						.setLongOpt("critical")
-						.setHasArgs(true)
-						.setArgName("age threshold")
-						.setRequired(false)
-						.setDescription("The age threshold for a critical to be raised")
-					)
-			.addOption(
-					new PluginOption()
-						.setOption("W")
-						.setLongOpt("sizewarning")
-						.setHasArgs(true)
-						.setArgName("size threshold")
-						.setRequired(false)
-						.setDescription("The size threshold for a warning to be raised")
-					)
-			.addOption(
-					new PluginOption()
-						.setOption("W")
-						.setLongOpt("sizecritical")
-						.setHasArgs(true)
-						.setArgName("size threshold")
-						.setRequired(false)
-						.setDescription("The size threshold for a critical to be raised")
-					)
-			.addOption(
-					new PluginOption()
-						.setOption("O")
-						.setLongOpt("contains")
-						.setHasArgs(true)
-						.setArgName("string to check")
-						.setRequired(false)
-						.setDescription("The string that must be found inside the file in the format STRING,WARNING_RANGE,CRITICAL_RANGE.")
-			)
-			.addOption(
-					new PluginOption()
-						.setOption("N")
-						.setLongOpt("notcontains")
-						.setHasArgs(true)
-						.setArgName("string to check")
-						.setRequired(false)
-						.setDescription("The string that must not be found inside the file.")
-			)
-			;
+		ClassLoader cl = CheckFilePluginTest.class.getClassLoader();
 		
-		System.out.println ("QUI" + SetupTest.getPluginRepository());
-		
+	    PluginDefinition checkFile = PluginRepositoryUtil.parseXmlPluginDefinition(cl, cl.getResourceAsStream("check_file_plugin.xml"));
+	    
 		SetupTest.getPluginRepository().addPluginDefinition(checkFile);
 	}
 	
