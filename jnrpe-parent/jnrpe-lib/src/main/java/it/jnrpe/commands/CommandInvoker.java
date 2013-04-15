@@ -155,7 +155,7 @@ public final class CommandInvoker
             // TODO : it would be better to give some information about the
             // error... (bad plugin name??)
             return new ReturnValue(Status.UNKNOWN,
-                    "Configuration error");
+                    "Error instantiating plugin '" + sPluginName + "' : bad plugin name?");
         }
 
         plugin.addListeners(m_vListeners);
