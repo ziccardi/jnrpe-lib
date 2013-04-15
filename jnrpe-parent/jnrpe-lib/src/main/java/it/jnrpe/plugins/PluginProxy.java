@@ -14,7 +14,6 @@ import it.jnrpe.ICommandLine;
 import it.jnrpe.ReturnValue;
 import it.jnrpe.Status;
 
-import java.text.ParseException;
 import java.util.Collection;
 
 import org.apache.commons.cli2.CommandLine;
