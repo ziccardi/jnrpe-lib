@@ -15,18 +15,23 @@
  */
 package it.jnrpe.server.plugins;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.List;
+import java.util.jar.JarFile;
 
 /**
- * A parent-last classloader that will try the child classloader first and then the parent.
- * This takes a fair bit of doing because java really prefers parent-first.
+ * A parent-last classloader that will try the child classloader first and then
+ * the parent. This takes a fair bit of doing because java really prefers
+ * parent-first.
  * 
  * For those not familiar with class loading trickery, be wary
  */
-class JNRPEClassLoader extends ClassLoader 
+class JNRPEClassLoader extends ClassLoader
 {
+    private List<URL> m_vUrls;
     private ChildURLClassLoader childClassLoader;
 
     /**
@@ -47,14 +52,15 @@ class JNRPEClassLoader extends ClassLoader
     }
 
     /**
-     * This class delegates (child then parent) for the findClass method for a URLClassLoader.
-     * We need this because findClass is protected in URLClassLoader
+     * This class delegates (child then parent) for the findClass method for a
+     * URLClassLoader. We need this because findClass is protected in
+     * URLClassLoader
      */
     private static class ChildURLClassLoader extends URLClassLoader
     {
         private FindClassClassLoader realParent;
 
-        public ChildURLClassLoader( URL[] urls, FindClassClassLoader realParent )
+        public ChildURLClassLoader(URL[] urls, FindClassClassLoader realParent)
         {
             super(urls, null);
 
@@ -69,9 +75,10 @@ class JNRPEClassLoader extends ClassLoader
                 // first try to use the URLClassLoader findClass
                 return super.findClass(name);
             }
-            catch( ClassNotFoundException e )
+            catch (ClassNotFoundException e)
             {
-                // if that fails, we ask our real parent classloader to load the class (we give up)
+                // if that fails, we ask our real parent classloader to load the
+                // class (we give up)
                 return realParent.loadClass(name);
             }
         }
@@ -80,24 +87,63 @@ class JNRPEClassLoader extends ClassLoader
     public JNRPEClassLoader(List<URL> classpath)
     {
         super(Thread.currentThread().getContextClassLoader());
+        m_vUrls = classpath;
 
         URL[] urls = classpath.toArray(new URL[classpath.size()]);
 
-        childClassLoader = new ChildURLClassLoader( urls, new FindClassClassLoader(this.getParent()) );
+        childClassLoader = new ChildURLClassLoader(urls,
+                new FindClassClassLoader(this.getParent()));
     }
 
     @Override
-    protected synchronized Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException
+    protected synchronized Class<?> loadClass(String name, boolean resolve)
+            throws ClassNotFoundException
     {
         try
         {
             // first we try to find a class inside the child classloader
             return childClassLoader.findClass(name);
         }
-        catch( ClassNotFoundException e )
+        catch (ClassNotFoundException e)
         {
             // didn't find it, try the parent
             return super.loadClass(name, resolve);
+        }
+    }
+
+    @Override
+    protected URL findResource(String name)
+    {
+        
+        JarFile jf = null;
+        try
+        {
+            for (URL u : m_vUrls)
+            {
+                jf = new JarFile(u.getFile());
+                String resourceUrl = "jar:" + new File(u.getFile()).toURI() + "!/" + name;
+                if (jf.getEntry("plugin.xml") != null)
+                    return new URL(resourceUrl);
+            }
+            return null;
+        }
+        catch (Exception e)
+        {
+            throw new RuntimeException(e.getMessage(), e);
+        }
+        finally
+        {
+            if (jf != null)
+            {
+                try
+                {
+                    jf.close();
+                }
+                catch (IOException e)
+                {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 }
