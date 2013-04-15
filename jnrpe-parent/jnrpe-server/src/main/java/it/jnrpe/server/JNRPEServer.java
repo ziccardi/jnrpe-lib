@@ -16,20 +16,18 @@
 package it.jnrpe.server;
 
 import it.jnrpe.JNRPE;
+import it.jnrpe.plugins.PluginConfigurationException;
 import it.jnrpe.plugins.PluginDefinition;
 import it.jnrpe.plugins.PluginProxy;
 import it.jnrpe.plugins.PluginRepository;
 import it.jnrpe.server.plugins.DynaPluginRepository;
-import it.jnrpe.server.xml.XMLOptions;
 
 import java.io.File;
-import java.io.IOException;
+import java.net.UnknownHostException;
 
-import org.apache.commons.cli2.Argument;
 import org.apache.commons.cli2.CommandLine;
 import org.apache.commons.cli2.DisplaySetting;
 import org.apache.commons.cli2.Group;
-import org.apache.commons.cli2.Option;
 import org.apache.commons.cli2.OptionException;
 import org.apache.commons.cli2.builder.ArgumentBuilder;
 import org.apache.commons.cli2.builder.DefaultOptionBuilder;
@@ -37,10 +35,6 @@ import org.apache.commons.cli2.builder.GroupBuilder;
 import org.apache.commons.cli2.commandline.Parser;
 import org.apache.commons.cli2.option.DefaultOption;
 import org.apache.commons.cli2.util.HelpFormatter;
-import org.apache.commons.digester.Digester;
-import org.apache.commons.digester.xmlrules.DigesterLoader;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 public class JNRPEServer
 {
@@ -70,11 +64,11 @@ public class JNRPEServer
         DefaultOption helpOption = oBuilder.withLongName("help").withShortName(
                 "h").withDescription("Show this help").create();
 
-        DefaultOption pluginNameOption = oBuilder.withLongName("plugin")
-                .withShortName("p").withDescription("The plugin name")
-                .withArgument(
-                        aBuilder.withName("name").withMinimum(1).withMaximum(1)
-                                .create()).create();
+//        DefaultOption pluginNameOption = oBuilder.withLongName("plugin")
+//                .withShortName("p").withDescription("The plugin name")
+//                .withArgument(
+//                        aBuilder.withName("name").withMinimum(1).withMaximum(1)
+//                                .create()).create();
 
         DefaultOption pluginHelpOption = oBuilder.withLongName("help")
                 .withShortName("h")
@@ -100,15 +94,8 @@ public class JNRPEServer
 
     private static CommandLine parseCommandLine(String[] vsArgs)
     {
-        // Digester d = DigesterLoader.createDigester(new
-        // InputSource(JNRPEServer.class.getResourceAsStream("command-line-digester.xml")));
-
         try
         {
-            // XMLOptions opts= (XMLOptions)
-            // d.parse(JNRPEServer.class.getResourceAsStream("jnrpe-command-line.xml"));
-            // m_Options = opts.toOptions();
-
             Group opts = configureCommandLine();
             // configure a HelpFormatter
             HelpFormatter hf = new HelpFormatter();
@@ -121,8 +108,6 @@ public class JNRPEServer
             CommandLine cl = p.parse(vsArgs);
 
             return cl;
-            // CommandLineParser clp = new PosixParser();
-            // return clp.parse(m_Options, vsArgs);
         }
         catch (OptionException oe)
         {
@@ -162,7 +147,6 @@ public class JNRPEServer
 
     private static void printVersion()
     {
-        // TODO: this should be handled by ant...
         System.out.println("JNRPE version " + VERSION);
         System.out.println("Copyright (c) 2011 Massimiliano Ziccardi");
         System.out.println("Licensed under the Apache License, Version 2.0");
@@ -190,19 +174,10 @@ public class JNRPEServer
         hf.getFullUsageSettings().add(DisplaySetting.DISPLAY_PARENT_CHILDREN);
         hf.getFullUsageSettings().add(DisplaySetting.DISPLAY_GROUP_EXPANDED);
 
-        // hf.getLineUsageSettings().clear();
-        // hf.getLineUsageSettings().add(DisplaySetting.DISPLAY_ARGUMENT_NUMBERED);
-        // hf.getFullUsageSettings().add(DisplaySetting.DISPLAY_GROUP_NAME);
-        // hf.getFullUsageSettings().add(DisplaySetting.DISPLAY_ALIASES);
-        // hf.getFullUsageSettings().add(DisplaySetting.DISPLAY_PARENT_ARGUMENT);
-
-        // hf.getFullUsageSettings().add(DisplaySetting.DISPLAY);
         hf.setDivider("=================================================================");
 
         hf.setGroup(configureCommandLine());
         hf.print();
-        // HelpFormatter hf = new HelpFormatter();
-        // hf.printHelp("JNRPE.jar", m_Options);
         System.exit(0);
     }
 
@@ -222,7 +197,7 @@ public class JNRPEServer
 
     }
 
-    private static PluginRepository loadPluginDefinitions(String sPluginDirPath)
+    private static PluginRepository loadPluginDefinitions(String sPluginDirPath) throws PluginConfigurationException
     {
         File fDir = new File(sPluginDirPath);
         DynaPluginRepository repo = new DynaPluginRepository();
@@ -243,7 +218,7 @@ public class JNRPEServer
         System.exit(0);
     }
 
-    public static void main(String[] args) throws Exception
+    public static void main(String[] args) 
     {
         CommandLine cl = parseCommandLine(args);
         if (cl.hasOption("--help")) 
@@ -258,8 +233,17 @@ public class JNRPEServer
             System.exit(0);
         }
 
-        JNRPEConfiguration conf = loadConfiguration((String) cl
-                .getValue("--conf"));
+        JNRPEConfiguration conf = null;
+        try
+        {
+            conf = loadConfiguration((String) cl
+                    .getValue("--conf"));
+        }
+        catch (Exception e)
+        {
+            System.out.println("It has not been possible to parse the configuration at " + cl.getValue("--conf") + ". The error is : " + e.getMessage());
+            System.exit(-1);
+        }
 
         String sPluginPath = conf.getServerSection().getPluginPath();
         if (sPluginPath == null)
@@ -285,8 +269,17 @@ public class JNRPEServer
             System.exit(-1);
         }
 
-        PluginRepository pr = loadPluginDefinitions(conf.getServerSection()
-                .getPluginPath());
+        PluginRepository pr = null;
+        try
+        {
+            pr = loadPluginDefinitions(conf.getServerSection()
+                    .getPluginPath());
+        }
+        catch (PluginConfigurationException e)
+        {
+            System.out.println("An error has occurred while parsing the plugin packages. The error is : " + e.getMessage());
+            System.exit(-1);
+        }
         // CJNRPEConfiguration.init(cl.getOptionValue("conf"));
 
         if (cl.hasOption("--help") && cl.getValue("--help") != null)
@@ -309,7 +302,14 @@ public class JNRPEServer
             String sIp = vsParts[0];
             if (vsParts.length > 1) iPort = Integer.parseInt(vsParts[1]);
 
-            jnrpe.listen(sIp, iPort, bindAddress.isSSL());
+            try
+            {
+                jnrpe.listen(sIp, iPort, bindAddress.isSSL());
+            }
+            catch (UnknownHostException e)
+            {
+                System.out.println (String.format("Error binding the server to %s:%d", sIp, iPort) + ": " + e.getMessage());
+            }
         }
     }
 }
