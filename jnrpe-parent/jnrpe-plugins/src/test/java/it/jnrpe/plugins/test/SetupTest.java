@@ -49,7 +49,7 @@ public class SetupTest implements Constants {
 		m_jnrpeServer.addEventListener(new IJNRPEEventListener() {
 
 			public void receive(Object sender, IJNRPEEvent event) {
-				System.out.println("SERVER : >>> " + event.getEventParams().get("MESSAGE"));
+				System.out.println(event.getEventParams().get("MESSAGE"));
 			}
 		});
 
