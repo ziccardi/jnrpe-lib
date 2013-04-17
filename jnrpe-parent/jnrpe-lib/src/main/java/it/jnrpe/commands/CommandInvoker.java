@@ -20,6 +20,7 @@ import it.jnrpe.plugins.PluginProxy;
 import it.jnrpe.plugins.PluginRepository;
 
 import java.util.Set;
+import java.util.regex.Matcher;
 
 /**
  * This class is used to invoke a command.
@@ -129,7 +130,7 @@ public final class CommandInvoker
                     // sCommandLine[j] = CStringUtil.replaceAll(sCommandLine[j],
                     // "$ARG" + (i + 1) + "$", args[i]);
                     sCommandLine[j] = sCommandLine[j].replaceAll(
-                            "\\$[Aa][Rr][Gg]" + (i + 1) + "\\$", args[i]);
+                            "\\$[Aa][Rr][Gg]" + (i + 1) + "\\$", Matcher.quoteReplacement(args[i]));
                     if (sCommandLine[j].indexOf(' ') != -1)
                     {
                         if (sCommandLine[j].indexOf('\'') == -1)
