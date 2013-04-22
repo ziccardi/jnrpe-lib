@@ -195,6 +195,11 @@ public class JNRPEClient {
 			String sCommand = (String) os.valueOf("command");
 			String sArgs = (String) os.valueOf("arglist");
 			
+			if (sArgs.startsWith("'") && sArgs.endsWith("'"))
+			{
+			    sArgs = sArgs.substring(1, sArgs.length() - 1);
+			}
+			
 			JNRPEClient client = new JNRPEClient(sHost, port, !os.has("nossl"));
 			client.setTimeout((Integer) os.valueOf("timeout"));
 			ReturnValue ret = client.sendCommand(sCommand, sArgs);
