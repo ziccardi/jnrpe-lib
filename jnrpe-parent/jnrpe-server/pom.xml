@@ -17,6 +17,11 @@
 		</license>
 	</licenses>
 
+	<parent>
+		<groupId>net.sf.jnrpe</groupId>
+		<artifactId>jnrpe-parent</artifactId>
+		<version>2.0.3-beta-04-SNAPSHOT</version>
+	</parent>
 
 	<mailingLists>
 		<mailingList>
@@ -227,11 +232,4 @@
 			</plugin>
 		</plugins>
 	</reporting>
-
-
-	<parent>
-		<groupId>net.sf.jnrpe</groupId>
-		<artifactId>jnrpe-parent</artifactId>
-		<version>2.0.3-beta-04-SNAPSHOT</version>
-	</parent>
 </project>
