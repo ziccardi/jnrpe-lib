@@ -48,6 +48,16 @@
 				<targetPath>${staging.dir}</targetPath>
 				<filtering>true</filtering>
 			</resource>
+			<resource>
+				<directory>${basedir}/img</directory>
+				<targetPath>${staging.dir}/img</targetPath>
+				<filtering>true</filtering>
+			</resource>
+			<resource>
+				<directory>${basedir}/std-docs</directory>
+				<targetPath>${staging.dir}/std-docs</targetPath>
+				<filtering>true</filtering>
+			</resource>
 		</resources>
 
 		<plugins>
