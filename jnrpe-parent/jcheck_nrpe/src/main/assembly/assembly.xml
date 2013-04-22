@@ -18,29 +18,53 @@
 				<include>NOTICE*</include>
 				<include>AUTHORS*</include>
 			</includes>
+			<fileMode>0644</fileMode>
+			<directoryMode>0755</directoryMode>
 		</fileSet>
 		<fileSet>
 			<directory>${project.build.directory}/site</directory>
 			<outputDirectory>docs</outputDirectory>
+			<directoryMode>0755</directoryMode>
+			<fileMode>0644</fileMode>
 		</fileSet>
 		<fileSet>
-			<directory>${project.build.directory}/../target/appassembler/bin</directory>
+			<directory>target/appassembler/bin</directory>
 			<outputDirectory>/bin</outputDirectory>
 			<excludes>
 				<exclude>**/*.bat</exclude>
 			</excludes>
 			<fileMode>0755</fileMode>
+			<directoryMode>0755</directoryMode>
 		</fileSet>
 		<fileSet>
-			<directory>${project.build.directory}/../target/appassembler/bin</directory>
+			<directory>target/appassembler/bin</directory>
 			<outputDirectory>/bin</outputDirectory>
 			<includes>
 				<include>**/*.bat</include>
 			</includes>
+			<fileMode>0644</fileMode>
+			<directoryMode>0755</directoryMode>
 		</fileSet>
 		<fileSet>
-			<directory>${project.build.directory}/../target/appassembler/lib</directory>
+			<directory>target/appassembler/lib</directory>
 			<outputDirectory>/lib</outputDirectory>
+			<fileMode>0644</fileMode>
+			<directoryMode>0755</directoryMode>
+		</fileSet>
+		<fileSet>
+			<directory>${project.basedir}/etc</directory>
+			<outputDirectory>/etc</outputDirectory>
+			<fileMode>0644</fileMode>
+			<directoryMode>0755</directoryMode>
+		</fileSet>
+		<fileSet>
+			<directory>${project.basedir}/etc</directory>
+			<outputDirectory>/plugins</outputDirectory>
+			<excludes>
+				<exclude>*</exclude>
+			</excludes>
+			<fileMode>0644</fileMode>
+			<directoryMode>0755</directoryMode>
 		</fileSet>
 	</fileSets>
 </assembly>
