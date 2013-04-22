@@ -71,7 +71,8 @@ public class CheckMysql extends PluginBase {
 			return new ReturnValue(Status.CRITICAL, "CHECK_MYSQL - CRITICAL: No database connection - " + error);
 		}
 		
-		if (cl.getOptionValue("checkslave") != null || cl.getOptionValue("-S") != null){
+		//if (cl.getOptionValue("checkslave") != null || cl.getOptionValue("-S") != null){
+		if (cl.hasOption("checkslave")) {
 			return checkSlave(cl, mysql, conn);			
 		}
 		
@@ -109,14 +110,14 @@ public class CheckMysql extends PluginBase {
 			
 			String slaveResult = "Slave IO: " + slaveIoRunning + " Slave SQL: " + slaveSqlRunning + " Seconds Behind Master: " + secondsBehindMaster;
 			
-			if (cl.getOptionValue("critical") != null){
+			if (cl.hasOption("critical")){
 				String critical = cl.getOptionValue("critical");
 				if (ThresholdUtil.isValueInRange(critical, secondsBehindMaster)){
 					return new ReturnValue(Status.CRITICAL, "CHECK_MYSQL - CRITICAL: Slow slave - " + slaveResult);
 				}
 			}
 			
-			if (cl.getOptionValue("warning") != null){
+			if (cl.hasOption("warning")){
 				String warning = cl.getOptionValue("warning");
 				if (ThresholdUtil.isValueInRange(warning, secondsBehindMaster)){
 					mysql.closeConnection(conn);

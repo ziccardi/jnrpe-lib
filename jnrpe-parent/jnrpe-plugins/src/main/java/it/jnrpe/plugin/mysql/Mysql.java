@@ -62,27 +62,27 @@ public class Mysql {
 	
 	public Mysql(ICommandLine cl){
 		this.database = "mysql";
-		if (cl.getOptionValue("database") != null){
+		if (cl.hasOption("database")){
 			this.database = cl.getOptionValue("database");
 		}
 		this.hostname = "localhost";
-		if (cl.getOptionValue("hostname") != null && "".equals(cl.getOptionValue("hostname"))) {
+		if (cl.hasOption("hostname") && !"".equals(cl.getOptionValue("hostname"))) {
 			this.hostname = cl.getOptionValue("hostname");
 			System.out.println("hostname = " + hostname);
 		}
 		this.port = "3306";
-		if (cl.getOptionValue("port") != null  && "".equals(cl.getOptionValue("port"))) {
+		if (cl.hasOption("port")  && !"".equals(cl.getOptionValue("port"))) {
 			this.port = cl.getOptionValue("port");
 			System.out.println("port = " + port);
 		}
 		this.password = "";
-		if (cl.getOptionValue("password") != null) {
+		if (cl.hasOption("password")) {
 			this.password = cl.getOptionValue("password");
 		}else{
 			// find password from my.cfg or my.ini
 		}
 		this.username = "";
-		if (cl.getOptionValue("user") != null){
+		if (cl.hasOption("user")){
 			this.username = cl.getOptionValue("user"); 
 		}
 	}
