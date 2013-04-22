@@ -84,6 +84,12 @@ public class JNRPERequest extends JNRPEProtocolPacket
     {
         if (arguments != null)
         {
+            if (arguments.length == 1)
+            {
+                init(sCommand, arguments[0]);
+                return;
+            }
+            
             String[] ary = new String[arguments.length];
 
             for (int i = 0; i < arguments.length; i++)
