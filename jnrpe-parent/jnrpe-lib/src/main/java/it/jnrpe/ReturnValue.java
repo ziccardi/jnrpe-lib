@@ -50,7 +50,7 @@ public final class ReturnValue
 
     /**
      * Initializes the return value object with the given message and with the
-     * {@link IJNRPEConstants.STATE_OK} state.
+     * {@link Status.OK} state.
      * 
      * @param sMessage
      *            The message
