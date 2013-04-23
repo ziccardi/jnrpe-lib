@@ -13,6 +13,7 @@ package it.jnrpe.plugins;
 import it.jnrpe.ICommandLine;
 import it.jnrpe.ReturnValue;
 import it.jnrpe.Status;
+import it.jnrpe.utils.BadThresholdException;
 
 import java.util.Collection;
 
@@ -95,7 +96,7 @@ public final class PluginProxy extends PluginBase
      *            The parameters to be passed to the plugin
      * @return The return value of the plugin.
      */
-    public ReturnValue execute(final String[] args)
+    public ReturnValue execute(final String[] args) throws BadThresholdException
     {
         //CommandLineParser clp = new PosixParser();
         try

@@ -48,9 +48,15 @@ public final class StringUtils
     public static String[] split(final String sString,
             final boolean bIgnoreQuotes)
     {
+        return split (sString, ' ', bIgnoreQuotes);
+    }
+    
+    public static String[] split(final String sString, char separator,
+            final boolean bIgnoreQuotes)
+    {
         StrTokenizer strtok = new StrTokenizer(sString,
-                StrMatcher.charMatcher(' '),
-                StrMatcher.charSetMatcher(new char[] { '\'', '"' }));
+                StrMatcher.charMatcher(separator),
+                StrMatcher.quoteMatcher());
         return strtok.getTokenArray();
     }
 }

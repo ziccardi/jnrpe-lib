@@ -17,8 +17,10 @@ package it.jnrpe.plugin;
 
 import it.jnrpe.ICommandLine;
 import it.jnrpe.ReturnValue;
+import it.jnrpe.ReturnValue.UnitOfMeasure;
 import it.jnrpe.Status;
 import it.jnrpe.plugins.IPluginInterface;
+import it.jnrpe.utils.BadThresholdException;
 import it.jnrpe.utils.ThresholdUtil;
 
 import java.io.File;
@@ -62,7 +64,7 @@ public class CheckDisk implements IPluginInterface
      * @param cl the command line
      * @return the check return code
      */
-    public ReturnValue execute(ICommandLine cl)
+    public ReturnValue execute(ICommandLine cl) throws BadThresholdException
     {
         String sPath = cl.getOptionValue("path");
         String sWarning = cl.getOptionValue("warning");
@@ -84,17 +86,25 @@ public class CheckDisk implements IPluginInterface
         if (ThresholdUtil.isValueInRange(sCritical, iFreePercent))
         {
             return new ReturnValue(Status.CRITICAL, 
-                    "CHECK_DISK CRITICAL - Used: " + sUsedSpace + "(" + sUsedPercent + ") Free: " + sFreeSpace + "(" + sFreePercent + ")");
+                    "CHECK_DISK CRITICAL - Used: " + sUsedSpace + "(" + sUsedPercent + ") Free: " + sFreeSpace + "(" + sFreePercent + ")")
+                    .withPerformanceData("used", (long) percent(lTotalSpace - lBytes, lTotalSpace), UnitOfMeasure.percentage, null, null, 0l, 100l)
+                    .withPerformanceData("free", (long) iFreePercent, UnitOfMeasure.percentage, sWarning, sCritical, 0l, 100l);
+
         }
 
         if (ThresholdUtil.isValueInRange(sWarning, iFreePercent))
         {
             return new ReturnValue(Status.WARNING, 
-                    "CHECK_DISK WARNING - Used: " + sUsedSpace + "(" + sUsedPercent + ") Free: " + sFreeSpace + "(" + sFreePercent + ")");
+                    "CHECK_DISK WARNING - Used: " + sUsedSpace + "(" + sUsedPercent + ") Free: " + sFreeSpace + "(" + sFreePercent + ")")
+                    .withPerformanceData("used", (long) percent(lTotalSpace - lBytes, lTotalSpace), UnitOfMeasure.percentage, null, null, 0l, 100l)
+                    .withPerformanceData("free", (long) iFreePercent, UnitOfMeasure.percentage, sWarning, sCritical, 0l, 100l);
         }
 
         return new ReturnValue(Status.OK, 
-                "CHECK_DISK OK - Used: " + sUsedSpace + "(" + sUsedPercent + ") Free: " + sFreeSpace + "(" + sFreePercent + ")");
+                "CHECK_DISK OK - Used: " + sUsedSpace + "(" + sUsedPercent + ") Free: " + sFreeSpace + "(" + sFreePercent + ")")
+                    .withPerformanceData("used", (long) percent(lTotalSpace - lBytes, lTotalSpace), UnitOfMeasure.percentage, null, null, 0l, 100l)
+                    .withPerformanceData("free", (long) iFreePercent, UnitOfMeasure.percentage, sWarning, sCritical, 0l, 100l);
+        
     }
 
     /**

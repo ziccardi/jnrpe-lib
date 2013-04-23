@@ -20,6 +20,7 @@ import it.jnrpe.ReturnValue;
 import it.jnrpe.Status;
 import it.jnrpe.events.LogEvent;
 import it.jnrpe.plugins.PluginBase;
+import it.jnrpe.utils.BadThresholdException;
 import it.jnrpe.utils.StreamManager;
 import it.jnrpe.utils.ThresholdUtil;
 
@@ -86,7 +87,7 @@ public class CCheckFile extends PluginBase
         return updateRes(res, new ReturnValue(Status.CRITICAL, "FILE CRITICAL: File '" + f.getAbsolutePath() + "' do not exists"));
     }
     
-    private ReturnValue checkAge(ICommandLine cl, File f, ReturnValue res)
+    private ReturnValue checkAge(ICommandLine cl, File f, ReturnValue res) throws BadThresholdException
     {
         if (cl.hasOption("critical"))
         {
@@ -113,7 +114,7 @@ public class CCheckFile extends PluginBase
         return updateRes(res, new ReturnValue(Status.OK, "FILE OK"));
     }
     
-    private ReturnValue checkSize(ICommandLine cl, File f, ReturnValue res)
+    private ReturnValue checkSize(ICommandLine cl, File f, ReturnValue res) throws BadThresholdException
     {
         if (cl.hasOption("sizecritical"))
         {
@@ -224,7 +225,7 @@ public class CCheckFile extends PluginBase
         
     }
     
-    public ReturnValue execute(ICommandLine cl)
+    public ReturnValue execute(ICommandLine cl) throws BadThresholdException
     {
         if (cl.hasOption("FILE"))
         {

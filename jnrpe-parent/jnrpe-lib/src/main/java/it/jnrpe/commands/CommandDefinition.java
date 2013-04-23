@@ -10,6 +10,8 @@
  */
 package it.jnrpe.commands;
 
+import it.jnrpe.utils.StringUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -162,25 +164,26 @@ public final class CommandDefinition
      */
     private static String[] split(final String sCommandLine)
     {
-        String regex = "[\"|']([^\"']*)[\"|']|([^ ]+)";
-
-        List<String> res = new ArrayList<String>();
-
-        Matcher m = Pattern.compile(regex).matcher(sCommandLine);
-        while (m.find())
-        {
-            if (m.group(1) != null)
-            {
-                // Quoted
-                res.add(m.group(1));
-            }
-            else
-            {
-                res.add(m.group(2));
-            }
-        }
-
-        return res.toArray(new String[0]);
+        return StringUtils.split(sCommandLine, false);
+//        String regex = "[\"|']([^\"']*)[\"|']|([^ ]+)";
+//
+//        List<String> res = new ArrayList<String>();
+//
+//        Matcher m = Pattern.compile(regex).matcher(sCommandLine);
+//        while (m.find())
+//        {
+//            if (m.group(1) != null)
+//            {
+//                // Quoted
+//                res.add(m.group(1));
+//            }
+//            else
+//            {
+//                res.add(m.group(2));
+//            }
+//        }
+//
+//        return res.toArray(new String[0]);
 
         // char[] vc = sCommandLine.trim().toCharArray();
         // char[] vcTmp = new char[vc.length];

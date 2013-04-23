@@ -5,6 +5,9 @@
 		<appversion>${project.version}</appversion>
 		<authors>
 			<author name="Massimiliano Ziccardi (Project Founder)" email="massimiliano.ziccardi@gmail.com" />
+			<author name="Frederico Campos (Contributor)" email="frederico.campos82@gmail.com" />
+			<author name="Athou (Contributor)" email="" />
+			
 		</authors>
 		<url>http://jnrpe.sourceforge.net</url>
 		<javaversion>1.6</javaversion>
@@ -35,10 +38,6 @@
 	<locale>
 		<langpack iso3="eng" />
 	</locale>
-
-	<variables>
-		<variable name="BASE_DIR" value="${basedir}" />
-	</variables>
 
 	<resources>
 		<res id="LicencePanel.licence" src="../../src/main/izpack/LICENSE.txt" />
@@ -130,7 +129,7 @@
 
 		<pack name="Core" required="yes">
 			<description>Core installation files</description>
-			<fileset dir="../../target/staging/dependency" targetdir="$INSTALL_PATH/lib"
+			<fileset dir="dependency" targetdir="$INSTALL_PATH/lib"
 				unpack="false">
 				<include name="*.jar" />
 				<!-- <exclude name="jnrpe-server*.jar"/> -->
@@ -159,7 +158,7 @@
 
 		<pack name="Base Plugins" required="no">
 			<description>The plugins provided with JNRPE</description>
-			<fileset dir="../../target/staging/dependency" targetdir="$INSTALL_PATH/plugins/base"
+			<fileset dir="dependency" targetdir="$INSTALL_PATH/plugins/base"
 				unpack="false">
 				<include name="jnrpe-plugins*.jar" />
 			</fileset>

@@ -50,8 +50,9 @@ public final class ThresholdUtil
      * @param iValue
      *            The value
      * @return <code>true</code> if the value <code>iValue</code> falls into the
+     * @throws BadThresholdException 
      */
-    public static boolean isValueInRange(final String sRange, final int iValue)
+    public static boolean isValueInRange(final String sRange, final int iValue) throws BadThresholdException
     {
         return new Threshold(sRange).isValueInRange(iValue);
     }
@@ -64,11 +65,11 @@ public final class ThresholdUtil
      *            The range
      * @param value
      *            The value
-     * @return <code>true</code> if the value <code>value</code> falls into the
      * given range
+     * @throws BadThresholdException 
      */
     public static boolean isValueInRange(final String sRange,
-            final BigDecimal value)
+            final BigDecimal value) throws BadThresholdException
     {
         return new Threshold(sRange).isValueInRange(value);
     }

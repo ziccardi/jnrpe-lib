@@ -20,6 +20,7 @@ import it.jnrpe.ReturnValue;
 import it.jnrpe.Status;
 import it.jnrpe.events.LogEvent;
 import it.jnrpe.plugins.PluginBase;
+import it.jnrpe.utils.BadThresholdException;
 import it.jnrpe.utils.ThresholdUtil;
 
 import java.sql.Connection;
@@ -42,7 +43,8 @@ public class CheckMysql extends PluginBase {
 	 * @param cl the command line
 	 * @return the check return code
 	 */
-	public ReturnValue execute(ICommandLine cl) {
+	public ReturnValue execute(ICommandLine cl) throws BadThresholdException
+	{
 		System.out.println("check_mysql");
 		Mysql mysql = new Mysql(cl);
 		Connection conn = null;
@@ -88,8 +90,9 @@ public class CheckMysql extends PluginBase {
 	 * @param conn
 	 * @return
 	 * ReturnValue
+	 * @throws BadThresholdException 
 	 */
-	private ReturnValue checkSlave(ICommandLine cl, Mysql mysql, Connection conn){
+	private ReturnValue checkSlave(ICommandLine cl, Mysql mysql, Connection conn) throws BadThresholdException{
 		System.out.println("checking slave");
 		try {
 			Map<String, Integer> status = getSlaveStatus(conn);

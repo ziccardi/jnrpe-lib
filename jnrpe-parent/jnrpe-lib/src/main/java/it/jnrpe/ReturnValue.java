@@ -10,18 +10,31 @@
  */
 package it.jnrpe;
 
+import it.jnrpe.net.IJNRPEConstants;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * This class is just a container for the plugin result.
- *
+ * 
  * @author Massimiliano Ziccardi
  */
 public final class ReturnValue
 {
+    public enum UnitOfMeasure
+    {
+        microseconds, milliseconds, seconds, percentage, bytes, kilobytes, megabytes, gigabytes, terabytes, counter
+    };
+
+    private List<PerformanceData> m_vPerformanceData = new ArrayList<PerformanceData>();
+
     /**
      * The raw return code.
      */
     private Status m_returnCode;
-    
+
     /**
      * The message.
      */
@@ -38,7 +51,7 @@ public final class ReturnValue
     /**
      * Initializes the return value object with the given message and with the
      * {@link IJNRPEConstants.STATE_OK} state.
-     *
+     * 
      * @param sMessage
      *            The message
      */
@@ -51,7 +64,7 @@ public final class ReturnValue
     /**
      * Initializes the return value object with the given state and the given
      * message.
-     *
+     * 
      * @param iReturnCode
      *            The state
      * @param sMessage
@@ -67,7 +80,7 @@ public final class ReturnValue
     /**
      * Initializes the return value object with the given state and the given
      * message.
-     *
+     * 
      * @param status
      *            The status to be returned
      * @param sMessage
@@ -82,8 +95,9 @@ public final class ReturnValue
     /**
      * Sets the return code and returns 'this' so that the calls can be
      * cascaded.
-     *
-     * @param iReturnCode The return code
+     * 
+     * @param iReturnCode
+     *            The return code
      * @return this
      * @deprecated Use {@link #withStatus(Status)} instead.
      */
@@ -96,8 +110,9 @@ public final class ReturnValue
     /**
      * Sets the return code and returns 'this' so that the calls can be
      * cascaded.
-     *
-     * @param status The status to be returned to Nagios
+     * 
+     * @param status
+     *            The status to be returned to Nagios
      * @return this
      */
     public ReturnValue withStatus(final Status status)
@@ -113,8 +128,9 @@ public final class ReturnValue
 
     /**
      * Sets the message and returns 'this' so that the calls can be cascaded.
-     *
-     * @param sMessage The message to be returned
+     * 
+     * @param sMessage
+     *            The message to be returned
      * @return this
      */
     public ReturnValue withMessage(final String sMessage)
@@ -125,7 +141,7 @@ public final class ReturnValue
 
     /**
      * Returns the status.
-     *
+     * 
      * @return The state
      * @deprecated Use {@link #getStatus()} instead.
      */
@@ -136,7 +152,7 @@ public final class ReturnValue
 
     /**
      * Returns the status.
-     *
+     * 
      * @return The status
      */
     public Status getStatus()
@@ -145,12 +161,94 @@ public final class ReturnValue
     }
 
     /**
-     * Returns the message.
-     *
-     * @return The message
+     * Returns the message. If the performance data has been passed in, they are
+     * attached at the end of the message accordingly to the Nagios
+     * specifications
+     * 
+     * @return The message and optionally the performance data
      */
     public String getMessage()
     {
-        return m_sMessage;
+        if (m_vPerformanceData.isEmpty()) return m_sMessage;
+        StringBuffer res = new StringBuffer(m_sMessage).append("|");
+        for (PerformanceData pd : m_vPerformanceData)
+        {
+            res.append(pd.toPerformanceString()).append(' ');
+        }
+        return res.toString();
+    }
+
+    /**
+     * Adds performance data to the plugin result. Thos data will be added to
+     * the output formatted as specified in Nagios specifications
+     * (http://nagiosplug.sourceforge.net/developer-guidelines.html#AEN201)
+     * 
+     * @param sLabel
+     *            The label of the performance data we are adding
+     * @param value
+     *            The performance data value
+     * @param uom
+     *            The Unit Of Measure
+     * @param sWarningRange
+     *            The warning threshold used to check this metric (can be null)
+     * @param sCriticalRange
+     *            The critical threshold used to check this value (can be null)
+     * @param minimumValue
+     *            The minimum value for this metric (can be null if not
+     *            applicable)
+     * @param maximumValue
+     *            The maximum value for this metric (can be null if not
+     *            applicable)
+     * @return this
+     */
+    public ReturnValue withPerformanceData(final String sLabel,
+            final Long value, final UnitOfMeasure uom,
+            final String sWarningRange, final String sCriticalRange,
+            final Long minimumValue, final Long maximumValue)
+    {
+        BigDecimal bdValue = null;
+        BigDecimal bdMin = null;
+        BigDecimal bdMax = null;
+
+        if (value != null) bdValue = new BigDecimal(value);
+        if (minimumValue != null) bdMin = new BigDecimal(minimumValue);
+        if (maximumValue != null) bdMax = new BigDecimal(maximumValue);
+
+        m_vPerformanceData.add(new PerformanceData(sLabel, bdValue, uom,
+                sWarningRange, sCriticalRange, bdMin, bdMax));
+        return this;
+    }
+
+    /**
+     * Adds performance data to the plugin result. Thos data will be added to
+     * the output formatted as specified in Nagios specifications
+     * (http://nagiosplug.sourceforge.net/developer-guidelines.html#AEN201)
+     * 
+     * @param sLabel
+     *            The label of the performance data we are adding
+     * @param value
+     *            The performance data value
+     * @param uom
+     *            The Unit Of Measure
+     * @param sWarningRange
+     *            The warning threshold used to check this metric (can be null)
+     * @param sCriticalRange
+     *            The critical threshold used to check this value (can be null)
+     * @param minimumValue
+     *            The minimum value for this metric (can be null if not
+     *            applicable)
+     * @param maximumValue
+     *            The maximum value for this metric (can be null if not
+     *            applicable)
+     * @return this
+     */
+    public ReturnValue withPerformanceData(final String sLabel,
+            final BigDecimal value, final UnitOfMeasure uom,
+            final String sWarningRange, final String sCriticalRange,
+            final BigDecimal minimumValue, final BigDecimal maximumValue)
+    {
+        m_vPerformanceData.add(new PerformanceData(sLabel, value, uom,
+                sWarningRange, sCriticalRange, minimumValue, maximumValue));
+        return this;
     }
 }

@@ -155,7 +155,7 @@ public class JnrpeParamTest {
 		ReturnValue ret = client.sendCommand("TESTCOMMAND", "NullPointerException");
 		
 		Assert.assertEquals(ret.getStatus(), Status.UNKNOWN);
-		Assert.assertEquals(ret.getMessage().contains("Plugin execution error: Thrown NullPointerException as requested"), true);
+		Assert.assertEquals(ret.getMessage().equals("Plugin [TESTPLUGIN] execution error: Thrown NullPointerException as requested"), true);
 	}
 	
 	@Test
@@ -173,6 +173,6 @@ public class JnrpeParamTest {
 		JNRPEClient client = new JNRPEClient("127.0.0.1", 5667, false);
 		ReturnValue ret = client.sendCommand("TESTCOMMAND", "ThrowRuntimeException");
 		Assert.assertEquals(ret.getStatus(), Status.UNKNOWN);
-		Assert.assertEquals(ret.getMessage().contains("Plugin execution error: Thrown RuntimeException as requested"), true);
+		Assert.assertEquals(ret.getMessage().equals("Plugin [TESTPLUGIN] execution error: Thrown RuntimeException as requested"), true);
 	}
 }

@@ -153,8 +153,6 @@ public final class CommandInvoker
         {
             EventsUtil.sendEvent(m_vListeners, this, LogEvent.INFO,
                     "Unable to instantiate plugin named " + sPluginName);
-            // TODO : it would be better to give some information about the
-            // error... (bad plugin name??)
             return new ReturnValue(Status.UNKNOWN,
                     "Error instantiating plugin '" + sPluginName + "' : bad plugin name?");
         }
@@ -175,12 +173,12 @@ public final class CommandInvoker
         catch (RuntimeException re)
         {
             return new ReturnValue(Status.UNKNOWN,
-                    "Plugin execution error: " + re.getMessage());
+                    "Plugin [" + sPluginName + "] execution error: " + re.getMessage());
         }
         catch (Throwable thr)
         {
             return new ReturnValue(Status.UNKNOWN,
-                    "Plugin execution error: " + thr.getMessage());
+                    "Plugin [" + sPluginName + "] execution error: " + thr.getMessage());
         }
     }
 }

@@ -65,8 +65,9 @@ class Threshold
      *
      * @param sRange
      *            The range
+     * @throws BadThresholdException 
      */
-    Threshold(final String sRange)
+    Threshold(final String sRange) throws BadThresholdException
     {
         parseRange(sRange);
     }
@@ -78,25 +79,26 @@ class Threshold
      * @param sRange
      *            The range
      */
-    private void parseRange(final String sRange)
+    private void parseRange(final String sRange) throws BadThresholdException
     {
         byte[] vBytes = sRange.getBytes();
         ByteArrayInputStream bin = new ByteArrayInputStream(vBytes);
         PushbackInputStream pb = new PushbackInputStream(bin);
 
+        StringBuffer sbCurrentParsed = new StringBuffer();
+        
         byte b = 0;
 
         try
         {
             while ((b = (byte) pb.read()) != -1)
             {
-
+                sbCurrentParsed.append(b);
                 if (b == '@')
                 {
                     if (m_iCurState != MINVAL)
                     {
-                        // FIXME : should throw an exception
-                        System.err.println("PARSE ERROR");
+                        throw new BadThresholdException("Unparsable threshold '" + sRange + "'. Error at char " + sbCurrentParsed.length() + ": the '@' should not be there.");
                     }
                     m_bNegate = true;
                     continue;
@@ -114,9 +116,9 @@ class Threshold
                             m_iCurState = MAXVAL;
                             continue;
                         case MAXVAL:
-                            System.err.println("PARSE ERROR");
-                            m_iCurState = END;
-                            continue;
+                            throw new BadThresholdException("Unparsable threshold '" + sRange + "'. Error at char " + sbCurrentParsed.length() + ": the ':' should not be there.");
+                            //m_iCurState = END;
+                            //continue;
                         default:
                             m_iCurState = MAXVAL;
                     }
@@ -159,8 +161,7 @@ class Threshold
                 String sNum = sNumBuffer.toString();
                 if (sNum.trim().length() == 0)
                 {
-                    //TODO: should throw an exception
-                    System.err.println("PARSE ERROR");
+                    throw new BadThresholdException("A number was expected after '" + sbCurrentParsed.toString() + "', but an empty string was found");
                 }
 
                 switch (m_iCurState)

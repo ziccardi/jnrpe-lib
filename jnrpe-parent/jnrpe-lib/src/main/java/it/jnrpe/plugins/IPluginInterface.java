@@ -12,6 +12,7 @@ package it.jnrpe.plugins;
 
 import it.jnrpe.ICommandLine;
 import it.jnrpe.ReturnValue;
+import it.jnrpe.utils.BadThresholdException;
 
 /**
  * This is the interface that all the JAVA plugins must implement.
@@ -28,5 +29,5 @@ public interface IPluginInterface
      *            The parsified command line arguments
      * @return The result of the plugin
      */
-    ReturnValue execute(ICommandLine cl);
+    ReturnValue execute(ICommandLine cl) throws BadThresholdException;
 }

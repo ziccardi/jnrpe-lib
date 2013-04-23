@@ -18,6 +18,7 @@ package it.jnrpe.plugin;
 import it.jnrpe.ICommandLine;
 import it.jnrpe.ReturnValue;
 import it.jnrpe.Status;
+import it.jnrpe.ReturnValue.UnitOfMeasure;
 import it.jnrpe.events.LogEvent;
 import it.jnrpe.plugins.PluginBase;
 import it.jnrpe.utils.ThresholdUtil;
@@ -94,19 +95,23 @@ public class CCheckOracle extends PluginBase
         
         MessageFormat mf = new MessageFormat(sMsg);
         
+        long lStart = System.currentTimeMillis();
+        
         try
         {
             stmt = c.createStatement();
             rs = stmt.executeQuery("SELECT SYSDATE FROM DUAL");
 
-            return new ReturnValue(Status.OK, mf.format(vObjs));
+            return new ReturnValue(Status.OK, mf.format(vObjs))
+                .withPerformanceData("time", System.currentTimeMillis() - lStart, UnitOfMeasure.milliseconds, null, null, null, null);
         }
         catch (SQLException sqle)
         {
             vObjs[2] = "UNKNOWN";
             vObjs[3] = sqle.getMessage();
                 
-            return new ReturnValue(Status.UNKNOWN, mf.format(vObjs));
+            return new ReturnValue(Status.UNKNOWN, mf.format(vObjs))
+                .withPerformanceData("time", System.currentTimeMillis() - lStart, UnitOfMeasure.milliseconds, null, null, null, null);
         }
         catch (Exception e)
         {
@@ -159,7 +164,12 @@ public class CCheckOracle extends PluginBase
         try
         {
             stmt = c.createStatement();
+            
+            long lStart = System.currentTimeMillis();
+            
             rs = stmt.executeQuery(sQry);
+            
+            long lElapsed = System.currentTimeMillis() - lStart;
             
             boolean bFound = rs.next();
             
@@ -170,7 +180,7 @@ public class CCheckOracle extends PluginBase
             BigDecimal ts_total = rs.getBigDecimal(2);
             BigDecimal ts_pct = rs.getBigDecimal(3);
             
-            String sMsg = "{0} : {1} {2} - {3,number,0.#}% used [ {4,number,0.#} / {5,number,0.#} MB available ]|{1}={3,number,0.#}%;{6};{7};0;100";
+            String sMsg = "{0} : {1} {2} - {3,number,0.#}% used [ {4,number,0.#} / {5,number,0.#} MB available ]"; //|{1}={3,number,0.#}%;{6};{7};0;100";
             
             Object[] vObjs = new Object[8];
             vObjs[0] = cl.getOptionValue("db");
@@ -188,20 +198,25 @@ public class CCheckOracle extends PluginBase
             if (ThresholdUtil.isValueInRange(sCritical, ts_pct))
             {
                 vObjs[2] = "CRITICAL";
-                ReturnValue rv = new ReturnValue(Status.CRITICAL, mf.format(vObjs)); 
+                ReturnValue rv = new ReturnValue(Status.CRITICAL, mf.format(vObjs))
+                    .withPerformanceData(cl.getOptionValue("tablespace"), ts_pct, UnitOfMeasure.percentage, sWarning, sCritical, new BigDecimal(0), new BigDecimal(100))
+                    .withPerformanceData("time", lElapsed, UnitOfMeasure.milliseconds, null, null, null, null);
                 return rv;
             }
             
             if (ThresholdUtil.isValueInRange(sWarning, ts_pct))
             {
                 vObjs[2] = "WARNING";                
-                ReturnValue rv = new ReturnValue(Status.WARNING, mf.format(vObjs));
+                ReturnValue rv = new ReturnValue(Status.WARNING, mf.format(vObjs))
+                    .withPerformanceData(cl.getOptionValue("tablespace"), ts_pct, UnitOfMeasure.percentage, sWarning, sCritical, new BigDecimal(0), new BigDecimal(100))
+                    .withPerformanceData("time", lElapsed, UnitOfMeasure.milliseconds, null, null, null, null);
                 
                 return rv;
             }
             
-            ReturnValue rv =  new ReturnValue(Status.OK,mf.format(vObjs));
-            
+            ReturnValue rv =  new ReturnValue(Status.OK,mf.format(vObjs))
+                .withPerformanceData(cl.getOptionValue("tablespace"), ts_pct, UnitOfMeasure.percentage, sWarning, sCritical, new BigDecimal(0), new BigDecimal(100))
+                .withPerformanceData("time", lElapsed, UnitOfMeasure.milliseconds, null, null, null, null);
             return rv;
             
         }
@@ -261,7 +276,7 @@ public class CCheckOracle extends PluginBase
             
             BigDecimal lib_hr = rs.getBigDecimal(1);
             
-            String sMessage = "{0} {1} - Cache Hit Rates: {2,number,0.#}% Lib -- {3,number,0.#}% Buff|lib={4,number,0.#}%;{5};{6};0;100 buffer={3,number,0.#};{5};{6};0;100";
+            String sMessage = "{0} {1} - Cache Hit Rates: {2,number,0.#}% Lib -- {3,number,0.#}% Buff"; //|lib={4,number,0.#}%;{5};{6};0;100 buffer={3,number,0.#};{5};{6};0;100";
 
             MessageFormat mf = new MessageFormat(sMessage);
 
@@ -279,7 +294,9 @@ public class CCheckOracle extends PluginBase
             {
                 vValues[1] = "CRITICAL";
                        
-                ReturnValue rv = new ReturnValue(Status.CRITICAL, mf.format(vValues));
+                ReturnValue rv = new ReturnValue(Status.CRITICAL, mf.format(vValues))
+                    .withPerformanceData("lib", lib_hr, UnitOfMeasure.percentage, sWarning, sCritical, new BigDecimal(0), new BigDecimal(100))
+                    .withPerformanceData("buffer", buf_hr, UnitOfMeasure.percentage, sWarning, sCritical, new BigDecimal(0), new BigDecimal(100));
                 return rv;
             }
             
@@ -288,13 +305,17 @@ public class CCheckOracle extends PluginBase
             {
                 vValues[1] = "WARNING";
                 
-                ReturnValue rv = new ReturnValue(Status.WARNING,mf.format(vValues)); 
+                ReturnValue rv = new ReturnValue(Status.WARNING,mf.format(vValues))
+                    .withPerformanceData("lib", lib_hr, UnitOfMeasure.percentage, sWarning, sCritical, new BigDecimal(0), new BigDecimal(100))
+                    .withPerformanceData("buffer", buf_hr, UnitOfMeasure.percentage, sWarning, sCritical, new BigDecimal(0), new BigDecimal(100));
 
                 return rv;
             }
             
-            ReturnValue rv = new ReturnValue(Status.WARNING, mf.format(vValues)); 
-            
+            ReturnValue rv = new ReturnValue(Status.WARNING, mf.format(vValues))
+                .withPerformanceData("lib", lib_hr, UnitOfMeasure.percentage, sWarning, sCritical, new BigDecimal(0), new BigDecimal(100))
+                .withPerformanceData("buffer", buf_hr, UnitOfMeasure.percentage, sWarning, sCritical, new BigDecimal(0), new BigDecimal(100));
+
             return rv;
             
         }
@@ -351,7 +372,6 @@ public class CCheckOracle extends PluginBase
         {
             sendEvent(LogEvent.ERROR, "Error communicating with database.", sqle);
             
-//            m_Logger.info("Error communicating with database.", sqle);
             return new ReturnValue(Status.CRITICAL,
                     sqle.getMessage()); 
         }
@@ -373,7 +393,6 @@ public class CCheckOracle extends PluginBase
                 catch (Exception e)
                 {
                     sendEvent(LogEvent.WARNING, "Error closing the DB connection.", e);
-//                    m_Logger.warn("ERROR CLOSING DB CONNECTION.", e);
                 }
             }
         }

@@ -107,26 +107,28 @@ class JNRPEServerThread extends Thread
      */
     private String[] split(final String sCommandLine)
     {
-        String regex = "[\"|']([^\"']*)[\"|']|([^\\!]+)";
-
-        List<String> res = new ArrayList<String>();
-
-        Matcher m = Pattern.compile(regex).matcher(sCommandLine);
-        while (m.find())
-        {
-            if (m.group(1) != null)
-            {
-                // Quoted string
-                res.add(m.group(1));
-            }
-            else
-            {
-                // Not quoted
-                res.add(m.group(2));
-            }
-        }
-
-        return res.toArray(new String[0]);
+//        String regex = "[\"|']([^\"']*)[\"|']|([^\\!]+)";
+//
+//        List<String> res = new ArrayList<String>();
+//
+//        Matcher m = Pattern.compile(regex).matcher(sCommandLine);
+//        while (m.find())
+//        {
+//            if (m.group(1) != null)
+//            {
+//                // Quoted string
+//                res.add(m.group(1));
+//            }
+//            else
+//            {
+//                // Not quoted
+//                res.add(m.group(2));
+//            }
+//        }
+//
+//        return res.toArray(new String[0]);
+        
+        return it.jnrpe.utils.StringUtils.split(sCommandLine, '!', false);
     }
 
     /**

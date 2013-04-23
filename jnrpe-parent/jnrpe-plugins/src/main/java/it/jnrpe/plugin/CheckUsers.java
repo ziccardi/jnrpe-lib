@@ -18,8 +18,10 @@ package it.jnrpe.plugin;
 import it.jnrpe.ICommandLine;
 import it.jnrpe.ReturnValue;
 import it.jnrpe.Status;
+import it.jnrpe.ReturnValue.UnitOfMeasure;
 import it.jnrpe.events.LogEvent;
 import it.jnrpe.plugins.PluginBase;
+import it.jnrpe.utils.BadThresholdException;
 import it.jnrpe.utils.ThresholdUtil;
 
 import java.io.BufferedReader;
@@ -42,7 +44,8 @@ public class CheckUsers extends PluginBase {
 	/* (non-Javadoc)System.getProperty("os.name")
 	 * @see it.jnrpe.plugins.IPluginInterface#execute(it.jnrpe.ICommandLine)
 	 */
-	public ReturnValue execute(ICommandLine cl) {
+	public ReturnValue execute(ICommandLine cl) throws BadThresholdException 
+	{
 		String warning = cl.getOptionValue("warning");
         String critical = cl.getOptionValue("critical");
 		
@@ -61,14 +64,17 @@ public class CheckUsers extends PluginBase {
         }
         
         if (ThresholdUtil.isValueInRange(critical, totalLoggedIn)){
-        	return new ReturnValue(Status.CRITICAL, "CHECK_USER - CRITICAL: " + totalLoggedIn + " users currently logged in");
+        	return new ReturnValue(Status.CRITICAL, "CHECK_USER - CRITICAL: " + totalLoggedIn + " users currently logged in")
+        	    .withPerformanceData("users", (long) totalLoggedIn, UnitOfMeasure.counter, warning, critical, 0l, null);
         }
         
         if (ThresholdUtil.isValueInRange(warning, totalLoggedIn)){
-        	return new ReturnValue(Status.WARNING, "CHECK_USER - WARNING: " + totalLoggedIn + " users currently logged in");
+        	return new ReturnValue(Status.WARNING, "CHECK_USER - WARNING: " + totalLoggedIn + " users currently logged in")
+        	    .withPerformanceData("users", (long) totalLoggedIn, UnitOfMeasure.counter, warning, critical, 0l, null);
         }
         
-        return new ReturnValue(Status.OK, "CHECK_USER - OK: " + totalLoggedIn + " users currently logged in");
+        return new ReturnValue(Status.OK, "CHECK_USER - OK: " + totalLoggedIn + " users currently logged in")
+            .withPerformanceData("users", (long) totalLoggedIn, UnitOfMeasure.counter, warning, critical, 0l, null);
 	}
 
 	/**

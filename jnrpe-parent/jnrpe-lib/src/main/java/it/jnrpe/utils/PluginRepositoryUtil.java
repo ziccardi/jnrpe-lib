@@ -15,7 +15,6 @@ import it.jnrpe.plugins.PluginDefinition;
 import it.jnrpe.plugins.PluginOption;
 import it.jnrpe.plugins.PluginRepository;
 
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Iterator;
 
@@ -24,8 +23,22 @@ import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 
+/**
+ * An utility class that allows to define the plugin repository in an XML file
+ * instead that using Java Code.
+ * 
+ * @author Massimiliano Ziccardi
+ */
 public final class PluginRepositoryUtil
 {
+    /**
+     * Loads a full repository definition from an XML file
+     * 
+     * @param repo The repository that must be loaded
+     * @param cl The classloader to be used to instantiate the plugin classes
+     * @param in The stream to the XML file
+     * @throws PluginConfigurationException
+     */
     public static void loadFromXmlPluginPackageDefinitions(PluginRepository repo, ClassLoader cl, InputStream in) throws PluginConfigurationException
     {
         SAXReader reader = new SAXReader();
@@ -52,6 +65,13 @@ public final class PluginRepositoryUtil
         }
     }
 
+    /**
+     * Loads the definition of a single plugin from an XML file
+     * @param cl The classloader to be used to instantiate the plugin class
+     * @param in The stream to the XML file
+     * @return The plugin definition
+     * @throws PluginConfigurationException
+     */
     public static PluginDefinition parseXmlPluginDefinition(ClassLoader cl, InputStream in) throws PluginConfigurationException
     {
         SAXReader reader = new SAXReader();
@@ -135,10 +155,5 @@ public final class PluginRepositoryUtil
         po.setValueSeparator(option.attributeValue("separator"));
         
         return po;
-    }
-
-    public static void main(String[] args) throws Exception
-    {
-        loadFromXmlPluginPackageDefinitions(null, PluginRepositoryUtil.class.getClassLoader(), new FileInputStream("/home/ziccardi/git/jnrpe-lib/jnrpe-parent/jnrpe-plugins/src/main/resources/plugin.xml"));
     }
 }
