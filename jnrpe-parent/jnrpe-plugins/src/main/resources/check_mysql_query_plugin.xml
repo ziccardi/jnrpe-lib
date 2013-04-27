@@ -8,7 +8,7 @@ For extra security, create a user with minimal access.
 EXAMPLES
 The example will be based upon the following command definition (ini file)
             
-check_mysql : CHECK_MYSQL --database $ARG1$ --hostname $ARG2$ --port $ARG3$ --socket $ARG4$ --user $ARG5$ --password $ARG6$ --query $ARG7$
+check_mysql : CHECK_MYSQL_QUERY --database $ARG1$ --hostname $ARG2$ --port $ARG3$ --socket $ARG4$ --user $ARG5$ --password $ARG6$ --query $ARG7$
             
 * Example 1 (Windows and Unix)
             
