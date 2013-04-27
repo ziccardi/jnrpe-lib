@@ -28,8 +28,8 @@ public class TestCommandLineParsing
         Group group = gBuilder.create();
         Parser p = new Parser();
         p.setGroup(group);
-        CommandLine cli = p.parse(new String[] {"--hostname","$ARG1$","--port", "$ARG2$", "--database", "$ARG3$", "--user", "$ARG4$", "--password", "$ARG5$", "--checkslave"});
+        CommandLine cli = p.parse(new String[] {"--hostname","$ARG1$","--port", "$ARG2$", "--database", "$ARG3$", "--user", "$ARG4$", "--password", "$ARG5$", "--check-slave"});
         
-        Assert.assertTrue(cli.hasOption("--checkslave"));
+        Assert.assertTrue(cli.hasOption("--check-slave"));
     }
 }
