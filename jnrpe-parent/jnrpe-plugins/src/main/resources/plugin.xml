@@ -8,4 +8,5 @@
     <plugin name="CHECK_DISK" definedIn="check_disk_plugin.xml" />
     <plugin name="CHECK_USERS" definedIn="check_users_plugin.xml" />
     <plugin name="CHECK_MYSQL" definedIn="check_mysql_plugin.xml" />
+    <plugin name="CHECK_MYSQL_QUERY" definedIn="check_mysql_query_plugin.xml" />
 </plugins>
