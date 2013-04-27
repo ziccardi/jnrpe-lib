@@ -73,8 +73,7 @@ public class CheckMysql extends PluginBase {
 			return new ReturnValue(Status.CRITICAL, "CHECK_MYSQL - CRITICAL: No database connection - " + error);
 		}
 		
-		//if (cl.getOptionValue("checkslave") != null || cl.getOptionValue("-S") != null){
-		if (cl.hasOption("checkslave")) {
+		if (cl.hasOption("check-slave")) {
 			return checkSlave(cl, mysql, conn);			
 		}
 		
@@ -93,7 +92,6 @@ public class CheckMysql extends PluginBase {
 	 * @throws BadThresholdException 
 	 */
 	private ReturnValue checkSlave(ICommandLine cl, Mysql mysql, Connection conn) throws BadThresholdException{
-		System.out.println("checking slave");
 		try {
 			Map<String, Integer> status = getSlaveStatus(conn);
 			if (status.isEmpty()){
