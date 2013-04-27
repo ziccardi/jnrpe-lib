@@ -14,6 +14,7 @@
             <item name="The CHECK_FILE plugin" href="plugins/check_file.html" />
             <item name="The EXEC plugin" href="plugins/exec.html" />
             <item name="The CHECK_USERS plugin" href="plugins/check_users.html" />
+            <item name="The CHECK_MYSQL plugin" href="plugins/check_mysql.html" />
         </menu>
     </body>
     <skin>
@@ -21,4 +22,4 @@
         <artifactId>maven-stylus-skin</artifactId>
         <version>1.2</version>
     </skin>
-</project>
+</project>	
