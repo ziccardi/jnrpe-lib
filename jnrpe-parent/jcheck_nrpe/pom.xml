@@ -3,9 +3,8 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<artifactId>jcheck_nrpe</artifactId>
-	<version>2.0.3-beta-04-SNAPSHOT</version>
 	<packaging>jar</packaging>
-
+	<version>2.0.3-beta-04-SNAPSHOT</version>
 	<name>jcheck_nrpe</name>
 	<description>jcheck_nrpe is a java implementation of the check_nrpe Nagios plugin. It can be easily embedded inside your code to talk to JNRPE or NRPE.
 Both plain socket and SSL are supported.</description>
@@ -62,7 +61,6 @@ Both plain socket and SSL are supported.</description>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-site-plugin</artifactId>
-				<version>3.2</version>
 				<executions>
 					<execution>
 						<id>jcheck-site</id>

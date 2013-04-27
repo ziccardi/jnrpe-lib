@@ -252,8 +252,8 @@ class JNRPEProtocolPacket
 
     /**
      * Sets the packet message. If the message is longer than.
-     * {@link IJNRPEConstants#MAX_PACKETBUFFER_LENGTH} than it gets truncated to
-     * {@link IJNRPEConstants#MAX_PACKETBUFFER_LENGTH} bytes.
+     * {@link JNRPEProtocolPacket#MAX_PACKETBUFFER_LENGTH} than it gets truncated to
+     * {@link JNRPEProtocolPacket#MAX_PACKETBUFFER_LENGTH} bytes.
      *
      * @param sMessage
      *            The message

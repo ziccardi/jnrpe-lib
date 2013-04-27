@@ -8,12 +8,6 @@ public class BadThresholdException extends Exception
         super();
     }
 
-    public BadThresholdException(String message, Throwable cause,
-            boolean enableSuppression, boolean writableStackTrace)
-    {
-        super(message, cause, enableSuppression, writableStackTrace);
-    }
-
     public BadThresholdException(String message, Throwable cause)
     {
         super(message, cause);
