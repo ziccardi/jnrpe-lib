@@ -31,6 +31,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 /**
+ * Plugin that checks a mysql query result against threshold levels
  * 
  * @author Frederico Campos
  *
