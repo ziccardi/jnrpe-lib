@@ -68,12 +68,12 @@ public class Mysql {
 		this.hostname = "localhost";
 		if (cl.hasOption("hostname") && !"".equals(cl.getOptionValue("hostname"))) {
 			this.hostname = cl.getOptionValue("hostname");
-			System.out.println("hostname = " + hostname);
+			//System.out.println("hostname = " + hostname);
 		}
 		this.port = "3306";
 		if (cl.hasOption("port")  && !"".equals(cl.getOptionValue("port"))) {
 			this.port = cl.getOptionValue("port");
-			System.out.println("port = " + port);
+			//System.out.println("port = " + port);
 		}
 		this.password = "";
 		if (cl.hasOption("password")) {
