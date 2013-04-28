@@ -37,7 +37,7 @@ check_nrpe -H myjnrpeserver -c check_mysql -a 'test-db!localhost!3306!mysql-user
 			<option shortName="w" longName="warning"
 				description="Exit with WARNING status if slave server is more than INTEGER seconds behind master. To be used with the check-slave option."
 				required="false" hasArgs="true" argName="warning" optionalArgs="false" />
-			<option shortName="w" longName="critical"
+			<option shortName="c" longName="critical"
 				description="Exit with CRITICAL status if slave server is more than INTEGER seconds behind master. To be used with the check-slave option."
 				required="false" hasArgs="true" argName="critical" optionalArgs="false" />
 
