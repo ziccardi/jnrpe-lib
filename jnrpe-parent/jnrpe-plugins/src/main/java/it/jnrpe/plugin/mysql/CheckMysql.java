@@ -45,7 +45,6 @@ public class CheckMysql extends PluginBase {
 	 */
 	public ReturnValue execute(ICommandLine cl) throws BadThresholdException
 	{
-		System.out.println("check_mysql");
 		Mysql mysql = new Mysql(cl);
 		Connection conn = null;
 		String error = "";
