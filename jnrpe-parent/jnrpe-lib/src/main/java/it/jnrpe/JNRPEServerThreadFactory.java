@@ -26,7 +26,7 @@ final class JNRPEServerThreadFactory
     /**
      * The singleton thread factory instance.
      */
-    private static JNRPEServerThreadFactory m_instance = null;
+    private static volatile JNRPEServerThreadFactory m_instance = null;
     /**
      * The command invoker.
      */
@@ -66,7 +66,14 @@ final class JNRPEServerThreadFactory
     {
         if (m_instance == null)
         {
-            m_instance = new JNRPEServerThreadFactory(commandInvoker);
+            synchronized (JNRPEServerThread.class)
+            {
+                if (m_instance == null)
+                {
+                    m_instance = new JNRPEServerThreadFactory(commandInvoker);
+                }
+            }
+            
         }
 
         return m_instance;

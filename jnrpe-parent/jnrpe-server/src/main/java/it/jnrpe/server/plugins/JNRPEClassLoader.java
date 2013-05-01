@@ -19,6 +19,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.List;
 import java.util.jar.JarFile;
 
@@ -89,10 +91,22 @@ class JNRPEClassLoader extends ClassLoader
         super(Thread.currentThread().getContextClassLoader());
         m_vUrls = classpath;
 
-        URL[] urls = classpath.toArray(new URL[classpath.size()]);
+        final URL[] urls = classpath.toArray(new URL[classpath.size()]);
 
-        childClassLoader = new ChildURLClassLoader(urls,
-                new FindClassClassLoader(this.getParent()));
+        final ClassLoader parent = getParent();
+        
+        childClassLoader = AccessController.doPrivileged(
+                new PrivilegedAction<ChildURLClassLoader>()
+                {
+                    public ChildURLClassLoader run() {
+                        return new ChildURLClassLoader(urls,
+                                new FindClassClassLoader(parent));
+                    }
+
+                }
+                );
+//        childClassLoader = new ChildURLClassLoader(urls,
+//                new FindClassClassLoader(this.getParent()));
     }
 
     @Override
@@ -127,7 +141,7 @@ class JNRPEClassLoader extends ClassLoader
             }
             return null;
         }
-        catch (Exception e)
+        catch (IOException e)
         {
             throw new RuntimeException(e.getMessage(), e);
         }

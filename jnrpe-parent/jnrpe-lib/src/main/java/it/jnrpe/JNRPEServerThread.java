@@ -25,11 +25,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -152,11 +148,7 @@ class JNRPEServerThread extends Thread
 
         if (ret == null)
         {
-            String args = "";
-            if (vArgs != null) 
-            {
-                args = StringUtils.join(vArgs, ",");
-            }
+            String args = StringUtils.join(vArgs, ",");
 
             ret = new ReturnValue(Status.UNKNOWN, "Command [" + sCommandName
                     + "] with args [" + args + "] returned null");
@@ -242,7 +234,7 @@ class JNRPEServerThread extends Thread
 
             }
 
-            synchronized (m_bStopped)
+            synchronized (this)
             {
                 if (!m_bStopped.booleanValue())
                 {
@@ -288,7 +280,7 @@ class JNRPEServerThread extends Thread
         StreamManager streamMgr = new StreamManager();
         try
         {
-            synchronized (m_bStopped)
+            synchronized (this)
             {
                 // If the socket is closed, the thread has finished...
                 if (!m_Socket.isClosed())
@@ -323,10 +315,6 @@ class JNRPEServerThread extends Thread
                     // We can exit now..
                 }
             }
-        }
-        catch (Exception e)
-        {
-
         }
         finally
         {

@@ -149,7 +149,7 @@ public class CCheckOracle extends PluginBase
         
         String sTablespace = cl.getOptionValue("tablespace").toUpperCase();
         
-        String sQry = "select NVL(b.free,0.0),a.total,100 - trunc(NVL(b.free,0.0)/a.total * 1000) / 10 prc"
+        final String sQry = "select NVL(b.free,0.0),a.total,100 - trunc(NVL(b.free,0.0)/a.total * 1000) / 10 prc"
                 + " from ("
                 + " select tablespace_name,sum(bytes)/1024/1024 total"
                 + " from dba_data_files group by tablespace_name) A"
@@ -231,7 +231,7 @@ public class CCheckOracle extends PluginBase
             try
             {
                 stmt.close();
-                rs.close();
+                //rs.close();
             }
             catch (Exception e)
             {
@@ -330,7 +330,7 @@ public class CCheckOracle extends PluginBase
             try
             {
                 stmt.close();
-                rs.close();
+                //rs.close();
             }
             catch (Exception e)
             {

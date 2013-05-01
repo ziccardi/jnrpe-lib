@@ -22,6 +22,7 @@ import it.jnrpe.utils.StreamManager;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FilenameFilter;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -34,21 +35,34 @@ import org.slf4j.LoggerFactory;
 public class DynaPluginRepository extends PluginRepository
 {
     private final static Logger LOG = LoggerFactory.getLogger(DynaPluginRepository.class);
+    private final static JarFilefilter jarFileFilter = new JarFilefilter();
+    
+    private static class JarFilefilter implements FilenameFilter
+    {
+        public boolean accept(File dir, String name)
+        {
+            return name.endsWith(".jar");
+        }
+    }
+    
+    
     
     private void configurePlugins(File fDir) throws PluginConfigurationException
     {
         LOG.trace("READING PLUGIN CONFIGURATION FROM DIRECTORY " + fDir.getName());
         StreamManager streamMgr = new StreamManager();
-        File[] vfJars = fDir.listFiles(new FileFilter()
-        {
+//        File[] vfJars = fDir.listFiles(new FileFilter()
+//        {
+//
+//            public boolean accept(File f)
+//            {
+//                return f.getName().endsWith(".jar");
+//            }
+//
+//        });
 
-            public boolean accept(File f)
-            {
-                return f.getName().endsWith(".jar");
-            }
-
-        });
-
+        File[] vfJars = fDir.listFiles(jarFileFilter);
+        
         if (vfJars == null || vfJars.length == 0)
             return;
         

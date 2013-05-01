@@ -88,8 +88,13 @@ It is fully compatible with check_nrpe and can be used to execute both old nativ
 					<artifactId>maven-source-plugin</artifactId>
 					<version>2.2.1</version>
 				</plugin>
-			</plugins>
 
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>findbugs-maven-plugin</artifactId>
+					<version>2.5.2</version>
+				</plugin>
+			</plugins>
 		</pluginManagement>
 		<plugins>
 			<plugin>
@@ -155,6 +160,15 @@ It is fully compatible with check_nrpe and can be used to execute both old nativ
 						</reports>
 					</reportSet>
 				</reportSets>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>findbugs-maven-plugin</artifactId>
+				<version>2.5.2</version>
+				<configuration>
+					<effort>Max</effort>
+					<threshold>Low</threshold>
+				</configuration>
 			</plugin>
 		</plugins>
 	</reporting>

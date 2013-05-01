@@ -134,6 +134,8 @@
 				<include name="*.jar" />
 				<!-- <exclude name="jnrpe-server*.jar"/> -->
 				<exclude name="jnrpe-plugins*.jar" />
+				<exclude name="jcheck_nrpe*.jar" />
+				<exclude name="jopt*.jar" />
 			</fileset>
 
 			<file src="../../../jnrpe-server/target/appassembler/bin/jnrpe"
@@ -150,7 +152,7 @@
 				type="javaprop" />
 		</pack>
 
-		<pack name="Sample Config" required="yes">
+		<pack name="Sample Config" required="yes" hidden="true">
 			<description>Sample configuration file</description>
 			<file src="../../src/config/jnrpe.ini" targetdir="$INSTALL_PATH/etc"
 				unpack="false" />
@@ -162,6 +164,22 @@
 				unpack="false">
 				<include name="jnrpe-plugins*.jar" />
 			</fileset>
+		</pack>
+
+		<pack name="jcheck_nrpe" required="no">
+			<description>Command line JNRPE/NRPE client</description>
+			<fileset dir="dependency" targetdir="$INSTALL_PATH/lib"
+				unpack="false">
+				<include name="jcheck_nrpe*.jar" />
+				<include name="jopt*.jar" />
+			</fileset>
+
+			<file src="../../../jcheck_nrpe/target/appassembler/bin/jcheck_nrpe"
+				targetdir="$INSTALL_PATH/bin" os="unix" unpack="false" />
+			<executable targetfile="$INSTALL_PATH/bin/jcheck_nrpe" os="unix" />
+
+			<file src="../../../jcheck_nrpe/target/appassembler/bin/jcheck_nrpe.bat"
+				targetdir="$INSTALL_PATH/bin" os="windows" unpack="false" />
 		</pack>
 
 		<pack name="serviceWrapper" required="no" hidden="true"

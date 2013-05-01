@@ -6,7 +6,7 @@
  2013/03/25
  -----
  
-jCheckNRPE Command Line
+jcheck_nrpe Command Line
  
    jcheck_nrpe can be useful if you want to test your JNRPE configuration and you don't want to compile the check_nrpe sources for your architecture.
    It accepts all the same parameters as check_nrpe does and allows you to talk to both JNRPE and NRPE (as with check_nrpe).

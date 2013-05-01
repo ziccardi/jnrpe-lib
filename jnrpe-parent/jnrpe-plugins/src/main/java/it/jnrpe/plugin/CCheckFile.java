@@ -26,7 +26,8 @@ import it.jnrpe.utils.ThresholdUtil;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.InputStreamReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.math.BigDecimal;
 
 /**
@@ -138,7 +139,7 @@ public class CCheckFile extends PluginBase
         return updateRes(res, new ReturnValue(Status.OK, "FILE OK"));
     }
 
-    private ReturnValue checkContains(ICommandLine cl, File f, ReturnValue res)
+    private ReturnValue checkContains(ICommandLine cl, File f, ReturnValue res) throws BadThresholdException
     {
         if (!cl.hasOption("contains"))
             return updateRes(res, new ReturnValue(Status.OK, "FILE OK"));
@@ -147,7 +148,7 @@ public class CCheckFile extends PluginBase
         
         try
         {
-            BufferedReader r = new BufferedReader(new InputStreamReader(sm.getInputStream(f)));
+            BufferedReader r = (BufferedReader) sm.handle(new BufferedReader(new FileReader(f)));
             String sLine = null;
             
             String sWarningThreshold = ":0";
@@ -179,7 +180,7 @@ public class CCheckFile extends PluginBase
                 
             return updateRes(res, new ReturnValue(Status.OK, "FILE OK - String '" + sPattern + "' found " + iCount + " times"));
         }
-        catch (Exception e)
+        catch (IOException e)
         {
             sendEvent(LogEvent.WARNING, "Plugin Execution error : " + e.getMessage(), e);
             return updateRes(res, new ReturnValue(Status.UNKNOWN, "FILE UNKNOWN - " + e.getMessage()) );        
@@ -200,7 +201,7 @@ public class CCheckFile extends PluginBase
         
         try
         {
-            BufferedReader r = new BufferedReader(new InputStreamReader(sm.getInputStream(f)));
+            BufferedReader r = (BufferedReader) sm.handle(new BufferedReader(new FileReader(f)));
             String sLine = null;
             
             String[] vsPatterns = cl.getOptionValue("notcontains").split(",");
@@ -213,7 +214,7 @@ public class CCheckFile extends PluginBase
             }
             return updateRes(res, new ReturnValue(Status.OK, "FILE OK: String '" + cl.getOptionValue("notcontains") + "' not found"));
         }
-        catch (Exception e)
+        catch (IOException e)
         {
             sendEvent(LogEvent.WARNING, "Plugin Execution error : " + e.getMessage(), e);
             return updateRes(res, new ReturnValue(Status.UNKNOWN, "FILE UNKNOWN - " + e.getMessage()) );        
@@ -237,7 +238,6 @@ public class CCheckFile extends PluginBase
         }
         
         //ReturnValue res = new ReturnValue(Status.OK, "CHECK_FILE: OK");
-        ReturnValue res = null;
                 
         File f = null;
         
@@ -250,8 +250,7 @@ public class CCheckFile extends PluginBase
 //            return new ReturnValue(Status.CRITICAL, "File '" + f.getName() + "' not found");
         
         // Check that the file exists...
-        if (res == null || res.getStatus() != Status.CRITICAL)
-            res = checkFileExists(f, res);
+        ReturnValue res = checkFileExists(f, null);
         
         if (res == null || res.getStatus() != Status.CRITICAL)
             res = checkAge(cl, f, res);

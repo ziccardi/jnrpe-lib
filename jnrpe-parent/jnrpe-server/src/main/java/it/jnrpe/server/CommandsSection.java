@@ -23,7 +23,7 @@ class CommandsSection
 {
     private List<Command> m_vCommands = new ArrayList<Command>();
     
-    public class Command
+    public static class Command
     {
         private final String m_sName;
         private final String m_sPlugin;

@@ -31,7 +31,7 @@ class ThreadTimeoutWatcher extends Thread
     /**
      * The value of one second.
      */
-    private static final int SECOND = 1000;
+    private static final long SECOND = 1000L;
 
     /**
      * The list of the currently executing thread.
@@ -119,7 +119,7 @@ class ThreadTimeoutWatcher extends Thread
     /**
      * Stop the thread execution.
      */
-    public void stopWatching()
+    public static void stopWatching()
     {
         m_bRun = false;
     }
@@ -173,7 +173,7 @@ class ThreadTimeoutWatcher extends Thread
      * @param iTimeout
      *            The timeout (in seconds)
      */
-    public void setThreadTimeout(final int iTimeout)
+    public static void setThreadTimeout(final int iTimeout)
     {
         m_iThreadTimeout = iTimeout;
     }

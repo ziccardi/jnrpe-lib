@@ -34,6 +34,10 @@
 			<artifactId>jnrpe-plugins</artifactId>
 		</dependency>
 
+		<dependency>
+			<groupId>net.sf.jnrpe</groupId>
+			<artifactId>jcheck_nrpe</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>

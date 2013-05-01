@@ -315,11 +315,6 @@ class JNRPEListenerThread extends Thread implements IJNRPEListener
             // Ignoring
 
         }
-        catch (Exception e)
-        {
-            EventsUtil.sendEvent(m_vEventListeners, this, LogEvent.ERROR, e
-                    .getMessage(), e);
-        }
         catch (Throwable e)
         {
             EventsUtil.sendEvent(m_vEventListeners, this, LogEvent.ERROR, e
@@ -334,7 +329,8 @@ class JNRPEListenerThread extends Thread implements IJNRPEListener
      */
     private synchronized void exit()
     {
-        notify();
+        m_serverSocket = null;
+        notifyAll();
         EventsUtil.sendEvent(m_vEventListeners, this, LogEvent.INFO,
                 "Listener Closed");
     }
@@ -351,7 +347,11 @@ class JNRPEListenerThread extends Thread implements IJNRPEListener
             if (m_serverSocket != null)
             {
                 m_serverSocket.close();
-                wait();
+                
+                while (m_serverSocket != null)
+                {
+                    wait();
+                }
             }
         }
         catch (InterruptedException ie)

@@ -10,35 +10,61 @@
     
     **** TO USE THIS PLUGIN, YOU MUST PUT THE ORACLE JDBC THIN DRIVER IN THE DIRECTORY WHERE
          THIS PLUGIN IS INSTALLED!! 
-    **** JDBC OCI DRIVER ARE NOT SUPPORTED!!
+    **** JDBC OCI DRIVER IS NOT SUPPORTED!!
     
-    Example Command Definitions on a Windows OS (inside the server configuration, in the command section)
+    Example Command Definitions
+    
     1. CHECK IS ALIVE
-    <command name="check_oracle_alive" plugin_name="CHECK_ORACLE" 
-    params="--username $ARG1$ --password $ARG2$ -db $ARG3$ 
-    --server $ARG4$ --alive"/>
+    
+    Command Definition (XML Style)
+    ------------------------------
+      <command name="check_oracle_alive" plugin_name="CHECK_ORACLE" 
+        params="--username $ARG1$ --password $ARG2$ -db $ARG3$ 
+        --server $ARG4$ --alive"/>
+    
+    Command Definition (INI Style)
+    ------------------------------
+      check_oracle_alive: CHECK_ORACLE --username $ARG1$ --password $ARG2$ --db $ARG3
+        --server $ARG4$ --alive
     
     Example invocation:
-    ./check_nrpe -t 20 -n -H myjnrpeserver -c check_oracle_alive -a 'username!password!SID!server'
+    -------------------
     
+      ./check_nrpe -t 20 -n -H myjnrpeserver -c check_oracle_alive -a 'username!password!SID!server'
+      
     2. CHECK TABLESPACE            
-                
-    <command name="check_oracle_ts" plugin_name="CHECK_ORACLE" 
-    params="--username $ARG1$ --password $ARG2$ -db $ARG3$ 
-    --server $ARG4$ --tablespace $ARG5$ -w 70 -c 80"/>
+    
+    Command Definition (XML Style)
+    ------------------------------      
+      <command name="check_oracle_ts" plugin_name="CHECK_ORACLE" 
+        params="--username $ARG1$ --password $ARG2$ -db $ARG3$ 
+        --server $ARG4$ --tablespace $ARG5$ -w 70: -c 80:"/>
+    
+    Command Definition (INI Style)
+    ------------------------------
+      check_oracle_ts: CHECK_ORACLE --username $ARG1$ --password $ARG2$ --db $ARG3
+        --server $ARG4$ --tablespace $ARG5$ -w 70: -c 80:
     
     Example invocation:
+    -------------------
     ./check_nrpe -t 20 -n -H myjnrpeserver -c check_oracle_ts -a 'username!password!SID!server!tablespacename'
 
     3. CHECK CACHE
 
-    <command name="check_oracle_cache" plugin_name="CHECK_ORACLE" 
-    params="--username $ARG1$ --password $ARG2$ -db $ARG3$ 
-    --server $ARG4$ --cache -w 70 -c 80"/>
+    Command Definition (XML Style)
+    ------------------------------  
+      <command name="check_oracle_cache" plugin_name="CHECK_ORACLE" 
+        params="--username $ARG1$ --password $ARG2$ -db $ARG3$ 
+       --server $ARG4$ --cache -w 70: -c 80:"/>
+
+    Command Definition (INI Style)
+    ------------------------------
+       check_oracle_ts: CHECK_ORACLE --username $ARG1$ --password $ARG2$ --db $ARG3
+       --server $ARG4$ --cache -w 70: -c 80:
     
     Example invocation:
+    -------------------
     ./check_nrpe -t 20 -n -H myjnrpeserver -c check_oracle_cache -a 'username!password!SID!server'
-
 ]]>
 	</description>
 	<command-line>
