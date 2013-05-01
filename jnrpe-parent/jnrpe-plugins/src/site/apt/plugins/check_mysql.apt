@@ -22,7 +22,7 @@ The CHECK_MYSQL plugin
 	You need a mysql connector jar file (<a href="http://dev.mysql.com/downloads/connector/j/"></a>) 
 	in the same directory that this plugin is installed.
 
-	* Usage Example
+* Usage Example
 	
   	In the following example, we will check the connection to a mysql database.
 
