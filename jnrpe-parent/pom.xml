@@ -192,9 +192,9 @@ It is fully compatible with check_nrpe and can be used to execute both old nativ
 		<artifactId>oss-parent</artifactId>
 	</parent>
 	<scm>
-		<connection>scm:git:https://github.com/ziccardi/jnrpe-lib.git</connection>
+		<connection>scm:git:https://github.com/ziccardi/jnrpe-lib.git/jnrpe-parent</connection>
 		<url>http://github.com/ziccardi/jnrpe-lib/tree/master/jnrpe-parent</url>
-		<developerConnection>scm:git:git@github.com:ziccardi/jnrpe-lib.git</developerConnection>
+		<developerConnection>scm:git:git@github.com:ziccardi/jnrpe-lib.git/jnrpe-parent</developerConnection>
 	</scm>
 	<dependencyManagement>
 		<dependencies>
