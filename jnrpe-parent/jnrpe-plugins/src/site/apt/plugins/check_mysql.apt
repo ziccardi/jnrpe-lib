@@ -56,13 +56,13 @@ The CHECK_MYSQL plugin
  
 +----------+
 
-  check_nrpe -H 127.0.0.1 -c check_mysql -a 'localhost!3306!knowhow!username!password' -n 
+  check_nrpe -H 127.0.0.1 -c check_mysql -a 'localhost!3306!database!username!password' -n 
 
 +----------+
 
 ** Checking the slave thread
 
-  In the followin example we show how to check a slave thread.
+  In the following example we show how to check a slave thread.
 
   
 ** Configuring using the XML configuration style
@@ -98,6 +98,6 @@ The CHECK_MYSQL plugin
  
 +----------+
 
-  check_nrpe -H 127.0.0.1 -c check_mysql -a 'localhost!3306!knowhow!username!password!30!10' -n 
+  check_nrpe -H 127.0.0.1 -c check_mysql -a 'localhost!3306!database!username!password!30!10' -n 
 
 +----------+
