@@ -73,4 +73,20 @@ public final class ThresholdUtil
     {
         return new Threshold(sRange).isValueInRange(value);
     }
+    
+    /**
+     * Returns <code>true</code> if the value <code>dalue</code> falls into the
+     * range <code>sRange</code>.
+     * 
+     * @param sRange
+     *            The range
+     * @param value
+     *            The value
+     * given range
+     * @throws BadThresholdException 
+     */
+    public static boolean isValueInRange(final String sRange,
+            final Long value) throws BadThresholdException {
+        return new Threshold(sRange).isValueInRange(new BigDecimal(value));
+    }
 }
