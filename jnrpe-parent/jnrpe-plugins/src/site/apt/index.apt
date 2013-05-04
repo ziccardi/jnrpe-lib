@@ -29,6 +29,8 @@ JNRPE Plugin package
    * CheckUsers : checks the the number of users currently logged in on the local
    system and generates an error if the number exceeds the thresholds specified.
    
-   * CheckUsers : tests connections to a MySQL server
+   * CheckMysql : tests connections to a MySQL server
+   
+   * CheckPgsql : tests connections to a PostgresSQL server
    
    
