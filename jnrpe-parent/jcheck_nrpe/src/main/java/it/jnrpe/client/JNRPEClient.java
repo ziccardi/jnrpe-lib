@@ -10,7 +10,6 @@
  */
 package it.jnrpe.client;
 
-import static java.util.Arrays.asList;
 import it.jnrpe.ReturnValue;
 import it.jnrpe.Status;
 import it.jnrpe.net.JNRPERequest;
@@ -30,9 +29,17 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
-import joptsimple.OptionException;
-import joptsimple.OptionParser;
-import joptsimple.OptionSet;
+import org.apache.commons.cli2.CommandLine;
+import org.apache.commons.cli2.DisplaySetting;
+import org.apache.commons.cli2.Group;
+import org.apache.commons.cli2.OptionException;
+import org.apache.commons.cli2.builder.ArgumentBuilder;
+import org.apache.commons.cli2.builder.DefaultOptionBuilder;
+import org.apache.commons.cli2.builder.GroupBuilder;
+import org.apache.commons.cli2.commandline.Parser;
+import org.apache.commons.cli2.option.DefaultOption;
+import org.apache.commons.cli2.util.HelpFormatter;
+import org.apache.commons.cli2.validation.NumberValidator;
 
 /**
  *  This class represent a simple JNRPE client that can be used to invoke
@@ -171,38 +178,165 @@ public class JNRPEClient {
 //			printSourceMessage(e.getCause());
 //	}
 	
+	
+	private static Group configureCommandLine()
+    {
+        DefaultOptionBuilder oBuilder = new DefaultOptionBuilder();
+        ArgumentBuilder aBuilder = new ArgumentBuilder();
+        GroupBuilder gBuilder = new GroupBuilder();
+
+        DefaultOption nosslOption = oBuilder.withLongName("nossl").withShortName(
+                "n").withDescription("Do no use SSL")
+                .create();
+
+        DefaultOption unknownOption = oBuilder.withLongName("unknown").withShortName(
+                "u").withDescription("Make socket timeouts return an UNKNOWN state instead of CRITICAL")
+                .create();
+        
+        DefaultOption hostOption = oBuilder.withLongName("host").withShortName("H")
+                    .withDescription("The address of the host running the JNRPE/NRPE daemon")
+                    .withArgument(aBuilder
+                                    .withName("host")
+                                    .withMinimum(1)
+                                    .withMaximum(1)
+                                    .create())
+                .create();
+
+        NumberValidator positiveInt = NumberValidator.getIntegerInstance();
+        positiveInt.setMinimum(0);
+        DefaultOption portOption = oBuilder.withLongName("port")
+                .withShortName("p")
+                .withDescription("The port on which the daemon is running (default=5666)")
+                    .withArgument(aBuilder
+                                    .withName("port")
+                                    .withMinimum(1)
+                                    .withMaximum(1)
+                                    .withDefault(new Long(5666))
+                                    .withValidator(positiveInt)
+                                    .create())
+                .create();
+
+        DefaultOption timeoutOption = oBuilder.withLongName("timeout").withShortName(
+                "t").withDescription("Number of seconds before connection times out (default=10)")
+                .withArgument(aBuilder
+                                    .withName("timeout")
+                                    .withMinimum(1)
+                                    .withMaximum(1)
+                                    .withDefault(new Long(10))
+                                    .withValidator(positiveInt)
+                                    .create())
+                .create();
+
+        DefaultOption commandOption = oBuilder.withLongName("command").withShortName(
+                "c").withDescription("The name of the command that the remote daemon should run")
+                .withArgument(aBuilder
+                                    .withName("command")
+                                    .withMinimum(1)
+                                    .withMaximum(1)
+                                    .create())
+                .create();
+        
+        DefaultOption argsOption = oBuilder.withLongName("arglist").withShortName(
+                "a").withDescription("Optional arguments that should be passed to the command.  Multiple arguments should be separated by a space (' ').  If provided, this must be the last option supplied on the command line.")
+                .withArgument(aBuilder
+                                    .withName("arglist")
+                                    .withMinimum(1)
+                                    .create())
+                .create();
+        
+        DefaultOption helpOption = oBuilder.withLongName("help").withShortName(
+                "h").withDescription("Shows this help")
+                .create();
+        
+        Group executionOption = gBuilder
+                    .withOption(nosslOption)
+                    .withOption(unknownOption)
+                    .withOption(hostOption)
+                    .withOption(portOption)
+                    .withOption(timeoutOption)
+                    .withOption(commandOption)
+                    .withOption(argsOption)
+                    .create();
+
+        Group mainGroup = gBuilder.withOption(executionOption).withOption(
+                helpOption).withMinimum(1).withMaximum(1).create();
+
+        return mainGroup;
+    }
+	
+	private static void printVersion()
+    {
+	    
+        System.out.println("jcheck_nrpe version " + JNRPEClient.class.getPackage().getImplementationVersion());
+        System.out.println("Copyright (c) 2013 Massimiliano Ziccardi");
+        System.out.println("Licensed under the Apache License, Version 2.0");
+        System.out.println();
+    }
+	
+	private static void printUsage(Exception e)
+    {
+        printVersion();
+        
+        StringBuffer sbDivider = new StringBuffer("=");
+        
+        if (e != null) System.out.println(e.getMessage() + "\n");
+
+        HelpFormatter hf = new HelpFormatter();
+        while (sbDivider.length() < hf.getPageWidth())
+            sbDivider.append("=");
+
+        // DISPLAY SETTING
+        hf.getDisplaySettings().clear();
+        hf.getDisplaySettings().add(DisplaySetting.DISPLAY_GROUP_EXPANDED);
+        hf.getDisplaySettings().add(DisplaySetting.DISPLAY_PARENT_CHILDREN);
+
+        // USAGE SETTING
+
+        hf.getFullUsageSettings().clear();
+        hf.getFullUsageSettings().add(DisplaySetting.DISPLAY_PARENT_ARGUMENT);
+        hf.getFullUsageSettings()
+                .add(DisplaySetting.DISPLAY_ARGUMENT_BRACKETED);
+        hf.getFullUsageSettings().add(DisplaySetting.DISPLAY_PARENT_CHILDREN);
+        hf.getFullUsageSettings().add(DisplaySetting.DISPLAY_GROUP_EXPANDED);
+
+        hf.setDivider(sbDivider.toString());
+
+        hf.setGroup(configureCommandLine());
+        hf.print();
+        System.exit(0);
+    }
+	
 	public static void main(String[] args)  throws Exception {
-		OptionParser parser = new OptionParser();
-		parser.acceptsAll(asList("n", "nossl"), "Do no use SSL");
-		parser.acceptsAll(asList("u", "unknown"), "Make socket timeouts return an UNKNOWN state instead of CRITICAL");
-		parser.acceptsAll(asList("H", "host"), "The address of the host running the JNRPE/NRPE daemon").withRequiredArg().describedAs("host").required();
-		parser.acceptsAll(asList("p", "port"), "The port on which the daemon is running (default=5666)").withRequiredArg().ofType(Integer.class).describedAs("port").defaultsTo(5666);
-		parser.acceptsAll(asList("t", "timeout"), "Number of seconds before connection times out (default=10)").withRequiredArg().describedAs("timeout").ofType(Integer.class).defaultsTo(10);
-		parser.acceptsAll(asList("c", "command"), "The name of the command that the remote daemon should run").withRequiredArg().required().describedAs("command name");
-		parser.acceptsAll(asList("a", "arglist"), "Optional arguments that should be passed to the command.  Multiple arguments should be separated by an exlamation mark ('!').  If provided, this must be the last option supplied on the command line.").withRequiredArg().describedAs("arglist");
-		parser.acceptsAll(asList("h", "help"), "Shows this help").forHelp();
 		
+	    Parser parser = new Parser();
+	    parser.setGroup(configureCommandLine());
+	    
 		boolean timeoutAsUnknown = false;
 		
 		try
 		{
-			OptionSet os = parser.parse(args);
+		    CommandLine cli = parser.parse(args);
+
+		    if (cli.hasOption("--help"))
+		        printUsage(null);
+		    
 			
-			timeoutAsUnknown = os.has("unknown");
+			timeoutAsUnknown = cli.hasOption("--unknown");
 			
-			String sHost = (String) os.valueOf("host");
-			int port = (Integer) os.valueOf("port");
-			String sCommand = (String) os.valueOf("command");
-			String sArgs = (String) os.valueOf("arglist");
+			String sHost = (String) cli.getValue("--host");
+			Long port = (Long) cli.getValue("--port", new Long(5666));
+			String sCommand = (String) cli.getValue("--command");
+//			String sArgs = (String) cli.getValue("--arglist");
+//			
+//			if (sArgs.startsWith("'") && sArgs.endsWith("'"))
+//			{
+//			    sArgs = sArgs.substring(1, sArgs.length() - 1);
+//			}
 			
-			if (sArgs.startsWith("'") && sArgs.endsWith("'"))
-			{
-			    sArgs = sArgs.substring(1, sArgs.length() - 1);
-			}
+			JNRPEClient client = new JNRPEClient(sHost, port.intValue(), !cli.hasOption("--nossl"));
+			client.setTimeout(  ((Long) cli.getValue("--timeout", new Long(10))).intValue());
 			
-			JNRPEClient client = new JNRPEClient(sHost, port, !os.has("nossl"));
-			client.setTimeout((Integer) os.valueOf("timeout"));
-			ReturnValue ret = client.sendCommand(sCommand, sArgs);
+			ReturnValue ret = client.sendCommand(sCommand, (String[]) cli.getValues("--arglist").toArray(new String[0]));
 			
 			System.out.println (ret.getMessage());
 			System.exit(ret.getStatus().intValue());
@@ -216,39 +350,13 @@ public class JNRPEClient {
 			else
 				returnStatus = Status.CRITICAL;
 			
-//			printSourceMessage(exc);
 			System.out.println(exc.getMessage());
 			System.exit(returnStatus.intValue());
 		}
 		catch (OptionException oe)
 		{
-			System.out.println ();
-			System.out.println ("Error : " + oe.getMessage());
-			System.out.println ();
-			
-			printBanner();
-			
-			System.out.println ("Usage: jcheck_nrpe -H <host> [-n] [-u] [-p <port>] [-t <timeout>] [-c <command>] [-a <arglist...>]");
-			System.out.println ();
-			try {
-				parser.printHelpOn(System.out);
-				System.exit(Status.UNKNOWN.intValue());
-			} catch (IOException e) {
-				// Should never happen...
-				e.printStackTrace();
-			}
-			
+			printUsage(oe);
 		}
-
-//		parser.printHelpOn(System.out);
 	}
 
-	private static void printBanner() {
-		System.out.println ("NRPE Plugin for Nagios");
-		System.out.println ("Copyright (c) 2013 Massimiliano Ziccardi (massimiliano.ziccardi@gmail.com)");
-		System.out.println ("Version: " + JNRPEClient.class.getPackage().getImplementationVersion());
-		System.out.println ();
-		
-	}
-	
 }
