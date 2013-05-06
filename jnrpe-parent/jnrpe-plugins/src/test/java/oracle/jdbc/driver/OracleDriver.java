@@ -23,32 +23,27 @@ public class OracleDriver implements Driver
 
     public boolean acceptsURL(String url) throws SQLException
     {
-        System.out.println ("???????????????????????????????????? " + url);
         return false;
     }
 
     public DriverPropertyInfo[] getPropertyInfo(String url, Properties info)
             throws SQLException
     {
-        System.out.println ("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx - getPropertyInfo(String url, Properties info)");
         return null;
     }
 
     public int getMajorVersion()
     {
-        System.out.println ("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx - getMajorVersion");
         return 0;
     }
 
     public int getMinorVersion()
     {
-        System.out.println ("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx - getMinorVersion");
         return 0;
     }
 
     public boolean jdbcCompliant()
     {
-        System.out.println ("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx - jdbcCompliant");
         return true;
     }
 
