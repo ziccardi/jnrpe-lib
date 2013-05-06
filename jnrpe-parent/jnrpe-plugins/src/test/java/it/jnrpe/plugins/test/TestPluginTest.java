@@ -55,7 +55,7 @@ public class TestPluginTest implements Constants{
 		ReturnValue ret = client.sendCommand("TESTCOMMAND", "Hello World", "critical");
 		
 		Assert.assertEquals(ret.getStatus(), Status.CRITICAL);
-		Assert.assertEquals(ret.getMessage(), "TEST : 'Hello World'");
+		Assert.assertEquals(ret.getMessage(), "TEST : Hello World");
 	}
 
 	@Test
@@ -65,7 +65,7 @@ public class TestPluginTest implements Constants{
 		ReturnValue ret = client.sendCommand("TESTCOMMAND", "Hello World!", "warning");
 		
 		Assert.assertEquals(ret.getStatus(), Status.WARNING);
-		Assert.assertEquals(ret.getMessage(), "TEST : 'Hello World!'");
+		Assert.assertEquals(ret.getMessage(), "TEST : Hello World!");
 	}
 	
 	@Test
@@ -75,7 +75,7 @@ public class TestPluginTest implements Constants{
 		ReturnValue ret = client.sendCommand("TESTCOMMAND", "Hello World!!!", "ok");
 		
 		Assert.assertEquals(ret.getStatus(), Status.OK);
-		Assert.assertEquals(ret.getMessage(), "TEST : 'Hello World!!!'");
+		Assert.assertEquals(ret.getMessage(), "TEST : Hello World!!!");
 	}
 	
 	@Test
@@ -85,6 +85,6 @@ public class TestPluginTest implements Constants{
 		ReturnValue ret = client.sendCommand("TESTCOMMAND", "Hello World!!!!!", "unknown");
 		
 		Assert.assertEquals(ret.getStatus(), Status.UNKNOWN);
-		Assert.assertEquals(ret.getMessage(), "TEST : 'Hello World!!!!!'");
+		Assert.assertEquals(ret.getMessage(), "TEST : Hello World!!!!!");
 	}
 }
