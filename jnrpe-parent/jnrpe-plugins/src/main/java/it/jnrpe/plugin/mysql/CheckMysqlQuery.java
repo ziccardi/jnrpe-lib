@@ -71,13 +71,13 @@ public class CheckMysqlQuery extends PluginBase {
 		}
 
 		String query = cl.getOptionValue("query");
-		if (query.startsWith("'") || query.startsWith("\"")){
-			query = query.substring(1);
-		}
-		if (query.endsWith("'") || query.endsWith("\"")){
-			query = query.substring(0, query.length() -1);
-		}
-		System.out.println(query);
+//		if (query.startsWith("'") || query.startsWith("\"")){
+//			query = query.substring(1);
+//		}
+//		if (query.endsWith("'") || query.endsWith("\"")){
+//			query = query.substring(0, query.length() -1);
+//		}
+//		System.out.println(query);
 		String critical = cl.getOptionValue("critical");
 		
 		String warning = cl.getOptionValue("warning");
