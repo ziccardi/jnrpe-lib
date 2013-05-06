@@ -16,7 +16,7 @@ Getting Started
   
 +--------------------------+
   
-  ../check_nrpe -n -H 127.0.0.1 -c runTest -a 'random1!33:66!67:'
+  ./check_nrpe -n -H 127.0.0.1 -c runTest -a random1 33:66 67:
   
 +--------------------------+  
   
@@ -248,7 +248,7 @@ Getting Started
   
 +----------------+
 
-  check_nrpe -n -H 127.0.0.1 -c runTest -a 'random1'
+  check_nrpe -n -H 127.0.0.1 -c runTest -a random1
 
 +----------------+
 
@@ -366,7 +366,7 @@ Getting Started
   
 +----------------+
 
-  ./check_nrpe -n -H 127.0.0.1 -c runTest -a 'random1!33:66!67:'
+  ./check_nrpe -n -H 127.0.0.1 -c runTest -a random1 33:66 67:
 
 +----------------+ 
 
