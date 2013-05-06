@@ -160,6 +160,10 @@ public class JNRPEServer
 
         HelpFormatter hf = new HelpFormatter();
 
+        StringBuffer sbDivider = new StringBuffer("=");
+        while (sbDivider.length() < hf.getPageWidth())
+            sbDivider.append("=");
+        
         // DISPLAY SETTING
         hf.getDisplaySettings().clear();
         hf.getDisplaySettings().add(DisplaySetting.DISPLAY_GROUP_EXPANDED);
@@ -174,7 +178,7 @@ public class JNRPEServer
         hf.getFullUsageSettings().add(DisplaySetting.DISPLAY_PARENT_CHILDREN);
         hf.getFullUsageSettings().add(DisplaySetting.DISPLAY_GROUP_EXPANDED);
 
-        hf.setDivider("=================================================================");
+        hf.setDivider(sbDivider.toString());
 
         hf.setGroup(configureCommandLine());
         hf.print();
