@@ -131,17 +131,17 @@ public final class CommandInvoker
                     // "$ARG" + (i + 1) + "$", args[i]);
                     sCommandLine[j] = sCommandLine[j].replaceAll(
                             "\\$[Aa][Rr][Gg]" + (i + 1) + "\\$", Matcher.quoteReplacement(args[i]));
-                    if (sCommandLine[j].indexOf(' ') != -1)
-                    {
-                        if (sCommandLine[j].indexOf('\'') == -1)
-                        {
-                            sCommandLine[j] = "'" + sCommandLine[j] + "'";
-                        }
-                        else if (sCommandLine[j].indexOf('"') == -1)
-                        {
-                            sCommandLine[j] = "\"" + sCommandLine[j] + "\"";
-                        }
-                    }
+//                    if (sCommandLine[j].indexOf(' ') != -1)
+//                    {
+//                        if (sCommandLine[j].indexOf('\'') == -1)
+//                        {
+//                            sCommandLine[j] = "'" + sCommandLine[j] + "'";
+//                        }
+//                        else if (sCommandLine[j].indexOf('"') == -1)
+//                        {
+//                            sCommandLine[j] = "\"" + sCommandLine[j] + "\"";
+//                        }
+//                    }
                 }
             }
         }
