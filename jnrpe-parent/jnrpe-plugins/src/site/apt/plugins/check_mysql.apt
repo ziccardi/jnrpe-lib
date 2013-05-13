@@ -93,7 +93,7 @@ The CHECK_MYSQL plugin
 
 ** Invocation
 
- The following will check the connection a slave thread and will send a warning if it is 30 seconds behind the master and a critical if it is 30 seconds behind the master:
+ The following will check the connection a slave thread and will send a warning if it is 10 seconds behind the master and a critical if it is 30 seconds behind the master:
  
 +----------+
 
