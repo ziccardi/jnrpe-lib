@@ -10,14 +10,12 @@
  */
 package it.jnrpe;
 
-
 /**
  * Enumeration of all the supported status.
  *
  * @author Massimiliano Ziccardi
  */
-public enum Status
-{
+public enum Status {
     /**
      * Service status 'OK'.
      */
@@ -55,44 +53,45 @@ public enum Status
     /**
      * The enumeration int value.
      */
-    private final int m_iIntValue;
+    private final int intValue;
 
     /**
      * Builds an enumeration with the given int value.
-     * @param iValue The value
+     *
+     * @param iValue
+     *            The value
      */
-    Status(final int iValue)
-    {
-        m_iIntValue = iValue;
+    Status(final int iValue) {
+        intValue = iValue;
     }
 
     /**
      * Returns the int value of the enum.
+     *
      * @return The int value
      */
-    public int intValue()
-    {
-        return m_iIntValue;
+    public int intValue() {
+        return intValue;
     }
 
     /**
      * Returns the enum corresponding with the given int value.
-     * @param iIntValue The int value to be converted
+     *
+     * @param intValue
+     *            The int value to be converted
      * @return A {@link Status} enum. Null if not found
      */
-    public static Status fromIntValue(final int iIntValue)
-    {
-        switch (iIntValue)
-        {
-            case OK_STATUS:
-                return OK;
-            case WARNING_STATUS:
-                return WARNING;
-            case CRITICAL_STATUS:
-                return CRITICAL;
-            case UNKNOWN_STATUS:
-            default:
-                return UNKNOWN;
+    public static Status fromIntValue(final int intValue) {
+        switch (intValue) {
+        case OK_STATUS:
+            return OK;
+        case WARNING_STATUS:
+            return WARNING;
+        case CRITICAL_STATUS:
+            return CRITICAL;
+        case UNKNOWN_STATUS:
+        default:
+            return UNKNOWN;
         }
     }
 }

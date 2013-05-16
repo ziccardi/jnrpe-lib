@@ -1,6 +1,6 @@
 /**
- * This package contains all the classes created to add the event function to
- * JNRPE.
+ * This package contains all the classes regarding the network
+ * protocol.
  */
 package it.jnrpe.net;
 

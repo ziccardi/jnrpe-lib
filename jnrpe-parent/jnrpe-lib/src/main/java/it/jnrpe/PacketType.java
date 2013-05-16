@@ -20,8 +20,7 @@ package it.jnrpe;
  *
  * @author Massimiliano Ziccardi
  */
-public enum PacketType
-{
+public enum PacketType {
     /**
      * Id code for a packet containing a query.
      */
@@ -34,40 +33,37 @@ public enum PacketType
     /**
      * The int value of the enumeration constant.
      */
-    private final int m_iIntValue;
+    private final int intValue;
 
     /**
-     * Creates an enumeration constant with the
-     * given value.
+     * Creates an enumeration constant with the given value.
      *
-     * @param iValue the constant value
+     * @param value
+     *            the constant value
      */
-    PacketType(final int iValue)
-    {
-        m_iIntValue = iValue;
+    PacketType(final int value) {
+        intValue = value;
     }
 
     /**
      * Return the integer value of the constant.
-
+     *
      * @return The integer value
      */
-    public int intValue()
-    {
-        return m_iIntValue;
+    public int intValue() {
+        return intValue;
     }
 
     /**
-     * Convert from the passed in integer value to the
-     * corresponding enumeration constant.
+     * Convert from the passed in integer value to the corresponding enumeration
+     * constant.
      *
-     * @param iIntValue The value to be converted
+     * @param value
+     *            The value to be converted
      * @return The corresponding enumeration constant
      */
-    public static PacketType fromIntValue(final int iIntValue)
-    {
-        switch (iIntValue)
-        {
+    public static PacketType fromIntValue(final int value) {
+        switch (value) {
         case 1:
             return QUERY;
         case 2:

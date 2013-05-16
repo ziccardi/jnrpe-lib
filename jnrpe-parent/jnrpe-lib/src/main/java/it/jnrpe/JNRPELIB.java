@@ -21,8 +21,7 @@ package it.jnrpe;
  * @author Massimiliano Ziccardi
  *
  */
-public interface JNRPELIB
-{
+public interface JNRPELIB {
     /**
      * The JNRPE Version as read from its manifest.
      */

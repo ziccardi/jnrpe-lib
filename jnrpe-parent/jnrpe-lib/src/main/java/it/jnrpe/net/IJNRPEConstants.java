@@ -16,8 +16,7 @@ package it.jnrpe.net;
  * @author Massimiliano Ziccardi
  * @deprecated
  */
-public interface IJNRPEConstants
-{
+public interface IJNRPEConstants {
     /**
      * Contains the version of the software.
      */

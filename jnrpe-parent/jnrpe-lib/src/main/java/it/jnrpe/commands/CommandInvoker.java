@@ -28,49 +28,47 @@ import java.util.regex.Matcher;
  * @author Massimiliano Ziccardi
  *
  */
-public final class CommandInvoker
-{
+public final class CommandInvoker {
     /**
      * <code>true</code> if the variable parameters ($ARG?$) must be
      * interpolated.
      */
-    private final boolean m_bAcceptParams;
+    private final boolean acceptParams;
 
     /**
      * The plugin repository to be used to find the plugins.
      */
-    private final PluginRepository m_pluginRepository;
+    private final PluginRepository pluginRepository;
 
     /**
      * The command repository to be used to find the commands.
      */
-    private final CommandRepository m_commandRepository;
+    private final CommandRepository commandRepository;
 
     /**
      * The listeners.
      */
-    private final Set<IJNRPEEventListener> m_vListeners;
+    private final Set<IJNRPEEventListener> listenersList;
 
     /**
      * Builds and initializes the {@link CommandInvoker} object.
      *
-     * @param pluginRepository
+     * @param pluginRepo
      *            The plugin repository containing all the plugins that must be
      *            used by this invoker.
-     * @param commandRepository
+     * @param commandRepo
      *            The command repository containing all the commands that must
      *            be used by this invoker.
-     * @param vListeners
+     * @param listeners
      *            All the listeners
      */
-    public CommandInvoker(final PluginRepository pluginRepository,
-            final CommandRepository commandRepository,
-            final Set<IJNRPEEventListener> vListeners)
-    {
-        m_bAcceptParams = true;
-        m_pluginRepository = pluginRepository;
-        m_commandRepository = commandRepository;
-        m_vListeners = vListeners;
+    public CommandInvoker(final PluginRepository pluginRepo,
+            final CommandRepository commandRepo,
+            final Set<IJNRPEEventListener> listeners) {
+        acceptParams = true;
+        this.pluginRepository = pluginRepo;
+        this.commandRepository = commandRepo;
+        this.listenersList = listeners;
     }
 
     /**
@@ -78,29 +76,27 @@ public final class CommandInvoker
      * execute external commands (plugins). The methods also expands the $ARG?$
      * macros.
      *
-     * @param sCommandName
+     * @param commandName
      *            The name of the command, as configured in the server
      *            configuration XML
-     * @param args
+     * @param argsAry
      *            The arguments to pass to the command as configured in the
      *            server configuration XML (with the $ARG?$ macros)
      * @return The result of the command
      */
-    public ReturnValue invoke(final String sCommandName, final String[] args)
-    {
-        if (sCommandName.equals("_NRPE_CHECK"))
-        {
-            return new ReturnValue(Status.OK, JNRPELIB.VERSION); 
+    public ReturnValue invoke(final String commandName,
+                               final String[] argsAry) {
+        if (commandName.equals("_NRPE_CHECK")) {
+            return new ReturnValue(Status.OK, JNRPELIB.VERSION);
         }
 
-        CommandDefinition cd = m_commandRepository.getCommand(sCommandName);
+        CommandDefinition cd = commandRepository.getCommand(commandName);
 
-        if (cd == null)
-        {
+        if (cd == null) {
             return new ReturnValue(Status.UNKNOWN, "Bad command");
         }
 
-        return invoke(cd, args);
+        return invoke(cd, argsAry);
     }
 
     /**
@@ -109,76 +105,54 @@ public final class CommandInvoker
      *
      * @param cd
      *            The command definition
-     * @param args
+     * @param argsAry
      *            The arguments to pass to the command as configured in the
      *            server configuration XML (with the $ARG?$ macros)
      * @return The result of the command
      */
-    public ReturnValue invoke(final CommandDefinition cd, final String[] args)
-    {
-        String sPluginName = cd.getPluginName();
+    public ReturnValue
+            invoke(final CommandDefinition cd, final String[] argsAry) {
+        String pluginName = cd.getPluginName();
 
-        String[] sCommandLine = cd.getCommandLine();
+        String[] commandLine = cd.getCommandLine();
 
-        if (m_bAcceptParams)
-        {
-            for (int j = 0; sCommandLine != null
-                        && j < sCommandLine.length; j++)
-            {
-                for (int i = 0; i < args.length; i++)
-                {
-                    // sCommandLine[j] = CStringUtil.replaceAll(sCommandLine[j],
-                    // "$ARG" + (i + 1) + "$", args[i]);
-                    sCommandLine[j] = sCommandLine[j].replaceAll(
-                            "\\$[Aa][Rr][Gg]" + (i + 1) + "\\$", Matcher.quoteReplacement(args[i]));
-//                    if (sCommandLine[j].indexOf(' ') != -1)
-//                    {
-//                        if (sCommandLine[j].indexOf('\'') == -1)
-//                        {
-//                            sCommandLine[j] = "'" + sCommandLine[j] + "'";
-//                        }
-//                        else if (sCommandLine[j].indexOf('"') == -1)
-//                        {
-//                            sCommandLine[j] = "\"" + sCommandLine[j] + "\"";
-//                        }
-//                    }
+        if (acceptParams) {
+            for (int j = 0;
+                        commandLine != null && j < commandLine.length; j++) {
+                for (int i = 0; i < argsAry.length; i++) {
+                    commandLine[j] =
+                            commandLine[j].replaceAll("\\$[Aa][Rr][Gg]"
+                                    + (i + 1) + "\\$",
+                                    Matcher.quoteReplacement(argsAry[i]));
                 }
             }
         }
 
-        PluginProxy plugin = (PluginProxy) m_pluginRepository
-                .getPlugin(sPluginName);
+        PluginProxy plugin =
+                (PluginProxy) pluginRepository.getPlugin(pluginName);
 
-        if (plugin == null)
-        {
-            EventsUtil.sendEvent(m_vListeners, this, LogEvent.INFO,
-                    "Unable to instantiate plugin named " + sPluginName);
+        if (plugin == null) {
+            EventsUtil.sendEvent(listenersList, this, LogEvent.INFO,
+                    "Unable to instantiate plugin named " + pluginName);
             return new ReturnValue(Status.UNKNOWN,
-                    "Error instantiating plugin '" + sPluginName + "' : bad plugin name?");
+                    "Error instantiating plugin '" + pluginName
+                            + "' : bad plugin name?");
         }
 
-        plugin.addListeners(m_vListeners);
+        plugin.addListeners(listenersList);
 
-        try
-        {
-            if (sCommandLine != null)
-            {
-                return plugin.execute(sCommandLine);
-            }
-            else
-            {
+        try {
+            if (commandLine != null) {
+                return plugin.execute(commandLine);
+            } else {
                 return plugin.execute(new String[0]);
             }
-        }
-        catch (RuntimeException re)
-        {
-            return new ReturnValue(Status.UNKNOWN,
-                    "Plugin [" + sPluginName + "] execution error: " + re.getMessage());
-        }
-        catch (Throwable thr)
-        {
-            return new ReturnValue(Status.UNKNOWN,
-                    "Plugin [" + sPluginName + "] execution error: " + thr.getMessage());
+        } catch (RuntimeException re) {
+            return new ReturnValue(Status.UNKNOWN, "Plugin [" + pluginName
+                    + "] execution error: " + re.getMessage());
+        } catch (Throwable thr) {
+            return new ReturnValue(Status.UNKNOWN, "Plugin [" + pluginName
+                    + "] execution error: " + thr.getMessage());
         }
     }
 }

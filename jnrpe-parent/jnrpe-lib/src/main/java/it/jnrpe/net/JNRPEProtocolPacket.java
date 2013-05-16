@@ -24,8 +24,7 @@ import java.util.zip.CRC32;
  *
  * @author Massimiliano Ziccardi
  */
-class JNRPEProtocolPacket
-{
+class JNRPEProtocolPacket {
     /**
      * Max amount of data we'll send in one query/response.
      */
@@ -34,41 +33,40 @@ class JNRPEProtocolPacket
     /**
      * The CRC value.
      */
-    private int m_iCRC = 0;
+    private int crcValue = 0;
 
     /**
      * The packet type.
      */
-    private int m_iPacketType = 0;
+    private int packetTypeCode = 0;
 
     /**
      * The packet version.
      */
-    private int m_iPacketVersion = 0;
+    private int packetVersion = 0;
 
     /**
      * The result code.
      */
-    private int m_iResultCode = 0;
+    private int resultCode = 0;
 
     /**
      * The packet buffer.
      */
-    private byte[] m_vBuffer = new byte[MAX_PACKETBUFFER_LENGTH];
+    private byte[] byteBufferAry = new byte[MAX_PACKETBUFFER_LENGTH];
 
     /**
      * Dummy bytes.
      */
-    private byte[] m_vDummy = new byte[2];
+    private byte[] dummyBytesAry = new byte[2];
 
     /**
      * Returns the packet CRC value.
      *
      * @return the CRC value
      */
-    public int getCRC()
-    {
-        return m_iCRC;
+    public int getCRC() {
+        return crcValue;
     }
 
     /**
@@ -76,9 +74,8 @@ class JNRPEProtocolPacket
      *
      * @return The packet type
      */
-    public PacketType getPacketType()
-    {
-        return PacketType.fromIntValue(m_iPacketType);
+    public PacketType getPacketType() {
+        return PacketType.fromIntValue(packetTypeCode);
     }
 
     /**
@@ -86,20 +83,18 @@ class JNRPEProtocolPacket
      *
      * @return The packet version
      */
-    public PacketVersion getPacketVersion()
-    {
-        return PacketVersion.fromIntValue(m_iPacketVersion);
+    public PacketVersion getPacketVersion() {
+        return PacketVersion.fromIntValue(packetVersion);
     }
 
     /**
      * Sets the CRC value.
      *
-     * @param iCRC
+     * @param crc
      *            The new CRC value
      */
-    public void setCRC(final int iCRC)
-    {
-        m_iCRC = iCRC;
+    public void setCRC(final int crc) {
+        crcValue = crc;
     }
 
     /**
@@ -108,9 +103,8 @@ class JNRPEProtocolPacket
      * @param packetType
      *            The new packet type
      */
-    protected void setPacketType(final PacketType packetType)
-    {
-        m_iPacketType = packetType.intValue();
+    protected void setPacketType(final PacketType packetType) {
+        packetTypeCode = packetType.intValue();
     }
 
     /**
@@ -119,9 +113,8 @@ class JNRPEProtocolPacket
      * @param version
      *            The packet version
      */
-    public void setPacketVersion(final PacketVersion version)
-    {
-        m_iPacketVersion = version.intValue();
+    public void setPacketVersion(final PacketVersion version) {
+        packetVersion = version.intValue();
     }
 
     /**
@@ -129,9 +122,8 @@ class JNRPEProtocolPacket
      *
      * @return The result code
      */
-    public int getResultCode()
-    {
-        return m_iResultCode;
+    public int getResultCode() {
+        return resultCode;
     }
 
     /**
@@ -140,46 +132,45 @@ class JNRPEProtocolPacket
      * @param status
      *            The new result code
      */
-    public void setResultCode(final int status)
-    {
-        m_iResultCode = status;
+    public void setResultCode(final int status) {
+        resultCode = status;
     }
 
     /**
      * Initialize the object reading the data from the input stream.
      *
-     * @param in The stream to be read
-     * @throws IOException On any I/O error
+     * @param in
+     *            The stream to be read
+     * @throws IOException
+     *             On any I/O error
      */
-    protected void fromInputStream(final InputStream in) throws IOException
-    {
+    protected void fromInputStream(final InputStream in) throws IOException {
         DataInputStream din = new DataInputStream(in);
-        m_iPacketVersion = din.readShort();
-        m_iPacketType = din.readShort();
-        m_iCRC = din.readInt();
-        m_iResultCode = din.readShort();
-        din.readFully(m_vBuffer);
-        din.readFully(m_vDummy);
+        packetVersion = din.readShort();
+        packetTypeCode = din.readShort();
+        crcValue = din.readInt();
+        resultCode = din.readShort();
+        din.readFully(byteBufferAry);
+        din.readFully(dummyBytesAry);
     }
 
     /**
      * Validates the packet CRC.
      *
-     * @throws BadCRCException If the CRC can't be validated
+     * @throws BadCRCException
+     *             If the CRC can't be validated
      */
-    public void validate() throws BadCRCException
-    {
+    public void validate() throws BadCRCException {
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
         DataOutputStream dout = new DataOutputStream(bout);
 
-        try
-        {
-            dout.writeShort(m_iPacketVersion);
-            dout.writeShort(m_iPacketType);
+        try {
+            dout.writeShort(packetVersion);
+            dout.writeShort(packetTypeCode);
             dout.writeInt(0); // NO CRC
-            dout.writeShort(m_iResultCode);
-            dout.write(m_vBuffer);
-            dout.write(m_vDummy);
+            dout.writeShort(resultCode);
+            dout.write(byteBufferAry);
+            dout.write(dummyBytesAry);
 
             dout.close();
 
@@ -188,13 +179,10 @@ class JNRPEProtocolPacket
             CRC32 crcAlg = new CRC32();
             crcAlg.update(vBytes);
 
-            if (!(((int) crcAlg.getValue()) == m_iCRC))
-            {
+            if (!(((int) crcAlg.getValue()) == crcValue)) {
                 throw new BadCRCException("Bad CRC");
             }
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             // Should never happen...
         }
     }
@@ -204,25 +192,21 @@ class JNRPEProtocolPacket
      *
      * @return The byte array representation of this packet.
      */
-    public byte[] toByteArray()
-    {
+    public byte[] toByteArray() {
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
         DataOutputStream dout = new DataOutputStream(bout);
 
-        try
-        {
-            dout.writeShort(m_iPacketVersion);
-            dout.writeShort(m_iPacketType);
-            dout.writeInt(m_iCRC);
-            dout.writeShort(m_iResultCode);
-            dout.write(m_vBuffer);
-            dout.write(m_vDummy);
+        try {
+            dout.writeShort(packetVersion);
+            dout.writeShort(packetTypeCode);
+            dout.writeInt(crcValue);
+            dout.writeShort(resultCode);
+            dout.write(byteBufferAry);
+            dout.write(dummyBytesAry);
 
             dout.close();
 
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             // Should never happen...
         }
         return bout.toByteArray();
@@ -233,70 +217,63 @@ class JNRPEProtocolPacket
      *
      * @return The string message
      */
-    public String getStringMessage()
-    {
-        int iZeroIndex = MAX_PACKETBUFFER_LENGTH - 1;
+    public String getStringMessage() {
+        int zeroIndex = MAX_PACKETBUFFER_LENGTH - 1;
 
         // find the first 0 byte
-        for (int i = 0; i < MAX_PACKETBUFFER_LENGTH; i++)
-        {
-            if (m_vBuffer[i] == 0)
-            {
-                iZeroIndex = i;
+        for (int i = 0; i < MAX_PACKETBUFFER_LENGTH; i++) {
+            if (byteBufferAry[i] == 0) {
+                zeroIndex = i;
                 break;
             }
         }
 
-        return new String(m_vBuffer, 0, iZeroIndex);
+        return new String(byteBufferAry, 0, zeroIndex);
     }
 
     /**
      * Sets the packet message. If the message is longer than.
-     * {@link JNRPEProtocolPacket#MAX_PACKETBUFFER_LENGTH} than it gets truncated to
-     * {@link JNRPEProtocolPacket#MAX_PACKETBUFFER_LENGTH} bytes.
+     * {@link JNRPEProtocolPacket#MAX_PACKETBUFFER_LENGTH} than it gets
+     * truncated to {@link JNRPEProtocolPacket#MAX_PACKETBUFFER_LENGTH} bytes.
      *
-     * @param sMessage
+     * @param message
      *            The message
      */
-    protected void _setMessage(final String sMessage)
-    {
-        if (sMessage == null)
-        {
-            m_vBuffer[0] = 0;
+    protected void _setMessage(final String message) {
+        if (message == null) {
+            byteBufferAry[0] = 0;
             return;
         }
-        System.arraycopy(sMessage.getBytes(), 0, m_vBuffer, 0, Math.min(
-                sMessage.length(), MAX_PACKETBUFFER_LENGTH));
+        System.arraycopy(message.getBytes(), 0, byteBufferAry, 0,
+                Math.min(message.length(), MAX_PACKETBUFFER_LENGTH));
 
-        if (sMessage.length() < MAX_PACKETBUFFER_LENGTH)
-        {
-            m_vBuffer[sMessage.length()] = 0;
+        if (message.length() < MAX_PACKETBUFFER_LENGTH) {
+            byteBufferAry[message.length()] = 0;
         }
     }
 
     /**
      * Initializes the arrays with random data. Not sure it is really needed...
      */
-    protected void initRandomBuffer()
-    {
+    protected void initRandomBuffer() {
         Random r = new Random(System.currentTimeMillis());
 
-        r.nextBytes(m_vBuffer);
-        r.nextBytes(m_vDummy);
+        r.nextBytes(byteBufferAry);
+        r.nextBytes(dummyBytesAry);
     }
-    
+
     /**
      * Write the command name inside the JNRPE packet.
-     * 
-     * @param sCommand The command name
+     *
+     * @param commandName
+     *            The command name
      */
-    protected void setDataBuffer(final String sCommand)
-    {
-    	if (sCommand == null)
-    	{
-    		throw new IllegalArgumentException("Buffer can't be null");
-    	}
-    	
-    	m_vBuffer = Arrays.copyOf(sCommand.getBytes(), MAX_PACKETBUFFER_LENGTH);
+    protected void setDataBuffer(final String commandName) {
+        if (commandName == null) {
+            throw new IllegalArgumentException("Command name can't be null");
+        }
+
+        byteBufferAry =
+                Arrays.copyOf(commandName.getBytes(), MAX_PACKETBUFFER_LENGTH);
     }
 }

@@ -1,12 +1,12 @@
 /*
  * Copyright (c) 2011 Massimiliano Ziccardi
- *  
+ *
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
  * You may obtain a copy of the License at 
- * 
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0 
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software 
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
@@ -30,58 +30,54 @@ import org.testng.annotations.Test;
 
 /**
  * Unit test for the check_users plugin
- * 
+ *
  * @author Frederico Campos
  *
  */
-public class CheckUsersPluginTest implements Constants{
+public class CheckUsersPluginTest implements Constants {
 
-	@BeforeTest
-	public void setup()	 throws Exception {
-	    ClassLoader cl = CheckFilePluginTest.class.getClassLoader();
-        
-        PluginDefinition checkUsers = PluginRepositoryUtil.parseXmlPluginDefinition(cl, cl.getResourceAsStream("check_users_plugin.xml"));
-        
-		SetupTest.getPluginRepository().addPluginDefinition(checkUsers);
-	}
-	
-	@Test
-	public void checkUsersOk() throws Exception {
-		CommandRepository cr = SetupTest.getCommandRepository();
-		cr.addCommandDefinition(
-				new CommandDefinition("CHECK_USERS", "CHECK_USERS")
-					.addArgument(new CommandOption("w", "$ARG1$"))
-					.addArgument(new CommandOption("c", "$ARG2$"))
-				);
-		JNRPEClient client = new JNRPEClient(BIND_ADDRESS, JNRPE_PORT, false);
-		ReturnValue ret = client.sendCommand("CHECK_USERS", "10:", "20:");
-		Assert.assertEquals(ret.getStatus(), Status.OK);
-	}
+    @BeforeTest
+    public void setup() throws Exception {
+        ClassLoader cl = CheckFilePluginTest.class.getClassLoader();
 
-	@Test
-	public void checkUsersWarning() throws Exception {
-		CommandRepository cr = SetupTest.getCommandRepository();
-		cr.addCommandDefinition(
-				new CommandDefinition("CHECK_USERS", "CHECK_USERS")
-					.addArgument(new CommandOption("w", "$ARG1$"))
-					.addArgument(new CommandOption("c", "$ARG2$"))
-				);
-		JNRPEClient client = new JNRPEClient(BIND_ADDRESS, JNRPE_PORT, false);
-		ReturnValue ret = client.sendCommand("CHECK_USERS", "1:", "20:");
-		Assert.assertEquals(ret.getStatus(), Status.WARNING);
-	}
-	
-	@Test
-	public void checkUsersCritical() throws Exception {
-		System.out.println("Running checkUsers");
-		CommandRepository cr = SetupTest.getCommandRepository();
-		cr.addCommandDefinition(
-				new CommandDefinition("CHECK_USERS", "CHECK_USERS")
-					.addArgument(new CommandOption("w", "$ARG1$"))
-					.addArgument(new CommandOption("c", "$ARG2$"))
-				);
-		JNRPEClient client = new JNRPEClient(BIND_ADDRESS, JNRPE_PORT, false);
-		ReturnValue ret = client.sendCommand("CHECK_USERS", "0:", "1:");
-		Assert.assertEquals(ret.getStatus(), Status.CRITICAL);
-	}
+        PluginDefinition checkUsers =
+                PluginRepositoryUtil.parseXmlPluginDefinition(cl,
+                        cl.getResourceAsStream("check_users_plugin.xml"));
+
+        SetupTest.getPluginRepository().addPluginDefinition(checkUsers);
+    }
+
+    @Test
+    public void checkUsersOk() throws Exception {
+        CommandRepository cr = SetupTest.getCommandRepository();
+        cr.addCommandDefinition(new CommandDefinition("CHECK_USERS",
+                "CHECK_USERS").addArgument(new CommandOption("w", "$ARG1$"))
+                .addArgument(new CommandOption("c", "$ARG2$")));
+        JNRPEClient client = new JNRPEClient(BIND_ADDRESS, JNRPE_PORT, false);
+        ReturnValue ret = client.sendCommand("CHECK_USERS", "10:", "20:");
+        Assert.assertEquals(ret.getStatus(), Status.OK);
+    }
+
+    @Test
+    public void checkUsersWarning() throws Exception {
+        CommandRepository cr = SetupTest.getCommandRepository();
+        cr.addCommandDefinition(new CommandDefinition("CHECK_USERS",
+                "CHECK_USERS").addArgument(new CommandOption("w", "$ARG1$"))
+                .addArgument(new CommandOption("c", "$ARG2$")));
+        JNRPEClient client = new JNRPEClient(BIND_ADDRESS, JNRPE_PORT, false);
+        ReturnValue ret = client.sendCommand("CHECK_USERS", "1:", "20:");
+        Assert.assertEquals(ret.getStatus(), Status.WARNING);
+    }
+
+    @Test
+    public void checkUsersCritical() throws Exception {
+        System.out.println("Running checkUsers");
+        CommandRepository cr = SetupTest.getCommandRepository();
+        cr.addCommandDefinition(new CommandDefinition("CHECK_USERS",
+                "CHECK_USERS").addArgument(new CommandOption("w", "$ARG1$"))
+                .addArgument(new CommandOption("c", "$ARG2$")));
+        JNRPEClient client = new JNRPEClient(BIND_ADDRESS, JNRPE_PORT, false);
+        ReturnValue ret = client.sendCommand("CHECK_USERS", "0:", "1:");
+        Assert.assertEquals(ret.getStatus(), Status.CRITICAL);
+    }
 }

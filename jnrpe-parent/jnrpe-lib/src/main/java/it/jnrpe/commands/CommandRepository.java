@@ -18,35 +18,33 @@ import java.util.Map;
  *
  * @author Massimiliano Ziccardi
  */
-public final class CommandRepository
-{
+public final class CommandRepository {
     /**
      * Contains all the commands. The KEY is the command name, while the value.
      * is the {@link CommandDefinition}.
      */
-    private Map<String, CommandDefinition> m_mCommandDefs
-                = new HashMap<String, CommandDefinition>();
+    private Map<String, CommandDefinition> commandDefinitionsMap =
+            new HashMap<String, CommandDefinition>();
 
     /**
      * Adds a new command definition to the repository.
      *
-     * @param commandDef The command definition to be added
+     * @param commandDef
+     *            The command definition to be added
      */
-    public void addCommandDefinition(final CommandDefinition commandDef)
-    {
-        m_mCommandDefs.put(commandDef.getName(), commandDef);
+    public void addCommandDefinition(final CommandDefinition commandDef) {
+        commandDefinitionsMap.put(commandDef.getName(), commandDef);
     }
 
     /**
      * Returns the named command definition.
      *
-     * @param sName
+     * @param commandName
      *            The command name
-     * @return The command definition associated with <code>sName</code>. 
-     * <code>null</code> if not found.
+     * @return The command definition associated with <code>sName</code>.
+     *         <code>null</code> if not found.
      */
-    public CommandDefinition getCommand(final String sName)
-    {
-        return m_mCommandDefs.get(sName);
+    public CommandDefinition getCommand(final String commandName) {
+        return commandDefinitionsMap.get(commandName);
     }
 }

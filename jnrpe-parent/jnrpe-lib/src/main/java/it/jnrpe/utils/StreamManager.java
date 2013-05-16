@@ -29,98 +29,98 @@ import java.util.List;
  *
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
-public final class StreamManager
-{
+public final class StreamManager {
     /**
      * Contains all the streams to be managed by the {@link StreamManager}
      * object.
      */
-    private List m_vStreams = new ArrayList();
+    private List managedStreamsList = new ArrayList();
 
     /**
      * Default constructor.
      */
-    public StreamManager()
-    {
+    public StreamManager() {
     }
 
     /**
      * Handles the received InputStream and returns it.
      *
-     * @param in The stream to be automatically closed when
-     * {@link #closeAll()} is called.
+     * @param in
+     *            The stream to be automatically closed when {@link #closeAll()}
+     *            is called.
      * @return The passed in stream.
      */
-    public InputStream handle(final InputStream in)
-    {
-        m_vStreams.add(in);
+    public InputStream handle(final InputStream in) {
+        managedStreamsList.add(in);
         return in;
     }
 
     /**
      * Handles the received OutputStream and returns it.
      *
-     * @param out The stream to be automatically closed when
-     * {@link #closeAll()} is called.
+     * @param out
+     *            The stream to be automatically closed when {@link #closeAll()}
+     *            is called.
      * @return The passed in stream.
      */
-    public OutputStream handle(final OutputStream out)
-    {
-        m_vStreams.add(out);
+    public OutputStream handle(final OutputStream out) {
+        managedStreamsList.add(out);
         return out;
     }
 
     /**
      * Handles the received Reader and returns it.
      *
-     * @param r The reader to be automatically closed when
-     * {@link #closeAll()} is called.
+     * @param r
+     *            The reader to be automatically closed when {@link #closeAll()}
+     *            is called.
      * @return The passed in reader.
      */
-    public Reader handle(final Reader r)
-    {
-        m_vStreams.add(r);
+    public Reader handle(final Reader r) {
+        managedStreamsList.add(r);
         return r;
     }
 
     /**
      * Handles the received Writer and returns it.
      *
-     * @param w The writer to be automatically closed when
-     * {@link #closeAll()} is called.
+     * @param w
+     *            The writer to be automatically closed when {@link #closeAll()}
+     *            is called.
      * @return The passed in writer.
      */
-    public Writer handle(final Writer w)
-    {
-        m_vStreams.add(w);
+    public Writer handle(final Writer w) {
+        managedStreamsList.add(w);
         return w;
     }
 
     /**
      * Returns an InputStream on the given file.
      *
-     * @param f The file attached to the returned stream
-     * to be automatically closed when {@link #closeAll()} is called.
+     * @param f
+     *            The file attached to the returned stream to be automatically
+     *            closed when {@link #closeAll()} is called.
      * @return The stream to the passed in file
-     * @throws FileNotFoundException If the file does not exists
+     * @throws FileNotFoundException
+     *             If the file does not exists
      */
     public InputStream getInputStream(final File f)
-            throws FileNotFoundException
-    {
+            throws FileNotFoundException {
         return (InputStream) handle(new FileInputStream(f));
     }
 
     /**
      * Returns an OutputStream on the given file.
      *
-     * @param f The file attached to the returned stream
-     * to be automatically closed when {@link #closeAll()} is called.
+     * @param f
+     *            The file attached to the returned stream to be automatically
+     *            closed when {@link #closeAll()} is called.
      * @return The stream to the passed in file
-     * @throws FileNotFoundException If the file does not exists
+     * @throws FileNotFoundException
+     *             If the file does not exists
      */
     public OutputStream getOutputStream(final File f)
-            throws FileNotFoundException
-    {
+            throws FileNotFoundException {
         return handle(new FileOutputStream(f));
     }
 
@@ -128,39 +128,31 @@ public final class StreamManager
      * Closes all handles streams and readers. Non exception is thrown. This.
      * method should be called in the finally block.
      */
-    public void closeAll()
-    {
-        for (Iterator iterator = m_vStreams.iterator(); iterator.hasNext();)
-        {
+    public void closeAll() {
+        for (Iterator iterator = managedStreamsList.iterator(); iterator
+                .hasNext();) {
             Object obj = (Object) iterator.next();
 
-            try
-            {
-                if (obj instanceof InputStream)
-                {
+            try {
+                if (obj instanceof InputStream) {
                     ((InputStream) obj).close();
                     continue;
                 }
-                if (obj instanceof OutputStream)
-                {
+                if (obj instanceof OutputStream) {
                     ((OutputStream) obj).flush();
                     ((OutputStream) obj).close();
                     continue;
                 }
-                if (obj instanceof Reader)
-                {
+                if (obj instanceof Reader) {
                     ((Reader) obj).close();
                     continue;
                 }
-                if (obj instanceof Writer)
-                {
+                if (obj instanceof Writer) {
                     ((Writer) obj).flush();
                     ((Writer) obj).close();
                     continue;
                 }
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 // if (m_Logger.isDebugEnabled())
                 // m_Logger.debug("EXCEPTION CLOSING STREAM/READER : " +
                 // e.getMessage());

@@ -15,8 +15,7 @@ package it.jnrpe.net;
  *
  * @author Massimiliano Ziccardi
  */
-public enum PacketType
-{
+public enum PacketType {
     /**
      * Id code for a packet containing a query.
      */
@@ -29,43 +28,43 @@ public enum PacketType
     /**
      * The enumeration int value.
      */
-    private final int m_iIntValue;
+    private final int intValue;
 
     /**
      * Builds an enumeration with the given int value.
-     * @param iValue The value
+     *
+     * @param value
+     *            The value
      */
-    PacketType(final int iValue)
-    {
-        m_iIntValue = iValue;
+    PacketType(final int value) {
+        intValue = value;
     }
 
     /**
      * Returns the int value of the enum.
+     *
      * @return The int value
      */
-    public int intValue()
-    {
-        return m_iIntValue;
+    public int intValue() {
+        return intValue;
     }
 
     /**
-     * Converts from the protocol int value representing the 
-     * state to the enumeration constant.
-     * 
-     * @param iIntValue The int value state
+     * Converts from the protocol int value representing the state to the
+     * enumeration constant.
+     *
+     * @param value
+     *            The int value state
      * @return The Enumeration
      */
-    public static PacketType fromIntValue(final int iIntValue)
-    {
-        switch (iIntValue)
-        {
-            case 1:
-                return QUERY;
-            case 2:
-                return RESPONSE;
-            default:
-                return null;
+    public static PacketType fromIntValue(final int value) {
+        switch (value) {
+        case 1:
+            return QUERY;
+        case 2:
+            return RESPONSE;
+        default:
+            return null;
         }
     }
 }

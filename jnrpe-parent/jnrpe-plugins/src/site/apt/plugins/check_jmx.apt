@@ -69,7 +69,7 @@ The CHECK_JMX plugin
  
 +----------+
 
-  check_nrpe -n -H 127.0.0.1 -c CHECK_JBOSS_MEM -a 'localhost:9999!50000000!70000000'
+  check_nrpe -n -H 127.0.0.1 -c CHECK_JBOSS_MEM -a localhost:9999 50000000 70000000
 
 +----------+
 

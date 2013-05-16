@@ -19,53 +19,50 @@ import java.util.zip.CRC32;
  *
  * @author Massimiliano Ziccardi
  */
-public final class JNRPEResponse extends JNRPEProtocolPacket
-{
+public final class JNRPEResponse extends JNRPEProtocolPacket {
     /**
      * Default constructor.
      */
-    public JNRPEResponse()
-    {
+    public JNRPEResponse() {
         super();
         setPacketType(PacketType.RESPONSE);
     }
 
     /**
      * Builds a JNRPE response reading the content from an InputStream.
-     * 
-     * @param in The InputStream to read from
-     * @throws IOException on any io exception
+     *
+     * @param in
+     *            The InputStream to read from
+     * @throws IOException
+     *             on any io exception
      */
-    public JNRPEResponse(final InputStream in) throws IOException
-    {
+    public JNRPEResponse(final InputStream in) throws IOException {
         super();
-		fromInputStream(in);
+        fromInputStream(in);
     }
-    
+
     /**
      * Updates the CRC value.
      */
-    public void updateCRC()
-    {
+    public void updateCRC() {
         setCRC(0);
-        int iCRC = 0;
+        int crc = 0;
 
         CRC32 crcAlg = new CRC32();
         crcAlg.update(toByteArray());
 
-        iCRC = (int) crcAlg.getValue();
+        crc = (int) crcAlg.getValue();
 
-        setCRC(iCRC);
+        setCRC(crc);
     }
 
     /**
      * Sets the message to be included in the response.
      *
-     * @param sMessage
+     * @param message the response message
      */
-    public void setMessage(final String sMessage)
-    {
+    public void setMessage(final String message) {
         initRandomBuffer();
-        _setMessage(sMessage);
+        _setMessage(message);
     }
 }

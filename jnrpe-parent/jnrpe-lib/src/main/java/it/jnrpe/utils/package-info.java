@@ -1,6 +1,5 @@
 /**
- * In this package you'll find all the classes you need to interact to to create
- * plugins.
+ * This package contains some utility class.
  */
 package it.jnrpe.utils;
 

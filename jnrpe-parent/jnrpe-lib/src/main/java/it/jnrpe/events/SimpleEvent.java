@@ -18,78 +18,70 @@ import java.util.Map;
  *
  * @author Massimiliano Ziccardi
  */
-class SimpleEvent implements IJNRPEEvent
-{
+class SimpleEvent implements IJNRPEEvent {
     /**
      * The log event associated with this object.
      */
-    private LogEvent m_evt = null;
+    private LogEvent logEventType = null;
 
     /**
      * The parameters of the vent.
      */
-    private Map<String, Object> m_mParams = new HashMap<String, Object>();
+    private Map<String, Object> parametersMap = new HashMap<String, Object>();
 
     /**
      * The custom event type (if it is not a log event).
      */
-    private String m_sCustEvtType = null;
+    private String customEventType = null;
 
     /**
      * Builds the {@link SimpleEvent} object with a LogEvent.
      *
      * @param evt
      *            The Log Event
-     * @param vParams
+     * @param paramsAry
      *            The Log Event parameters
      */
-    public SimpleEvent(final LogEvent evt, final Object[] vParams)
-    {
-        if (evt == null)
-        {
+    public SimpleEvent(final LogEvent evt, final Object[] paramsAry) {
+        if (evt == null) {
             throw new NullPointerException("Event type can't be null");
         }
-        m_evt = evt;
-        for (int i = 0; vParams != null && i < vParams.length; i += 2)
-        {
-            m_mParams.put((String) vParams[i], vParams[i + 1]);
+        logEventType = evt;
+        for (int i = 0; paramsAry != null && i < paramsAry.length; i += 2) {
+            parametersMap.put((String) paramsAry[i], paramsAry[i + 1]);
         }
     }
 
     /**
      * Builds the {@link SimpleEvent} object with a custom event type.
      *
-     * @param sCustEvtType
+     * @param custEvtType
      *            The Custom Event Type
-     * @param vParams
+     * @param paramsAry
      *            The Event parameters
      */
-    public SimpleEvent(final String sCustEvtType, final Object[] vParams)
-    {
-        if (sCustEvtType == null)
-        {
+    public SimpleEvent(final String custEvtType, final Object[] paramsAry) {
+        if (custEvtType == null) {
             throw new NullPointerException("Event type can't be null");
         }
 
-        m_sCustEvtType = sCustEvtType;
-        for (int i = 0; vParams != null && i < vParams.length; i += 2)
-        {
-            EventParam param = (EventParam) vParams[i];
-            m_mParams.put(param.getName(), param.getValue());
+        customEventType = custEvtType;
+        for (int i = 0; paramsAry != null && i < paramsAry.length; i += 2) {
+            EventParam param = (EventParam) paramsAry[i];
+            parametersMap.put(param.getName(), param.getValue());
         }
     }
 
     /**
      * Returns the event name.
+     *
      * @return The event name
      */
-    public String getEventName()
-    {
-        if (m_sCustEvtType != null)
-        {
-            return m_sCustEvtType;
+    public String getEventName() {
+        if (customEventType != null) {
+            return customEventType;
         }
-        return m_evt.name();
+        return logEventType.name();
     }
 
     /**
@@ -97,18 +89,17 @@ class SimpleEvent implements IJNRPEEvent
      *
      * @return The LogEvent type
      */
-    LogEvent getLogEvent()
-    {
-        return m_evt;
+    LogEvent getLogEvent() {
+        return logEventType;
     }
 
     /**
      * Returns the event parameters.
+     *
      * @return The event parameters
      */
-    public Map<String, Object> getEventParams()
-    {
-        return m_mParams;
+    public Map<String, Object> getEventParams() {
+        return parametersMap;
     }
 
 }

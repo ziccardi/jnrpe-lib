@@ -15,22 +15,20 @@
  */
 package it.jnrpe;
 
-import java.util.List;
-
 import it.jnrpe.events.IJNRPEEventListener;
+
+import java.util.List;
 
 /**
  * A simple utility class that helps in sending events.
  *
  * @author Massimiliano Ziccardi
  */
-final class EventsUtil
-{
+final class EventsUtil {
     /**
      * Default private constructor to avoid instantiations.
      */
-    private EventsUtil()
-    {
+    private EventsUtil() {
     }
 
     /**
@@ -45,19 +43,17 @@ final class EventsUtil
      * @param vParams
      *            The event parameters
      */
-    public static void sendEvent(final List<IJNRPEEventListener> vListeners,
-            final Object sender, final String sEventName,
-            final Object[] vParams)
-    {
-        if (vListeners == null || vListeners.isEmpty()) 
-        {
+    public static void
+            sendEvent(final List<IJNRPEEventListener> vListeners,
+                    final Object sender, final String sEventName,
+                    final Object[] vParams) {
+        if (vListeners == null || vListeners.isEmpty()) {
             return;
         }
 
         SimpleEvent se = new SimpleEvent(sEventName, vParams);
 
-        for (IJNRPEEventListener listener : vListeners)
-        {
+        for (IJNRPEEventListener listener : vListeners) {
             listener.receive(sender, se);
         }
     }

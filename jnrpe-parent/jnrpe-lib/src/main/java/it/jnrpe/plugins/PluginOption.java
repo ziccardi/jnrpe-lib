@@ -14,69 +14,66 @@ import org.apache.commons.cli2.Option;
 import org.apache.commons.cli2.builder.ArgumentBuilder;
 import org.apache.commons.cli2.builder.DefaultOptionBuilder;
 
-
 /**
  * This class describes a plugin option.
  *
  * @author Massimiliano Ziccardi
  */
-public final class PluginOption
-{
+public final class PluginOption {
     /**
      * The option.
      */
-    private String m_sOption = null;
+    private String option = null;
 
     /**
      * Indicate if the option ha arguments.
      */
-    private boolean m_bHasArgs = false;
+    private boolean hasArgs = false;
 
     /**
      * The number of arguments.
      */
-    private Integer m_iArgsCount = null;
+    private Integer argsCount = null;
 
     /**
      * If the option is mandatory.
      */
-    private boolean m_bRequired = false;
+    private boolean required = false;
 
     /**
      * If the argument is optional.
      */
-    private boolean m_bArgsOptional = true;
+    private boolean argsAreOptional = true;
 
     /**
      * The name of the argument.
      */
-    private String m_sArgName = null;
+    private String argName = null;
 
     /**
      * Long version of the option.
      */
-    private String m_sLongOpt = null;
+    private String longOptionName = null;
 
     /**
      * The type.
      */
-    private String m_sType = null;
+    private String optionType = null;
 
     /**
      * The separator of the values.
      */
-    private String m_sValueSeparator = null;
+    private String argsValueSeparator = null;
 
     /**
      * The description.
      */
-    private String m_sDescription = null;
+    private String description = null;
 
     /**
      * Default constructor.
      */
-    public PluginOption()
-    {
+    public PluginOption() {
 
     }
 
@@ -85,21 +82,20 @@ public final class PluginOption
      *
      * @return The option as string
      */
-    public String getOption()
-    {
-        return m_sOption;
+    public String getOption() {
+        return option;
     }
 
     /**
      * Sets the option string. For example, if the plugin must receive the.
      * '--file' option, sOption will be 'file'.
      *
-     * @param sOption The option as string
+     * @param optionName
+     *            The option as string
      * @return this
      */
-    public PluginOption setOption(final String sOption)
-    {
-        m_sOption = sOption;
+    public PluginOption setOption(final String optionName) {
+        this.option = optionName;
         return this;
     }
 
@@ -108,20 +104,19 @@ public final class PluginOption
      *
      * @return true if the option has an argument.
      */
-    public boolean hasArgs()
-    {
-        return m_bHasArgs;
+    public boolean hasArgs() {
+        return hasArgs;
     }
 
     /**
      * Tells the option that it must accept an argument.
      *
-     * @param bHasArgs true if the option has an argument.
+     * @param argsPresent
+     *            true if the option has an argument.
      * @return this
      */
-    public PluginOption setHasArgs(final boolean bHasArgs)
-    {
-        m_bHasArgs = bHasArgs;
+    public PluginOption setHasArgs(final boolean argsPresent) {
+        this.hasArgs = argsPresent;
         return this;
     }
 
@@ -130,20 +125,19 @@ public final class PluginOption
      *
      * @return the number of arguments.
      */
-    public Integer getArgsCount()
-    {
-        return m_iArgsCount;
+    public Integer getArgsCount() {
+        return argsCount;
     }
 
     /**
      * Sets the number of arguments.
      *
-     * @param iArgCount the number of arguments.
+     * @param numberOfArgs
+     *            the number of arguments.
      * @return this
      */
-    public PluginOption setArgsCount(final Integer iArgCount)
-    {
-        m_iArgsCount = iArgCount;
+    public PluginOption setArgsCount(final Integer numberOfArgs) {
+        this.argsCount = numberOfArgs;
         return this;
     }
 
@@ -152,20 +146,19 @@ public final class PluginOption
      *
      * @return the string 'true' if required.
      */
-    public String getRequired()
-    {
-        return "" + m_bRequired;
+    public String getRequired() {
+        return "" + required;
     }
 
     /**
      * Set if the option is required.
      *
-     * @param bRequired <code>true</code> if the option is required.
+     * @param optIsRequired
+     *            <code>true</code> if the option is required.
      * @return this
      */
-    public PluginOption setRequired(final boolean bRequired)
-    {
-        m_bRequired = bRequired;
+    public PluginOption setRequired(final boolean optIsRequired) {
+        this.required = optIsRequired;
         return this;
     }
 
@@ -174,21 +167,19 @@ public final class PluginOption
      *
      * @return <code>true</code> if the option has optional arguments.
      */
-    public Boolean getArgsOptional()
-    {
-        return m_bArgsOptional;
+    public Boolean getArgsOptional() {
+        return argsAreOptional;
     }
 
     /**
      * Sets if the arguments are mandatory.
      *
-     * @param bArgsOptional <code>true</code> if the option
-     * has optional arguments.
+     * @param argsOptional
+     *            <code>true</code> if the option has optional arguments.
      * @return this
      */
-    public PluginOption setArgsOptional(final Boolean bArgsOptional)
-    {
-        m_bArgsOptional = bArgsOptional;
+    public PluginOption setArgsOptional(final Boolean argsOptional) {
+        argsAreOptional = argsOptional;
         return this;
     }
 
@@ -197,20 +188,19 @@ public final class PluginOption
      *
      * @return the name of the argument of this option.
      */
-    public String getArgName()
-    {
-        return m_sArgName;
+    public String getArgName() {
+        return argName;
     }
 
     /**
      * Sets the name of the argument of this option.
      *
-     * @param sArgName The argument name
+     * @param argumentName
+     *            The argument name
      * @return this
      */
-    public PluginOption setArgName(final String sArgName)
-    {
-        m_sArgName = sArgName;
+    public PluginOption setArgName(final String argumentName) {
+        this.argName = argumentName;
         return this;
     }
 
@@ -219,20 +209,19 @@ public final class PluginOption
      *
      * @return the long name of this option.
      */
-    public String getLongOpt()
-    {
-        return m_sLongOpt;
+    public String getLongOpt() {
+        return longOptionName;
     }
 
     /**
      * Sets the long name of this option.
      *
-     * @param sLongOpt the long name of this option.
+     * @param longOptName
+     *            the long name of this option.
      * @return this
      */
-    public PluginOption setLongOpt(final String sLongOpt)
-    {
-        m_sLongOpt = sLongOpt;
+    public PluginOption setLongOpt(final String longOptName) {
+        this.longOptionName = longOptName;
         return this;
     }
 
@@ -241,20 +230,19 @@ public final class PluginOption
      *
      * @return the type of this option.
      */
-    public String getType()
-    {
-        return m_sType;
+    public String getType() {
+        return optionType;
     }
 
     /**
      * Sets the type of this option.
      *
-     * @param sType the type of this option.
+     * @param type
+     *            the type of this option.
      * @return this
      */
-    public PluginOption setType(final String sType)
-    {
-        m_sType = sType;
+    public PluginOption setType(final String type) {
+        optionType = type;
         return this;
     }
 
@@ -263,20 +251,20 @@ public final class PluginOption
      *
      * @return the value separator.
      */
-    public String getValueSeparator()
-    {
-        return m_sValueSeparator;
+    public String getValueSeparator() {
+        return argsValueSeparator;
     }
 
     /**
      * Sets the value separator.
      *
-     * @param sValueSeparator the value separator.
+     * @param argumentsValueSeparator
+     *            the value separator.
      * @return this
      */
-    public PluginOption setValueSeparator(final String sValueSeparator)
-    {
-        m_sValueSeparator = sValueSeparator;
+    public PluginOption setValueSeparator(
+            final String argumentsValueSeparator) {
+        this.argsValueSeparator = argumentsValueSeparator;
         return this;
     }
 
@@ -285,20 +273,19 @@ public final class PluginOption
      *
      * @return the description of this option.
      */
-    public String getDescription()
-    {
-        return m_sDescription;
+    public String getDescription() {
+        return description;
     }
 
     /**
      * Sets the description of this option.
      *
-     * @param sDescription the description of this option.
+     * @param optDescription
+     *            the description of this option.
      * @return this
      */
-    public PluginOption setDescription(final String sDescription)
-    {
-        m_sDescription = sDescription;
+    public PluginOption setDescription(final String optDescription) {
+        this.description = optDescription;
         return this;
     }
 
@@ -308,51 +295,37 @@ public final class PluginOption
      *
      * @return The option object required by commons cli
      */
-    Option toOption()
-    {
+    Option toOption() {
         DefaultOptionBuilder oBuilder = new DefaultOptionBuilder();
-        
-        oBuilder
-          .withShortName(m_sOption)
-          .withDescription(m_sDescription)
-          .withRequired(m_bRequired)
-          ;
-        
-        if (m_sLongOpt != null)
-            oBuilder.withLongName(m_sLongOpt);
-        
-        //        DefaultOption ret = oBuilder
-//                                .withLongName(m_sOption)
-//                                .withDescription(m_sDescription);
-        
-        //Option ret = new Option(m_sOption, m_sDescription);
 
-//        if (m_bArgsOptional != null)
-//        {
-//            ret.setOptionalArg(m_bArgsOptional.booleanValue());
-//        }
+        oBuilder.withShortName(option).withDescription(description)
+                .withRequired(required);
 
-        if (m_bHasArgs)
-        {
+        if (longOptionName != null) {
+            oBuilder.withLongName(longOptionName);
+        }
+
+        if (hasArgs) {
             ArgumentBuilder aBuilder = new ArgumentBuilder();
-            
-            if (m_sArgName != null)
-                aBuilder.withName(m_sArgName);
-            
-            if (m_bArgsOptional)
-                aBuilder.withMinimum(0);
-            
-            if (m_iArgsCount != null)
-            {
-                aBuilder.withMaximum(m_iArgsCount);
+
+            if (argName != null) {
+                aBuilder.withName(argName);
             }
-            else
+
+            if (argsAreOptional) {
+                aBuilder.withMinimum(0);
+            }
+
+            if (argsCount != null) {
+                aBuilder.withMaximum(argsCount);
+            } else {
                 aBuilder.withMaximum(1);
-            
-            if (m_sValueSeparator != null && m_sValueSeparator.length() != 0)
-            {
-                aBuilder.withInitialSeparator(m_sValueSeparator.charAt(0));
-                aBuilder.withSubsequentSeparator(m_sValueSeparator.charAt(0));
+            }
+
+            if (argsValueSeparator != null
+                    && argsValueSeparator.length() != 0) {
+                aBuilder.withInitialSeparator(argsValueSeparator.charAt(0));
+                aBuilder.withSubsequentSeparator(argsValueSeparator.charAt(0));
             }
             oBuilder.withArgument(aBuilder.create());
         }

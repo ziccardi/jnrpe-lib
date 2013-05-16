@@ -16,8 +16,7 @@ package it.jnrpe.events;
  *
  * @author Massimiliano Ziccardi
  */
-public interface IJNRPEEventListener
-{
+public interface IJNRPEEventListener {
     /**
      * This method receives the event and reacts.
      *

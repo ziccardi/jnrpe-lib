@@ -25,18 +25,18 @@ import it.jnrpe.events.IJNRPEEvent;
  *
  * @author Massimiliano Ziccardi
  */
-class SimpleEvent implements IJNRPEEvent
-{
+class SimpleEvent implements IJNRPEEvent {
     /**
      * The name of the event.
      */
-    private String m_sEventName = null;
+    private String eventName = null;
 
     /**
      * A map containing all the event parameters. The key of the map is the
      * parameter name.
      */
-    private Map<String, Object> m_mParams = new HashMap<String, Object>();
+    private Map<String, Object> eventParametersMap =
+            new HashMap<String, Object>();
 
     /**
      * Initializes the event with the given event name and the given event
@@ -44,34 +44,31 @@ class SimpleEvent implements IJNRPEEvent
      *
      * @param sEventName
      *            The event name
-     * @param vParams
+     * @param paramsAry
      *            The event parameters
      */
-    public SimpleEvent(final String sEventName, final Object[] vParams)
-    {
-        m_sEventName = sEventName;
-        for (int i = 0; vParams != null && i < vParams.length; i += 2)
-        {
-            m_mParams.put((String) vParams[i], vParams[i + 1]);
+    public SimpleEvent(final String sEventName, final Object[] paramsAry) {
+        this.eventName = sEventName;
+        for (int i = 0; paramsAry != null && i < paramsAry.length; i += 2) {
+            eventParametersMap.put((String) paramsAry[i], paramsAry[i + 1]);
         }
     }
 
     /**
      * Returns the event name.
+     *
      * @return The event name
      */
-    public String getEventName()
-    {
-        return m_sEventName;
+    public String getEventName() {
+        return eventName;
     }
 
     /**
      * Returns the event parameters.
+     *
      * @return The event parameters
      */
-    public Map<String, Object> getEventParams()
-    {
-        return m_mParams;
+    public Map<String, Object> getEventParams() {
+        return eventParametersMap;
     }
-
 }

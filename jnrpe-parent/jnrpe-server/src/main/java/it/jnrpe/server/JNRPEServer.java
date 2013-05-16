@@ -1,16 +1,16 @@
 /*
  * Copyright (c) 2011 Massimiliano Ziccardi
- *  
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
- * You may obtain a copy of the License at 
- * 
- *     http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, software 
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- * See the License for the specific language governing permissions and 
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
  * limitations under the License.
  */
 package it.jnrpe.server;
@@ -36,66 +36,98 @@ import org.apache.commons.cli2.commandline.Parser;
 import org.apache.commons.cli2.option.DefaultOption;
 import org.apache.commons.cli2.util.HelpFormatter;
 
-public class JNRPEServer
-{
+/**
+ * The JNRPE Server entry point.
+ *
+ * @author Massimiliano Ziccardi
+ */
+public final class JNRPEServer {
+
+    /**
+     * The default JNRPE server listening port.
+     */
+    private static final int DEFAULT_PORT = 5666;
+
+    /**
+     * The JNRPE Server version.
+     */
     private static final String VERSION = JNRPEServer.class.getPackage()
             .getImplementationVersion();
 
-    // private static Options m_Options = null;
-
-    private JNRPEServer()
-    {
+    /**
+     * Default constructor.
+     */
+    private JNRPEServer() {
     }
 
-    private static Group configureCommandLine()
-    {
+    /**
+     * Configure the command line parser.
+     *
+     * @return The configuration
+     */
+    private static Group configureCommandLine() {
         DefaultOptionBuilder oBuilder = new DefaultOptionBuilder();
         ArgumentBuilder aBuilder = new ArgumentBuilder();
         GroupBuilder gBuilder = new GroupBuilder();
 
-        DefaultOption listOption = oBuilder.withLongName("list").withShortName(
-                "l").withDescription("Lists all the installed plugins")
-                .create();
+        DefaultOption listOption =
+                oBuilder.withLongName("list").withShortName("l")
+                        .withDescription("Lists all the installed plugins")
+                        .create();
 
-        DefaultOption versionOption = oBuilder.withLongName("version")
-                .withShortName("v").withDescription(
-                        "Print the server version number").create();
+        DefaultOption versionOption =
+                oBuilder.withLongName("version").withShortName("v")
+                        .withDescription("Print the server version number")
+                        .create();
 
-        DefaultOption helpOption = oBuilder.withLongName("help").withShortName(
-                "h").withDescription("Show this help").create();
+        DefaultOption helpOption =
+                oBuilder.withLongName("help").withShortName("h")
+                        .withDescription("Show this help").create();
 
-//        DefaultOption pluginNameOption = oBuilder.withLongName("plugin")
-//                .withShortName("p").withDescription("The plugin name")
-//                .withArgument(
-//                        aBuilder.withName("name").withMinimum(1).withMaximum(1)
-//                                .create()).create();
+        // DefaultOption pluginNameOption = oBuilder.withLongName("plugin")
+        // .withShortName("p").withDescription("The plugin name")
+        // .withArgument(
+        // aBuilder.withName("name").withMinimum(1).withMaximum(1)
+        // .create()).create();
 
-        DefaultOption pluginHelpOption = oBuilder.withLongName("help")
-                .withShortName("h")
-                .withDescription("Shows help about a plugin").withArgument(
-                        aBuilder.withName("name").withMinimum(1).withMaximum(1)
-                                .create()).create();
+        DefaultOption pluginHelpOption =
+                oBuilder.withLongName("help")
+                        .withShortName("h")
+                        .withDescription("Shows help about a plugin")
+                        .withArgument(
+                                aBuilder.withName("name").withMinimum(1)
+                                        .withMaximum(1).create()).create();
 
-        Group alternativeOptions = gBuilder.withOption(listOption).withOption(
-                pluginHelpOption).create();
+        Group alternativeOptions =
+                gBuilder.withOption(listOption).withOption(pluginHelpOption)
+                        .create();
 
-        DefaultOption confOption = oBuilder.withLongName("conf").withShortName(
-                "c").withDescription("Specifies the JNRPE configuration file")
-                .withArgument(
-                        aBuilder.withName("path").withMinimum(1).withMaximum(1)
-                                .create()).withChildren(alternativeOptions)
-                .create();
+        DefaultOption confOption =
+                oBuilder.withLongName("conf")
+                        .withShortName("c")
+                        .withDescription(
+                                "Specifies the JNRPE configuration file")
+                        .withArgument(
+                                aBuilder.withName("path").withMinimum(1)
+                                        .withMaximum(1).create())
+                        .withChildren(alternativeOptions).create();
 
-        Group mainGroup = gBuilder.withOption(versionOption).withOption(
-                helpOption).withOption(confOption).withMinimum(1).create();
+        Group mainGroup =
+                gBuilder.withOption(versionOption).withOption(helpOption)
+                        .withOption(confOption).withMinimum(1).create();
 
         return mainGroup;
     }
 
-    private static CommandLine parseCommandLine(String[] vsArgs)
-    {
-        try
-        {
+    /**
+     * Parses the command line.
+     *
+     * @param vsArgs
+     *            The command line
+     * @return The parsed command line
+     */
+    private static CommandLine parseCommandLine(final String[] vsArgs) {
+        try {
             Group opts = configureCommandLine();
             // configure a HelpFormatter
             HelpFormatter hf = new HelpFormatter();
@@ -108,62 +140,73 @@ public class JNRPEServer
             CommandLine cl = p.parse(vsArgs);
 
             return cl;
-        }
-        catch (OptionException oe)
-        {
+        } catch (OptionException oe) {
             printUsage(oe);
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
             // Should never happen...
         }
         return null;
     }
 
-    private static void printHelp(PluginRepository pr, String sPluginName)
-    {
-        try
-        {
-            PluginProxy pp = (PluginProxy) pr.getPlugin(sPluginName);
+    /**
+     * Prints the help about a plugin.
+     *
+     * @param pr
+     *            The plugin repository
+     * @param pluginName
+     *            The plugin name
+     */
+    private static void printHelp(final PluginRepository pr,
+            final String pluginName) {
+        try {
+            PluginProxy pp = (PluginProxy) pr.getPlugin(pluginName);
 
             // CPluginProxy pp =
             // CPluginFactory.getInstance().getPlugin(sPluginName);
-            if (pp == null)
-                System.out.println("Plugin " + sPluginName
+            if (pp == null) {
+                System.out.println("Plugin " + pluginName
                         + " does not exists.");
-            else
-            {
+            } else {
                 pp.printHelp();
             }
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
         System.exit(0);
     }
 
-    private static void printVersion()
-    {
+    /**
+     * Prints the JNRPE Server version.
+     */
+    private static void printVersion() {
         System.out.println("JNRPE version " + VERSION);
         System.out.println("Copyright (c) 2011 Massimiliano Ziccardi");
         System.out.println("Licensed under the Apache License, Version 2.0");
         System.out.println();
     }
 
-    private static void printUsage(Exception e)
-    {
+    /**
+     * Prints the JNRPE Server usage and, eventually, the error about the last
+     * invocation.
+     *
+     * @param e
+     *            The last error. Can be null.
+     */
+    private static void printUsage(final Exception e) {
         printVersion();
-        if (e != null) System.out.println(e.getMessage() + "\n");
+        if (e != null) {
+            System.out.println(e.getMessage() + "\n");
+        }
 
         HelpFormatter hf = new HelpFormatter();
 
         StringBuffer sbDivider = new StringBuffer("=");
-        while (sbDivider.length() < hf.getPageWidth())
+        while (sbDivider.length() < hf.getPageWidth()) {
             sbDivider.append("=");
-        
+        }
+
         // DISPLAY SETTING
         hf.getDisplaySettings().clear();
         hf.getDisplaySettings().add(DisplaySetting.DISPLAY_GROUP_EXPANDED);
@@ -185,24 +228,41 @@ public class JNRPEServer
         System.exit(0);
     }
 
+    /**
+     * Loads the JNRPE configuration from the INI or the XML file.
+     *
+     * @param configurationFilePath
+     *            The path to the configuration file
+     * @return The parsed configuration.
+     * @throws ConfigurationException
+     *             -
+     */
     private static JNRPEConfiguration loadConfiguration(
-            String sConfigurationFilePath) throws ConfigurationException
-    {
-        File confFile = new File(sConfigurationFilePath);
+            final String configurationFilePath) throws ConfigurationException {
+        File confFile = new File(configurationFilePath);
 
-        if (!confFile.exists() || !confFile.canRead())
-        {
+        if (!confFile.exists() || !confFile.canRead()) {
             throw new ConfigurationException("Cannot access config file : "
-                    + sConfigurationFilePath);
+                    + configurationFilePath);
         }
 
         return JNRPEConfigurationFactory
-                .createConfiguration(sConfigurationFilePath);
+                .createConfiguration(configurationFilePath);
 
     }
 
-    private static PluginRepository loadPluginDefinitions(String sPluginDirPath) throws PluginConfigurationException
-    {
+    /**
+     * Loads a plugin repository from a directory.
+     *
+     * @param sPluginDirPath
+     *            The path to the directory
+     * @return The plugin repository
+     * @throws PluginConfigurationException
+     *             -
+     */
+    private static PluginRepository
+            loadPluginDefinitions(final String sPluginDirPath)
+                    throws PluginConfigurationException {
         File fDir = new File(sPluginDirPath);
         DynaPluginRepository repo = new DynaPluginRepository();
         repo.load(fDir);
@@ -210,109 +270,114 @@ public class JNRPEServer
         return repo;
     }
 
-    private static void printPluginList(PluginRepository pr)
-    {
+    /**
+     * Prints the list of installed plugins.
+     *
+     * @param pr The plugin repository
+     */
+    private static void printPluginList(final PluginRepository pr) {
         System.out.println("List of installed plugins : ");
 
-        for (PluginDefinition pd : pr.getAllPlugins())
-        {
+        for (PluginDefinition pd : pr.getAllPlugins()) {
             System.out.println("  * " + pd.getName());
         }
 
         System.exit(0);
     }
 
-    public static void main(String[] args) 
-    {
+    /**
+     * The main method.
+     *
+     * @param args The command line
+     */
+    public static void main(final String[] args) {
         CommandLine cl = parseCommandLine(args);
-        if (cl.hasOption("--help")) 
-        {
-            if (!cl.hasOption("--conf"))
+        if (cl.hasOption("--help")) {
+            if (!cl.hasOption("--conf")) {
                 printUsage(null);
+            }
         }
 
-        if (cl.hasOption("--version")) 
-        {   
+        if (cl.hasOption("--version")) {
             printVersion();
             System.exit(0);
         }
 
         JNRPEConfiguration conf = null;
-        try
-        {
-            conf = loadConfiguration((String) cl
-                    .getValue("--conf"));
-        }
-        catch (Exception e)
-        {
-            System.out.println("It has not been possible to parse the configuration at " + cl.getValue("--conf") + ". The error is : " + e.getMessage());
+        try {
+            conf = loadConfiguration((String) cl.getValue("--conf"));
+        } catch (Exception e) {
+            System.out
+                    .println("Unable to parse the configuration at "
+                            + cl.getValue("--conf")
+                            + ". The error is : "
+                            + e.getMessage());
             System.exit(-1);
         }
 
         String sPluginPath = conf.getServerSection().getPluginPath();
-        if (sPluginPath == null)
-        {
+        if (sPluginPath == null) {
             System.out.println("Plugin path has not been specified");
             System.exit(-1);
         }
         File fPluginPath = new File(sPluginPath);
 
-        if (fPluginPath.exists())
-        {
-            if (!fPluginPath.isDirectory())
-            {
+        if (fPluginPath.exists()) {
+            if (!fPluginPath.isDirectory()) {
                 System.out.println("Specified plugin path ('" + sPluginPath
                         + "') must be a directory");
                 System.exit(-1);
             }
-        }
-        else
-        {
+        } else {
             System.out.println("Specified plugin path ('" + sPluginPath
                     + "') do not exist");
             System.exit(-1);
         }
 
         PluginRepository pr = null;
-        try
-        {
-            pr = loadPluginDefinitions(conf.getServerSection()
-                    .getPluginPath());
-        }
-        catch (PluginConfigurationException e)
-        {
-            System.out.println("An error has occurred while parsing the plugin packages. The error is : " + e.getMessage());
+        try {
+            pr = loadPluginDefinitions(conf.getServerSection().getPluginPath());
+        } catch (PluginConfigurationException e) {
+            System.out
+                    .println("An error has occurred while parsing "
+                            + "the plugin packages : "
+                            + e.getMessage());
             System.exit(-1);
         }
         // CJNRPEConfiguration.init(cl.getOptionValue("conf"));
 
-        if (cl.hasOption("--help") && cl.getValue("--help") != null)
+        if (cl.hasOption("--help") && cl.getValue("--help") != null) {
             printHelp(pr, (String) cl.getValue("--help"));
+        }
 
-        if (cl.hasOption("--list")) printPluginList(pr);
+        if (cl.hasOption("--list")) {
+            printPluginList(pr);
+        }
 
         JNRPE jnrpe = new JNRPE(pr, conf.createCommandRepository());
         jnrpe.addEventListener(new EventLoggerListener());
 
         for (String sAcceptedAddress : conf.getServerSection()
-                .getAllowedAddresses())
+                .getAllowedAddresses()) {
             jnrpe.addAcceptedHost(sAcceptedAddress);
+        }
 
         for (BindAddress bindAddress : conf.getServerSection()
-                .getBindAddresses())
-        {
-            int iPort = 5666;
+                .getBindAddresses()) {
+            int iPort = DEFAULT_PORT;
             String[] vsParts = bindAddress.getBindingAddress().split(":");
             String sIp = vsParts[0];
-            if (vsParts.length > 1) iPort = Integer.parseInt(vsParts[1]);
-
-            try
-            {
-                jnrpe.listen(sIp, iPort, bindAddress.isSSL());
+            if (vsParts.length > 1) {
+                iPort = Integer.parseInt(vsParts[1]);
             }
-            catch (UnknownHostException e)
-            {
-                System.out.println (String.format("Error binding the server to %s:%d", sIp, iPort) + ": " + e.getMessage());
+
+            try {
+                jnrpe.listen(sIp, iPort, bindAddress.isSSL());
+            } catch (UnknownHostException e) {
+                System.out.println(String.format(
+                        "Error binding the server to %s:%d", sIp, iPort)
+                        + ": "
+                        + e.getMessage());
             }
         }
     }

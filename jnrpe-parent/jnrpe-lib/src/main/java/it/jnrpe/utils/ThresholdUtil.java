@@ -28,65 +28,66 @@ import java.math.BigDecimal;
  * endpoints)
  * </ul>
  * start and ":" is not required if start=0.
- * 
+ *
  * @author Massimiliano Ziccardi
  */
-public final class ThresholdUtil
-{
+public final class ThresholdUtil {
     /**
      * Private default constructor to avoid instantiation.
      */
-    private ThresholdUtil()
-    {
+    private ThresholdUtil() {
 
     }
 
     /**
-     * Returns <code>true</code> if the value <code>iValue</code> falls into
-     * the range <code>sRange</code>.
-     * 
-     * @param sRange
+     * Returns <code>true</code> if the value <code>iValue</code> falls into the
+     * range <code>sRange</code>.
+     *
+     * @param thresholdString
      *            The range
-     * @param iValue
+     * @param value
      *            The value
      * @return <code>true</code> if the value <code>iValue</code> falls into the
-     * @throws BadThresholdException 
+     * @throws BadThresholdException
+     *             -
      */
-    public static boolean isValueInRange(final String sRange, final int iValue) throws BadThresholdException
-    {
-        return new Threshold(sRange).isValueInRange(iValue);
+    public static boolean isValueInRange(final String thresholdString,
+            final int value) throws BadThresholdException {
+        return new Threshold(thresholdString).isValueInRange(value);
     }
 
     /**
      * Returns <code>true</code> if the value <code>dalue</code> falls into the
      * range <code>sRange</code>.
-     * 
-     * @param sRange
+     *
+     * @param thresholdString
      *            The range
      * @param value
-     *            The value
-     * given range
-     * @throws BadThresholdException 
+     *            The value given range
+     * @return <code>true</code> if the given value falls inside the given range
+     * @throws BadThresholdException
+     *             -
      */
-    public static boolean isValueInRange(final String sRange,
-            final BigDecimal value) throws BadThresholdException
-    {
-        return new Threshold(sRange).isValueInRange(value);
+    public static boolean isValueInRange(final String thresholdString,
+            final BigDecimal value) throws BadThresholdException {
+        return new Threshold(thresholdString).isValueInRange(value);
     }
-    
+
     /**
      * Returns <code>true</code> if the value <code>dalue</code> falls into the
      * range <code>sRange</code>.
-     * 
-     * @param sRange
+     *
+     * @param thresholdString
      *            The range
      * @param value
-     *            The value
-     * given range
-     * @throws BadThresholdException 
+     *            The value given range
+     * @return <code>true</code> if the given value falls inside the given range
+     * @throws BadThresholdException
+     *             -
      */
-    public static boolean isValueInRange(final String sRange,
+    public static boolean isValueInRange(final String thresholdString,
             final Long value) throws BadThresholdException {
-        return new Threshold(sRange).isValueInRange(new BigDecimal(value));
+        return new Threshold(thresholdString).isValueInRange(new BigDecimal(
+                value));
     }
 }

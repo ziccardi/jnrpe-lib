@@ -23,7 +23,7 @@ The CHECK_MYSQL_QUERY plugin
 
 * Usage Example
 	
-  	In the following example, we will check the connection to a mysql database.
+  	In the following example, we will check the result of a simple query (select count(*) from users_table).
 
 ** Configuring using the XML configuration style
 
@@ -53,10 +53,11 @@ The CHECK_MYSQL_QUERY plugin
 
 ** Invocation
 
- The following will query the number of rows in a the table "users_table". It will send a warning if it takes 10 seconds or more to execute the quey and a critical if it takes 30 seconds or more:
+ The following will query the number of rows in a the table "users_table". It will send a warning if it takes 10 seconds or more to 
+ execute the query and a critical if it takes 30 seconds or more:
  
 +----------+
 
-  check_nrpe -H 127.0.0.1 -c check_mysql_query  -n -a 'localhost!3306!database!username!password!"select count(*) from users_table"!30!10'
+  check_nrpe -H 127.0.0.1 -c check_mysql_query  -n -a localhost 3306 database username password "select count(*) from users_table" 30 10
 
 +----------+

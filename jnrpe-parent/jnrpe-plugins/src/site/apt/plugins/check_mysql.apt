@@ -1,6 +1,12 @@
 The CHECK_MYSQL plugin
   
-	This plugin tests connections to a MySQL server.
+	This plugin can be used to:
+	
+	* test if a MySQL server is alive
+	
+	* check how long needs to connect to a MySQL server
+	
+	* check the MySQL server slaves status
 	
 	Supported parameters are:
 	
@@ -16,16 +22,19 @@ The CHECK_MYSQL plugin
     
 	* <<--check-slave/-S >>: Check if the slave thread is running properly.
     
-	* <<--warning/-w >>: Exit with WARNING status if slave server is more than INTEGER seconds behind master.
+	* <<--warning/-w >>: Exit with WARNING status if slave server "seconds behind master" (if --check-slave is specified) or
+	  the number of seconds required to connect (if --check-slave is NOT specified) falls inside the given range.
     
-	* <<--critical/-c >>: Exit with CRITICAL status if slave server is more than INTEGER seconds
-    behind master.
+	* <<--critical/-c >>: Exit with CRITICAL status if slave server "seconds behind master" (--check-slave is specified) or
+	  the number of seconds required to connect (--check-slave is NOT specified) falls inside the given range.
 
 	You need a mysql connector jar file	in the same directory that this plugin is installed.
 
 * Usage Example
 	
   	In the following example, we will check the connection to a mysql database.
+  	We will give a CRITICAL if the connection can't be established or if it requires more than 8 seconds.
+  	A WARNING will be returned if the connection requires something between 3 and 8 seconds.
 
 ** Configuring using the XML configuration style
 
@@ -37,6 +46,8 @@ The CHECK_MYSQL plugin
 	<arg name="database"  value="$ARG3$" />
 	<arg name="user"  value="$ARG4$" />
 	<arg name="password"  value="$ARG5$" />
+	<arg name="warning"  value="$ARG6$" />
+	<arg name="critical"  value="$ARG7$" />
   </command>
 
 +----------+  
@@ -45,7 +56,7 @@ The CHECK_MYSQL plugin
   
 +----------+
 
-  check_mysql : CHECK_MYSQL --hostname $ARG1$ --port $ARG2$ --database $ARG3$ --user $ARG4$ --password $ARG5$
+  check_mysql : CHECK_MYSQL --hostname $ARG1$ --port $ARG2$ --database $ARG3$ --user $ARG4$ --password $ARG5$ --warning $ARG6$ --critical $ARG7$
    
 +----------+
 
@@ -57,14 +68,13 @@ The CHECK_MYSQL plugin
  
 +----------+
 
-  check_nrpe -H 127.0.0.1 -c check_mysql -a 'localhost!3306!database!username!password' -n 
+  check_nrpe -n -H 127.0.0.1 -c check_mysql -a localhost 3306 database username password 3:8 8: 
 
 +----------+
 
 ** Checking the slave thread
 
   In the following example we show how to check a slave thread.
-
   
 ** Configuring using the XML configuration style
 
@@ -87,16 +97,16 @@ The CHECK_MYSQL plugin
   
 +----------+
 
-  check_mysql:CHECK_MYSQL --check-slave --hostname $ARG1$ --port $ARG2$ --database $ARG3$ --user $ARG4$ --password $ARG5$ --warning $ARG6$ --critical $ARG7$
+  check_mysql: CHECK_MYSQL --check-slave --hostname $ARG1$ --port $ARG2$ --database $ARG3$ --user $ARG4$ --password $ARG5$ --warning $ARG6$ --critical $ARG7$
    
 +----------+
 
 ** Invocation
 
- The following will check the connection a slave thread and will send a warning if it is 10 seconds behind the master and a critical if it is 30 seconds behind the master:
+ The following will check the connection a slave thread and will send a warning if it is more than 10 seconds behind the master and a critical if it is more than 30 seconds behind the master:
  
 +----------+
 
-  check_nrpe -H 127.0.0.1 -c check_mysql -a 'localhost!3306!database!username!password!30!10' -n 
+  check_nrpe -n -H 127.0.0.1 -c check_mysql -a localhost 3306 database username password 10: 30:  
 
 +----------+

@@ -40,6 +40,15 @@
 						<descriptorRef>bin</descriptorRef>
 					</descriptorRefs>
 				</configuration>
+				<executions> 
+					<execution>
+						<id>jnrpe-plugins-zips</id>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<phase>package</phase>
+					</execution>
+				</executions>
 			</plugin>
 			
 			<plugin>

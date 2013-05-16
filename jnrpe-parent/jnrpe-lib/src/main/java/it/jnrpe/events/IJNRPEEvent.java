@@ -17,8 +17,7 @@ import java.util.Map;
  *
  * @author Massimiliano Ziccardi
  */
-public interface IJNRPEEvent
-{
+public interface IJNRPEEvent {
     /**
      * The event name.
      *

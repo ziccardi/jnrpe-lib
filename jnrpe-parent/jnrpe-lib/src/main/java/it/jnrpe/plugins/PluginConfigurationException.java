@@ -10,31 +10,55 @@
  */
 package it.jnrpe.plugins;
 
-public class PluginConfigurationException extends Exception
-{
-
+/**
+ * Exception thrown in case of plugin configuration errors.
+ *
+ * @author Massimiliano Ziccardi
+ */
+public class PluginConfigurationException extends Exception {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -9096977896397218216L;
 
-    public PluginConfigurationException()
-    {
+    /**
+     * Default constructor.
+     */
+    public PluginConfigurationException() {
         super();
     }
 
-    public PluginConfigurationException(String message, Throwable cause)
-    {
+    /**
+     * Initializes the exception with a message and an optional root cause.
+     *
+     * @param message
+     *            The exception message
+     * @param cause
+     *            The root cause
+     */
+    public PluginConfigurationException(final String message,
+            final Throwable cause) {
         super(message, cause);
     }
 
-    public PluginConfigurationException(String message)
-    {
+    /**
+     * Initializes the exception with a message.
+     *
+     * @param message
+     *            The exception message
+     */
+    public PluginConfigurationException(final String message) {
         super(message);
     }
 
-    public PluginConfigurationException(Throwable cause)
-    {
+    /**
+     * Initializes the exception with a cause. The message is inherited from the
+     * root cause.
+     *
+     * @param cause
+     *            The root cause.
+     */
+    public PluginConfigurationException(final Throwable cause) {
         super(cause);
     }
 

@@ -27,100 +27,95 @@ import org.apache.commons.cli2.util.HelpFormatter;
 /**
  * This class was intended to abstract the kind of plugin to execute. Hides
  * command line parsing from command invoker.
- * 
+ *
  * @author Massimiliano Ziccardi
- * 
+ *
  */
-public final class PluginProxy extends PluginBase
-{
+public final class PluginProxy extends PluginBase {
     /**
      * The plugin instance proxied by this object.
      */
-    private IPluginInterface m_plugin = null;
+    private IPluginInterface proxiedPlugin = null;
 
     /**
      * The plugin definition of the plugin proxied by this object.
      */
-    private PluginDefinition m_pluginDef;
+    private PluginDefinition proxyedPluginDefinition;
 
     /**
      * The command line definition as requested by the Apache commons cli.
      * library.
      */
-    private Group m_MainOptionsGroup = null;
+    private Group mainOptionsGroup = null;
 
     /**
      * The proxied plugin description.
      */
-    private final String m_sDescription;
+    private final String description;
 
     /**
      * Instantiate a new plugin proxy.
-     * 
+     *
      * @param plugin
      *            The plugin to be proxied
      * @param pluginDef
      *            The plugin definition of the plugin to be proxied
      */
     public PluginProxy(final IPluginInterface plugin,
-            final PluginDefinition pluginDef)
-    {
-        m_plugin = plugin;
-        m_pluginDef = pluginDef;
-        m_sDescription = m_pluginDef.getDescription();
+            final PluginDefinition pluginDef) {
+        proxiedPlugin = plugin;
+        proxyedPluginDefinition = pluginDef;
+        description = proxyedPluginDefinition.getDescription();
 
         GroupBuilder gBuilder = new GroupBuilder();
-        
-        for (PluginOption po : pluginDef.getOptions())
-        {
+
+        for (PluginOption po : pluginDef.getOptions()) {
             gBuilder = gBuilder.withOption(po.toOption());
         }
-        
-        m_MainOptionsGroup = gBuilder.create();
+
+        mainOptionsGroup = gBuilder.create();
     }
 
     /**
      * Returns a collection of all the options accepted by this plugin.
-     * 
+     *
      * @return a collection of plugin options.
      */
-    public Collection<PluginOption> getOptions()
-    {
-        return m_pluginDef.getOptions();
+    public Collection<PluginOption> getOptions() {
+        return proxyedPluginDefinition.getOptions();
     }
 
     /**
      * Executes the proxied plugin passing the received arguments as parameters.
-     * 
-     * @param args
+     *
+     * @param argsAry
      *            The parameters to be passed to the plugin
      * @return The return value of the plugin.
+     * @throws BadThresholdException
+     *             -
      */
-    public ReturnValue execute(final String[] args) throws BadThresholdException
-    {
-        //CommandLineParser clp = new PosixParser();
-        try
-        {
+    public ReturnValue execute(final String[] argsAry)
+            throws BadThresholdException {
+        // CommandLineParser clp = new PosixParser();
+        try {
             HelpFormatter hf = new HelpFormatter();
 
             // configure a parser
             Parser p = new Parser();
-            p.setGroup(m_MainOptionsGroup);
+            p.setGroup(mainOptionsGroup);
             p.setHelpFormatter(hf);
-            CommandLine cl = p.parse(args);
+            CommandLine cl = p.parse(argsAry);
             if (getListeners() != null
-                    && m_plugin instanceof IPluginInterfaceEx)
-            {
-                ((IPluginInterfaceEx) m_plugin).addListeners(getListeners());
+                    && proxiedPlugin instanceof IPluginInterfaceEx) {
+                ((IPluginInterfaceEx) proxiedPlugin)
+                        .addListeners(getListeners());
             }
 
             Thread.currentThread().setContextClassLoader(
-                    m_plugin.getClass().getClassLoader());
+                    proxiedPlugin.getClass().getClassLoader());
 
-            return m_plugin.execute(new PluginCommandLine(cl));
-        }
-        catch (OptionException e)
-        {
+            return proxiedPlugin.execute(new PluginCommandLine(cl));
+        } catch (OptionException e) {
             // m_Logger.error("ERROR PARSING PLUGIN ARGUMENTS", e);
 
             return new ReturnValue(Status.UNKNOWN, e.getMessage());
@@ -130,37 +125,39 @@ public final class PluginProxy extends PluginBase
     /**
      * Prints the help related to the plugin (standard output).
      */
-    public void printHelp()
-    {
-        String sDivider = "================================================================================";
-        System.out.println (sDivider);
-        System.out.println ("PLUGIN NAME : " + m_pluginDef.getName());
-        if (m_sDescription != null && m_sDescription.trim().length() != 0)
-        {
-            System.out.println (sDivider);
+    public void printHelp() {
+
+        HelpFormatter hf = new HelpFormatter();
+        StringBuffer sbDivider = new StringBuffer("=");
+
+        while (sbDivider.length() < hf.getPageWidth()) {
+            sbDivider.append("=");
+        }
+        System.out.println(sbDivider.toString());
+        System.out
+                .println("PLUGIN NAME : " + proxyedPluginDefinition.getName());
+        if (description != null && description.trim().length() != 0) {
+            System.out.println(sbDivider.toString());
             System.out.println("Description : ");
             System.out.println();
-            System.out.println(m_sDescription);
+            System.out.println(description);
         }
-        HelpFormatter hf = new HelpFormatter();
-        hf.setGroup(m_MainOptionsGroup);
-        //hf.setHeader(m_pluginDef.getName());
-        hf.setDivider(sDivider);
+
+        hf.setGroup(mainOptionsGroup);
+        // hf.setHeader(m_pluginDef.getName());
+        hf.setDivider(sbDivider.toString());
         hf.print();
-        //hf.printHelp(m_pluginDef.getName(), m_Options);
+        // hf.printHelp(m_pluginDef.getName(), m_Options);
     }
 
     /**
      * Not used.
-     * 
+     *
      * @param cl
      *            Not used
      * @return null.
      */
-    public ReturnValue execute(final ICommandLine cl)
-    {
-        // TODO Auto-generated method stub
+    public ReturnValue execute(final ICommandLine cl) {
         return null;
     }
-
 }

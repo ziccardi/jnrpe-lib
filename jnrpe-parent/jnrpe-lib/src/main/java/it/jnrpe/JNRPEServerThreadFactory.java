@@ -21,61 +21,55 @@ import java.net.Socket;
  * @author Massimiliano Ziccardi
  *
  */
-final class JNRPEServerThreadFactory
-{
+final class JNRPEServerThreadFactory {
     /**
      * The singleton thread factory instance.
      */
-    private static volatile JNRPEServerThreadFactory m_instance = null;
+    private static volatile JNRPEServerThreadFactory instance = null;
     /**
      * The command invoker.
      */
-    private final CommandInvoker m_commandInvoker;
+    private final CommandInvoker commandInvoker;
 
     /**
      * Builds the object and initializes it with the given command invoker.
      *
-     * @param commandInvoker
+     * @param cmdInvoker
      *            The command invoker
      */
-    private JNRPEServerThreadFactory(final CommandInvoker commandInvoker)
-    {
-        m_commandInvoker = commandInvoker;
+    private JNRPEServerThreadFactory(final CommandInvoker cmdInvoker) {
+        this.commandInvoker = cmdInvoker;
     }
 
     /**
      * In this version thread are always created.
      *
-     * @param s
+     * @param socket
      *            The socked served by the thread
      * @return The newly created thread
      */
-    public JNRPEServerThread createNewThread(final Socket s)
-    {
-        return new JNRPEServerThread(s, m_commandInvoker);
+    public JNRPEServerThread createNewThread(final Socket socket) {
+        return new JNRPEServerThread(socket, commandInvoker);
     }
 
     /**
      * Return an instance of the system level thread factory.
-     * 
-     * @param commandInvoker The command Invoker instance.
+     *
+     * @param commandInvoker
+     *            The command Invoker instance.
      * @return The thread factory
      */
     public static JNRPEServerThreadFactory getInstance(
-            final CommandInvoker commandInvoker)
-    {
-        if (m_instance == null)
-        {
-            synchronized (JNRPEServerThread.class)
-            {
-                if (m_instance == null)
-                {
-                    m_instance = new JNRPEServerThreadFactory(commandInvoker);
+            final CommandInvoker commandInvoker) {
+        if (instance == null) {
+            synchronized (JNRPEServerThread.class) {
+                if (instance == null) {
+                    instance = new JNRPEServerThreadFactory(commandInvoker);
                 }
             }
-            
+
         }
 
-        return m_instance;
+        return instance;
     }
 }
