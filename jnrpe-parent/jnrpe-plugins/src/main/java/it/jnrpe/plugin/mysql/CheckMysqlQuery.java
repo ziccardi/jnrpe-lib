@@ -53,9 +53,7 @@ public class CheckMysqlQuery extends PluginBase {
         try {
             conn = mysql.getConnection();
         } catch (ClassNotFoundException e) {
-            sendEvent(
-                    LogEvent.ERROR,
-                    "Mysql driver library not found into the classpath"
+            log.error("Mysql driver library not found into the classpath"
                     + ": download and put it in the same directory "
                     + "of this plugin");
             return new ReturnValue(
@@ -63,7 +61,7 @@ public class CheckMysqlQuery extends PluginBase {
                     "CHECK_MYSQL_QUERY - CRITICAL: Error accessing the "
                     + "MySQL server - JDBC driver not installed");
         } catch (Exception e) {
-            sendEvent(LogEvent.ERROR, "Error accessing the MySQL server", e);
+            log.error("Error accessing the MySQL server", e);
             return new ReturnValue(Status.CRITICAL,
                     "CHECK_MYSQL_QUERY - CRITICAL: Error accessing "
                     + "the MySQL server - " + e.getMessage());
@@ -119,9 +117,7 @@ public class CheckMysqlQuery extends PluginBase {
                         + " returned no rows");
             }
         } catch (SQLException e) {
-            sendEvent(
-                    LogEvent.WARNING,
-                    "Error executing plugin CheckMysqlQuery : "
+            log.warn("Error executing plugin CheckMysqlQuery : "
                             + e.getMessage(), e);
             return new ReturnValue(Status.CRITICAL,
                     "CHECK_MYSQL_QUERY - CRITICAL: " + e.getMessage());
@@ -130,16 +126,14 @@ public class CheckMysqlQuery extends PluginBase {
                 try {
                     st.close();
                 } catch (SQLException e) {
-                    sendEvent(LogEvent.ERROR, "Error closing MySQL statement",
-                            e);
+                    log.error("Error closing MySQL statement", e);
                 }
             }
             if (set != null) {
                 try {
                     set.close();
                 } catch (SQLException e) {
-                    sendEvent(LogEvent.ERROR, "Error closing MySQL ResultSet",
-                            e);
+                    log.error("Error closing MySQL ResultSet", e);
                 }
             }
             mysql.closeConnection(conn);

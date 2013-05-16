@@ -32,6 +32,165 @@ public abstract class PluginBase implements IPluginInterfaceEx {
     private Set<IJNRPEEventListener> listenersSet =
             new HashSet<IJNRPEEventListener>();
 
+    protected final Logger log = new Logger();
+
+    /**
+     * This class represent a generic logger that will be used by plugins
+     * extending the {@link PluginBase} to write logs.
+     *
+     * @author Massimiliano Ziccardi
+     *
+     */
+    protected class Logger {
+
+        /**
+         * Writes a trace message.
+         *
+         * @param message
+         *            the message
+         */
+        public final void trace(final String message) {
+            EventsUtil.sendEvent(listenersSet, PluginBase.this, LogEvent.TRACE,
+                    message);
+        }
+
+        /**
+         * Writes a trace message and logs the exception.
+         *
+         * @param message
+         *            the message
+         * @param exc
+         *            the exception to be logged
+         */
+        public final void trace(final String message, final Throwable exc) {
+            EventsUtil.sendEvent(listenersSet, PluginBase.this, LogEvent.TRACE,
+                    message, exc);
+        }
+
+        /**
+         * Writes a debug message.
+         *
+         * @param message
+         *            the message
+         */
+        public final void debug(final String message) {
+            EventsUtil.sendEvent(listenersSet, PluginBase.this, LogEvent.DEBUG,
+                    message);
+        }
+
+        /**
+         * Writes a debug message and logs the exception.
+         *
+         * @param message
+         *            the message
+         * @param exc
+         *            the exception to be logged
+         */
+        public final void debug(final String message, final Throwable exc) {
+            EventsUtil.sendEvent(listenersSet, PluginBase.this, LogEvent.DEBUG,
+                    message, exc);
+        }
+
+        /**
+         * Writes an info message.
+         *
+         * @param message
+         *            the message
+         */
+        public final void info(final String message) {
+            EventsUtil.sendEvent(listenersSet, PluginBase.this, LogEvent.INFO,
+                    message);
+        }
+
+        /**
+         * Writes an info message and logs the exception.
+         *
+         * @param message
+         *            the message
+         * @param exc
+         *            the exception to be logged
+         */
+        public final void info(final String message, final Throwable exc) {
+            EventsUtil.sendEvent(listenersSet, PluginBase.this, LogEvent.INFO,
+                    message, exc);
+        }
+
+        /**
+         * Writes a warning message.
+         *
+         * @param message
+         *            the message
+         */
+        public final void warn(final String message) {
+            EventsUtil.sendEvent(listenersSet, PluginBase.this,
+                    LogEvent.WARNING, message);
+        }
+
+        /**
+         * Writes a warning message and logs the exception.
+         *
+         * @param message
+         *            the message
+         * @param exc
+         *            the exception to be logged
+         */
+        public final void warn(final String message, final Throwable exc) {
+            EventsUtil.sendEvent(listenersSet, PluginBase.this,
+                    LogEvent.WARNING, message,
+                    exc);
+        }
+
+        /**
+         * Writes an error message.
+         *
+         * @param message
+         *            the message
+         */
+        public final void error(final String message) {
+            EventsUtil.sendEvent(listenersSet, PluginBase.this, LogEvent.ERROR,
+                    message);
+        }
+
+        /**
+         * Writes an error message and logs the exception.
+         *
+         * @param message
+         *            the message
+         * @param exc
+         *            the exception to be logged
+         */
+        public final void error(final String message, final Throwable exc) {
+            EventsUtil.sendEvent(listenersSet, PluginBase.this, LogEvent.ERROR,
+                    message,
+                    exc);
+        }
+
+        /**
+         * Writes a fatal message.
+         *
+         * @param message
+         *            the message
+         */
+        public final void fatal(final String message) {
+            EventsUtil.sendEvent(listenersSet, PluginBase.this, LogEvent.FATAL,
+                    message);
+        }
+
+        /**
+         * Writes a fatal message and logs the exception.
+         *
+         * @param message
+         *            the message
+         * @param exc
+         *            the exception to be logged
+         */
+        public final void fatal(final String message, final Throwable exc) {
+            EventsUtil.sendEvent(listenersSet, PluginBase.this, LogEvent.FATAL,
+                    message,
+                    exc);
+        }
+    }
+
     /**
      * Adds a new listener to the list of objects that will receive the messages
      * sent by this class.

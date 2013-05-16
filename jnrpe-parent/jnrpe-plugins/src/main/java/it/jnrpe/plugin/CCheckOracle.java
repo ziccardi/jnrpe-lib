@@ -63,7 +63,7 @@ public class CCheckOracle extends PluginBase {
                 "oracle.jdbc.driver.OracleDriver")
                 .newInstance());
 
-        sendEvent(LogEvent.DEBUG, "Connecting to " + cl.getOptionValue("db")
+        log.debug("Connecting to " + cl.getOptionValue("db")
                 + "@" + cl.getOptionValue("server"));
 
         Connection conn =
@@ -247,7 +247,7 @@ public class CCheckOracle extends PluginBase {
             return rv;
 
         } catch (Exception e) {
-            sendEvent(LogEvent.WARNING, "Error during CHECK_ORACLE execution "
+            log.warn("Error during CHECK_ORACLE execution "
                     + e.getMessage(), e);
             return new ReturnValue(Status.CRITICAL,
                     "CHECK_ORACLE : CRITICAL - " + e.getMessage());
@@ -365,7 +365,7 @@ public class CCheckOracle extends PluginBase {
             return rv;
 
         } catch (Exception e) {
-            sendEvent(LogEvent.WARNING, "Error during CHECK_ORACLE execution "
+            log.warn("Error during CHECK_ORACLE execution "
                     + e.getMessage(), e);
             return new ReturnValue(Status.CRITICAL,
                     "CHECK_ORACLE : CRITICAL - " + e.getMessage());
@@ -405,19 +405,18 @@ public class CCheckOracle extends PluginBase {
 
             conn.close();
         } catch (ClassNotFoundException cnfe) {
-            sendEvent(
-                    LogEvent.ERROR,
-                    "Oracle driver library not found into the classpath: "
+            log.error("Oracle driver library not found into the classpath: "
                     + "download and put it in the same directory "
                     + "of this plugin");
+
             return new ReturnValue(Status.UNKNOWN, cnfe.getMessage());
         } catch (SQLException sqle) {
-            sendEvent(LogEvent.ERROR, "Error communicating with database.",
+            log.error("Error communicating with database.",
                     sqle);
 
             return new ReturnValue(Status.CRITICAL, sqle.getMessage());
         } catch (Exception e) {
-            sendEvent(LogEvent.FATAL, "Error communicating with database.", e);
+            log.fatal("Error communicating with database.", e);
 
             return new ReturnValue(Status.UNKNOWN, e.getMessage());
         } finally {
@@ -425,8 +424,7 @@ public class CCheckOracle extends PluginBase {
                 try {
                     conn.close();
                 } catch (Exception e) {
-                    sendEvent(LogEvent.WARNING,
-                            "Error closing the DB connection.", e);
+                    log.warn("Error closing the DB connection.", e);
                 }
             }
         }

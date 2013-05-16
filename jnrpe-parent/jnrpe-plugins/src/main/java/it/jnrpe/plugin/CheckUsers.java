@@ -65,7 +65,7 @@ public class CheckUsers extends PluginBase {
                 totalLoggedIn = getWindowsLoggedInUsers();
             }
         } catch (IOException e) {
-            sendEvent(LogEvent.WARNING, "CheckUser plugin execution error: "
+            log.warn("CheckUser plugin execution error: "
                     + e.getMessage(), e);
             return new ReturnValue(Status.UNKNOWN,
                     "CHECK_USER - UNKNOWN: An error has occurred : "

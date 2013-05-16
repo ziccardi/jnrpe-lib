@@ -82,9 +82,7 @@ public class CheckPgsql extends PluginBase {
             conn = getConnection(cl);
             // elapsed = (System.currentTimeMillis() - start) / 1000l;
         } catch (ClassNotFoundException e) {
-            sendEvent(
-                    LogEvent.ERROR,
-                    "PostgreSQL driver library not found into the classpath: "
+            log.error("PostgreSQL driver library not found into the classpath: "
                             + "download and put it in the same directory of "
                             + "this plugin");
             return new ReturnValue(
@@ -92,8 +90,7 @@ public class CheckPgsql extends PluginBase {
                     "CHECK_PGSQL - CRITICAL: Error accessing the PostgreSQL "
                             + "server - JDBC driver not installed");
         } catch (Exception e) {
-            sendEvent(LogEvent.ERROR, "Error accessing the PostgreSQL server",
-                    e);
+            log.error("Error accessing the PostgreSQL server", e);
             return new ReturnValue(Status.CRITICAL,
                     "CHECK_PGSQL - CRITICAL: Error accessing the PostgreSQL "
                             + "server - " + e.getMessage());
