@@ -22,96 +22,247 @@ import java.util.Set;
 /**
  * If your plugin needs to send events and you don't mind extending this class,
  * you can save some coding using this as a base.
- * 
+ *
  * @author Massimiliano Ziccardi
  */
-public abstract class PluginBase implements IPluginInterfaceEx
-{
+public abstract class PluginBase implements IPluginInterfaceEx {
     /**
      * The list of listener registered for the events raised by this plugin.
      */
-    private Set<IJNRPEEventListener> m_vListeners 
-        = new HashSet<IJNRPEEventListener>();
+    private Set<IJNRPEEventListener> listenersSet =
+            new HashSet<IJNRPEEventListener>();
+
+    protected final Logger log = new Logger();
 
     /**
-     * Adds a new listener to the list of objects that will receive the
-     * messages sent by this class.
-     * 
+     * This class represent a generic logger that will be used by plugins
+     * extending the {@link PluginBase} to write logs.
+     *
+     * @author Massimiliano Ziccardi
+     *
+     */
+    protected class Logger {
+
+        /**
+         * Writes a trace message.
+         *
+         * @param message
+         *            the message
+         */
+        public final void trace(final String message) {
+            EventsUtil.sendEvent(listenersSet, PluginBase.this, LogEvent.TRACE,
+                    message);
+        }
+
+        /**
+         * Writes a trace message and logs the exception.
+         *
+         * @param message
+         *            the message
+         * @param exc
+         *            the exception to be logged
+         */
+        public final void trace(final String message, final Throwable exc) {
+            EventsUtil.sendEvent(listenersSet, PluginBase.this, LogEvent.TRACE,
+                    message, exc);
+        }
+
+        /**
+         * Writes a debug message.
+         *
+         * @param message
+         *            the message
+         */
+        public final void debug(final String message) {
+            EventsUtil.sendEvent(listenersSet, PluginBase.this, LogEvent.DEBUG,
+                    message);
+        }
+
+        /**
+         * Writes a debug message and logs the exception.
+         *
+         * @param message
+         *            the message
+         * @param exc
+         *            the exception to be logged
+         */
+        public final void debug(final String message, final Throwable exc) {
+            EventsUtil.sendEvent(listenersSet, PluginBase.this, LogEvent.DEBUG,
+                    message, exc);
+        }
+
+        /**
+         * Writes an info message.
+         *
+         * @param message
+         *            the message
+         */
+        public final void info(final String message) {
+            EventsUtil.sendEvent(listenersSet, PluginBase.this, LogEvent.INFO,
+                    message);
+        }
+
+        /**
+         * Writes an info message and logs the exception.
+         *
+         * @param message
+         *            the message
+         * @param exc
+         *            the exception to be logged
+         */
+        public final void info(final String message, final Throwable exc) {
+            EventsUtil.sendEvent(listenersSet, PluginBase.this, LogEvent.INFO,
+                    message, exc);
+        }
+
+        /**
+         * Writes a warning message.
+         *
+         * @param message
+         *            the message
+         */
+        public final void warn(final String message) {
+            EventsUtil.sendEvent(listenersSet, PluginBase.this,
+                    LogEvent.WARNING, message);
+        }
+
+        /**
+         * Writes a warning message and logs the exception.
+         *
+         * @param message
+         *            the message
+         * @param exc
+         *            the exception to be logged
+         */
+        public final void warn(final String message, final Throwable exc) {
+            EventsUtil.sendEvent(listenersSet, PluginBase.this,
+                    LogEvent.WARNING, message,
+                    exc);
+        }
+
+        /**
+         * Writes an error message.
+         *
+         * @param message
+         *            the message
+         */
+        public final void error(final String message) {
+            EventsUtil.sendEvent(listenersSet, PluginBase.this, LogEvent.ERROR,
+                    message);
+        }
+
+        /**
+         * Writes an error message and logs the exception.
+         *
+         * @param message
+         *            the message
+         * @param exc
+         *            the exception to be logged
+         */
+        public final void error(final String message, final Throwable exc) {
+            EventsUtil.sendEvent(listenersSet, PluginBase.this, LogEvent.ERROR,
+                    message,
+                    exc);
+        }
+
+        /**
+         * Writes a fatal message.
+         *
+         * @param message
+         *            the message
+         */
+        public final void fatal(final String message) {
+            EventsUtil.sendEvent(listenersSet, PluginBase.this, LogEvent.FATAL,
+                    message);
+        }
+
+        /**
+         * Writes a fatal message and logs the exception.
+         *
+         * @param message
+         *            the message
+         * @param exc
+         *            the exception to be logged
+         */
+        public final void fatal(final String message, final Throwable exc) {
+            EventsUtil.sendEvent(listenersSet, PluginBase.this, LogEvent.FATAL,
+                    message,
+                    exc);
+        }
+    }
+
+    /**
+     * Adds a new listener to the list of objects that will receive the messages
+     * sent by this class.
+     *
      * @param listener
      *            The new listener
      */
-    public final void addListener(final IJNRPEEventListener listener)
-    {
-        m_vListeners.add(listener);
+    public final void addListener(final IJNRPEEventListener listener) {
+        listenersSet.add(listener);
     }
 
     /**
      * Adds a new collection of listeners.
-     * 
+     *
      * @param listeners
      *            The collection of listeners to be added
      */
     public final void addListeners(
-            final Collection<IJNRPEEventListener> listeners)
-    {
-        if (listeners == null)
-        {
+            final Collection<IJNRPEEventListener> listeners) {
+        if (listeners == null) {
             return;
         }
 
-        m_vListeners.addAll(listeners);
+        listenersSet.addAll(listeners);
     }
 
     /**
      * Sends an event.
-     * 
+     *
      * @param evt
      *            The event type
-     * @param sMessage
+     * @param message
      *            The message
      */
-    public final void sendEvent(final LogEvent evt, final String sMessage)
-    {
-        EventsUtil.sendEvent(m_vListeners, this, evt, sMessage);
+    public final void sendEvent(final LogEvent evt, final String message) {
+        EventsUtil.sendEvent(listenersSet, this, evt, message);
     }
 
     /**
      * Sends an event.
-     * 
+     *
      * @param evt
      *            The event type
-     * @param sMessage
+     * @param message
      *            The message
      * @param exc
      *            The exception to be attached to the event
      */
-    public final void sendEvent(final LogEvent evt, final String sMessage,
-            final Exception exc)
-    {
-        EventsUtil.sendEvent(m_vListeners, this, evt, sMessage, exc);
+    public final void sendEvent(final LogEvent evt, final String message,
+            final Exception exc) {
+        EventsUtil.sendEvent(listenersSet, this, evt, message, exc);
     }
 
     /**
      * Sends a custom event.
-     * 
-     * @param sCustomEvent
+     *
+     * @param customEventName
      *            The custom event identifier
-     * @param vParams
+     * @param paramsAry
      *            The parameter of the event. Can be null.
      */
-    public final void sendEvent(final String sCustomEvent,
-            final EventParam... vParams)
-    {
-        EventsUtil.sendEvent(m_vListeners, this, sCustomEvent, vParams);
+    public final void sendEvent(final String customEventName,
+            final EventParam... paramsAry) {
+        EventsUtil.sendEvent(listenersSet, this, customEventName, paramsAry);
     }
 
     /**
      * Returns all the registered listeners.
-     * 
+     *
      * @return All the listeners
      */
-    protected final Set<IJNRPEEventListener> getListeners()
-    {
-        return m_vListeners;
+    protected final Set<IJNRPEEventListener> getListeners() {
+        return listenersSet;
     }
 }

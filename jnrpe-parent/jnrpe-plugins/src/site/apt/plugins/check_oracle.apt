@@ -82,5 +82,5 @@ The CHECK_ORACLE plugin
  is up and running. To perform the check we use the user SCOTT with password TIGER.
 
 +----------+ 
-  check_nrpe -n -H my.jnrpe.server -c check_oracle_alive -a 'SCOTT!TIGER!TESTSID!DB_ADDRESS'
+  check_nrpe -n -H my.jnrpe.server -c check_oracle_alive -a  SCOTT TIGER TESTSID DB_ADDRESS
 +----------+ 

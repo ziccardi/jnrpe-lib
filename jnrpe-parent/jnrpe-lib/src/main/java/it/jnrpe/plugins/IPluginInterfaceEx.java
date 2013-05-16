@@ -24,8 +24,7 @@ import it.jnrpe.events.IJNRPEEventListener;
  * @author Massimiliano Ziccardi
  *
  */
-public interface IPluginInterfaceEx extends IPluginInterface
-{
+public interface IPluginInterfaceEx extends IPluginInterface {
     /**
      * Adds a new listener to the list of objects that will receive the messages
      * sent by this class.
@@ -38,7 +37,8 @@ public interface IPluginInterfaceEx extends IPluginInterface
     /**
      * Adds a whole collection of listeners to the plugin.
      *
-     * @param listeners The list of listeners
+     * @param listeners
+     *            The list of listeners
      */
     void addListeners(Collection<IJNRPEEventListener> listeners);
 }

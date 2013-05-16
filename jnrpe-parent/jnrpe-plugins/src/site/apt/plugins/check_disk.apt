@@ -58,7 +58,7 @@ Example ranges :
  
 +----------+
 
-  check_nrpe -n -H my.jnrpe.server -c check_disk -a '/!:20!:5'
+  check_nrpe -n -H my.jnrpe.server -c check_disk -a / :20 :5
 
 +----------+
 
@@ -66,7 +66,7 @@ Example ranges :
  
 +----------+
 
-  check_nrpe -n -H my.jnrpe.server -c check_disk -a 'C:!:20!:5'
+  check_nrpe -n -H my.jnrpe.server -c check_disk -a C: :20 :5
 
 +----------+
  

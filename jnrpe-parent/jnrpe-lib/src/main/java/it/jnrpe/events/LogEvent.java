@@ -15,8 +15,7 @@ package it.jnrpe.events;
  *
  * @author Massimiliano Ziccardi
  */
-public enum LogEvent
-{
+public enum LogEvent {
     /**
      * Trace Log Event.
      */

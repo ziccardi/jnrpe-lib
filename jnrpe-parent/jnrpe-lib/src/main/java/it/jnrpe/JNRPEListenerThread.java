@@ -43,11 +43,10 @@ import javax.net.ssl.SSLServerSocketFactory;
 /**
  * Thread that listen on a given IP:PORT. When a request is received, a
  * {@link JNRPEServerThread} is created to serve it.
- * 
+ *
  * @author Massimiliano Ziccardi
  */
-class JNRPEListenerThread extends Thread implements IJNRPEListener
-{
+class JNRPEListenerThread extends Thread implements IJNRPEListener {
 
     /**
      * The default So Linger timeout (in seconds).
@@ -62,40 +61,42 @@ class JNRPEListenerThread extends Thread implements IJNRPEListener
     /**
      * The ServerSocket.
      */
-    private ServerSocket m_serverSocket = null;
+    private ServerSocket serverSocket = null;
 
     /**
      * The list of all the accepted clients.
      */
-    private List<InetAddress> m_vAcceptedHosts = new ArrayList<InetAddress>();
+    private final List<InetAddress> acceptedHostsList =
+            new ArrayList<InetAddress>();
 
     /**
      * The thread factory to be used to create server threads.
      */
-    private ThreadFactory m_threadFactory = null;
+    private ThreadFactory threadFactory = null;
 
     /**
      * The address to bind to.
      */
-    private final String m_sBindingAddress;
+    private final String bindingAddress;
     /**
      * The port to listen to.
      */
-    private final int m_iBindingPort;
+    private final int bindingPort;
     /**
      * The command invoker to be used to serve the requests.
      */
-    private final CommandInvoker m_commandInvoker;
+    private final CommandInvoker commandInvoker;
 
     /**
      * <code>true</code> if the connection must be encrypted.
      */
-    private boolean m_bSSL = false;
+    private boolean useSSL = false;
 
     /**
      * The command execution timeout (milliseconds).
      */
-    private int m_iCommandExecutionTimeout = DEFAULT_COMMAND_EXECUTION_TIMEOUT;
+    private final int commandExecutionTimeout =
+            DEFAULT_COMMAND_EXECUTION_TIMEOUT;
 
     /**
      * The default keystore file name.
@@ -109,65 +110,54 @@ class JNRPEListenerThread extends Thread implements IJNRPEListener
     /**
      * The set of event listeners.
      */
-    private Set<IJNRPEEventListener> m_vEventListeners = null;
+    private Set<IJNRPEEventListener> eventListenersList = null;
 
     /**
      * Set to true if the server is shutting down.
      */
-    private boolean m_bShutdown = false;
+    private boolean shutdownTriggered = false;
 
     /**
      * Builds a listener thread.
-     * 
-     * @param vEventListeners
+     *
+     * @param eventListeners
      *            The event listeners
-     * @param sBindingAddress
+     * @param newBindingAddress
      *            The address to bind to
-     * @param iBindingPort
+     * @param newBindingPort
      *            The port to bind to
-     * @param commandInvoker
+     * @param newCommandInvoker
      *            The command invoker to be used to serve the request
      */
-    JNRPEListenerThread(final Set<IJNRPEEventListener> vEventListeners,
-            final String sBindingAddress, final int iBindingPort,
-            final CommandInvoker commandInvoker)
-    {
-        m_sBindingAddress = sBindingAddress;
-        m_iBindingPort = iBindingPort;
-        m_commandInvoker = commandInvoker;
-        m_vEventListeners = vEventListeners;
-        // try
-        // {
-        // init();
-        // }
-        // catch (Exception e)
-        // {
-        // throw new BindException(e.getMessage());
-        // }
+    JNRPEListenerThread(final Set<IJNRPEEventListener> eventListeners,
+            final String newBindingAddress, final int newBindingPort,
+            final CommandInvoker newCommandInvoker) {
+        this.bindingAddress = newBindingAddress;
+        this.bindingPort = newBindingPort;
+        this.commandInvoker = newCommandInvoker;
+        this.eventListenersList = eventListeners;
     }
 
     /**
      * Enables the SSL.
      */
-    public void enableSSL()
-    {
-        m_bSSL = true;
+    public void enableSSL() {
+        useSSL = true;
     }
 
     /**
      * Creates an SSLServerSocketFactory.
-     * 
+     *
      * @return the newly creates SSL Server Socket Factory
-     * @throws KeyStoreException
-     * @throws CertificateException
-     * @throws IOException
-     * @throws UnrecoverableKeyException
-     * @throws KeyManagementException
+     * @throws KeyStoreException -
+     * @throws CertificateException -
+     * @throws IOException -
+     * @throws UnrecoverableKeyException -
+     * @throws KeyManagementException -
      */
     private SSLServerSocketFactory getSSLSocketFactory()
             throws KeyStoreException, CertificateException, IOException,
-            UnrecoverableKeyException, KeyManagementException
-    {
+            UnrecoverableKeyException, KeyManagementException {
 
         // Open the KeyStore Stream
         StreamManager h = new StreamManager();
@@ -175,15 +165,16 @@ class JNRPEListenerThread extends Thread implements IJNRPEListener
         SSLContext ctx;
         KeyManagerFactory kmf;
 
-        try
-        {
-            InputStream ksStream = getClass().getClassLoader()
-                    .getResourceAsStream(KEYSTORE_NAME);
+        try {
+            InputStream ksStream =
+                    getClass().getClassLoader().getResourceAsStream(
+                            KEYSTORE_NAME);
             h.handle(ksStream);
             ctx = SSLContext.getInstance("SSLv3");
 
-            kmf = KeyManagerFactory.getInstance(KeyManagerFactory
-                    .getDefaultAlgorithm());
+            kmf =
+                    KeyManagerFactory.getInstance(KeyManagerFactory
+                            .getDefaultAlgorithm());
 
             KeyStore ks = KeyStore.getInstance("JKS");
             char[] passphrase = KEYSTORE_PWD.toCharArray();
@@ -192,14 +183,10 @@ class JNRPEListenerThread extends Thread implements IJNRPEListener
             kmf.init(ks, passphrase);
             ctx.init(kmf.getKeyManagers(), null,
                     new java.security.SecureRandom());
-        }
-        catch (NoSuchAlgorithmException e)
-        {
+        } catch (NoSuchAlgorithmException e) {
             throw new SSLException("Unable to initialize SSLSocketFactory.\n"
                     + e.getMessage());
-        }
-        finally
-        {
+        } finally {
             h.closeAll();
         }
 
@@ -208,117 +195,104 @@ class JNRPEListenerThread extends Thread implements IJNRPEListener
 
     /**
      * Initializes the object.
-     * 
+     *
      * @throws IOException
+     *             -
      * @throws KeyManagementException
+     *             -
      * @throws KeyStoreException
+     *             -
      * @throws CertificateException
+     *             -
      * @throws UnrecoverableKeyException
+     *             -
      */
     private void init() throws IOException, KeyManagementException,
-            KeyStoreException, CertificateException, UnrecoverableKeyException
-    {
-        InetAddress addr = InetAddress.getByName(m_sBindingAddress);
+            KeyStoreException, CertificateException, UnrecoverableKeyException {
+        InetAddress addr = InetAddress.getByName(bindingAddress);
         ServerSocketFactory sf = null;
 
-        if (m_bSSL)
-        {
-            // TODO: configurazione keystore
+        if (useSSL) {
             sf = getSSLSocketFactory();
             // sf = getSSLSocketFactory(m_Binding.getKeyStoreFile(),
             // m_Binding.getKeyStorePassword(), "JKS");
-        }
-        else
-        {
+        } else {
             sf = ServerSocketFactory.getDefault();
         }
 
-        m_serverSocket = sf.createServerSocket(m_iBindingPort, 0, addr);
-        if (m_serverSocket instanceof SSLServerSocket)
-        {
-            ((SSLServerSocket) m_serverSocket)
-                    .setEnabledCipherSuites(((SSLServerSocket) m_serverSocket)
+        serverSocket = sf.createServerSocket(bindingPort, 0, addr);
+        if (serverSocket instanceof SSLServerSocket) {
+            ((SSLServerSocket) serverSocket)
+                    .setEnabledCipherSuites(((SSLServerSocket) serverSocket)
                             .getSupportedCipherSuites());
         }
 
         // Init the thread factory
-        m_threadFactory = new ThreadFactory(m_iCommandExecutionTimeout,
-                m_commandInvoker);
+        threadFactory =
+                new ThreadFactory(commandExecutionTimeout, commandInvoker);
     }
 
     /**
      * Adds an host to the list of accepted hosts.
-     * 
+     *
      * @param sHost
      *            The hostname or IP
      * @throws UnknownHostException
      *             thrown if the host name can't be translated to an IP.
      */
     public void addAcceptedHosts(final String sHost)
-            throws UnknownHostException
-    {
+            throws UnknownHostException {
         InetAddress addr = InetAddress.getByName(sHost);
-        m_vAcceptedHosts.add(addr);
+        acceptedHostsList.add(addr);
     }
 
     /**
      * Executes the thread.
      */
-    public void run()
-    {
-        try
-        {
+    @Override
+    public void run() {
+        try {
             init();
 
             StringBuffer msg = new StringBuffer("Listening on ");
-            
-            if (m_bSSL)
-            {
+
+            if (useSSL) {
                 msg = msg.append("SSL/");
             }
-            
-            msg = msg.append(m_sBindingAddress)
-                .append(":")
-                .append(m_iBindingPort);
-            
-            EventsUtil.sendEvent(m_vEventListeners, this, LogEvent.INFO,
+
+            msg = msg.append(bindingAddress).append(":").append(bindingPort);
+
+            EventsUtil.sendEvent(eventListenersList, this, LogEvent.INFO,
                     msg.toString());
 
-            while (true)
-            {
-                Socket clientSocket = m_serverSocket.accept();
+            while (true) {
+                Socket clientSocket = serverSocket.accept();
                 clientSocket.setSoLinger(false, SOLINGER_TIMEOUT);
-                clientSocket.setSoTimeout(m_iCommandExecutionTimeout);
+                clientSocket.setSoTimeout(commandExecutionTimeout);
 
-                if (!canAccept(clientSocket.getInetAddress()))
-                {
+                if (!canAccept(clientSocket.getInetAddress())) {
                     clientSocket.close();
                     continue;
                 }
 
-                JNRPEServerThread kk = m_threadFactory
-                        .createNewThread(clientSocket);
-                kk.configure(this, m_vEventListeners);
+                JNRPEServerThread kk =
+                        threadFactory.createNewThread(clientSocket);
+                kk.configure(this, eventListenersList);
                 kk.start();
             }
-        }
-        catch (SocketException se)
-        {
-            if (!m_bShutdown)
-            {
-                EventsUtil.sendEvent(m_vEventListeners, this, LogEvent.ERROR,
-                        "Unable to listen on " + m_sBindingAddress + ":"
-                                + m_iBindingPort + ": " + se.getMessage(), se);
+        } catch (SocketException se) {
+            if (!shutdownTriggered) {
+                EventsUtil.sendEvent(eventListenersList, this, LogEvent.ERROR,
+                        "Unable to listen on " + bindingAddress + ":"
+                                + bindingPort + ": " + se.getMessage(), se);
             }
 
             // This exception is thrown when the server socket is closed.
             // Ignoring
 
-        }
-        catch (Throwable e)
-        {
-            EventsUtil.sendEvent(m_vEventListeners, this, LogEvent.ERROR, e
-                    .getMessage(), e);
+        } catch (Throwable e) {
+            EventsUtil.sendEvent(eventListenersList, this, LogEvent.ERROR,
+                    e.getMessage(), e);
         }
 
         exit();
@@ -327,61 +301,49 @@ class JNRPEListenerThread extends Thread implements IJNRPEListener
     /**
      * Closes the listener.
      */
-    private synchronized void exit()
-    {
-        m_serverSocket = null;
+    private synchronized void exit() {
+        serverSocket = null;
         notifyAll();
-        EventsUtil.sendEvent(m_vEventListeners, this, LogEvent.INFO,
+        EventsUtil.sendEvent(eventListenersList, this, LogEvent.INFO,
                 "Listener Closed");
     }
 
     /**
      * @see it.jnrpe.IJNRPEListener#close()
      */
-    public synchronized void shutdown()
-    {
-        m_bShutdown = true;
+    public synchronized void shutdown() {
+        shutdownTriggered = true;
 
-        try
-        {
-            if (m_serverSocket != null)
-            {
-                m_serverSocket.close();
-                
-                while (m_serverSocket != null)
-                {
+        try {
+            if (serverSocket != null) {
+                serverSocket.close();
+
+                while (serverSocket != null) {
                     wait();
                 }
             }
-        }
-        catch (InterruptedException ie)
-        {
 
-        }
-        catch (IOException e)
-        {
+        } catch (InterruptedException ie) {
+        } catch (IOException e) {
         }
     }
 
     /**
      * Returns <code>true</code> if the request must be accepted.
-     * 
+     *
      * @param inetAddress
      *            The client IP address
      * @return <code>true</code> if the request must be accepted.
      */
-    private boolean canAccept(final InetAddress inetAddress)
-    {
-        for (InetAddress addr : m_vAcceptedHosts)
-        {
-            if (addr.equals(inetAddress)) 
-            {
+    private boolean canAccept(final InetAddress inetAddress) {
+        for (InetAddress addr : acceptedHostsList) {
+            if (addr.equals(inetAddress)) {
                 return true;
             }
         }
 
         // System.out.println ("Refusing connection to " + inetAddress);
-        EventsUtil.sendEvent(m_vEventListeners, this, LogEvent.INFO,
+        EventsUtil.sendEvent(eventListenersList, this, LogEvent.INFO,
                 "Connection refused from : " + inetAddress);
 
         return false;

@@ -20,15 +20,14 @@ import java.util.Map;
  * @author Massimiliano Ziccardi
  *
  */
-public class PluginRepository
-{
+public class PluginRepository {
     /**
      * Contains all the plugins declared inside this {@link PluginRepository}
      * instance. The key of the map is the plugin name, while the value is the.
      * plugin definition itself.
      */
-    private Map<String, PluginDefinition> m_mPluginsDefs = 
-                new HashMap<String, PluginDefinition>();
+    private Map<String, PluginDefinition> pluginsDefinitionsMap =
+            new HashMap<String, PluginDefinition>();
 
     /**
      * Adds a plugin definition to this repository.
@@ -36,41 +35,35 @@ public class PluginRepository
      * @param pluginDef
      *            The plugin definition to be added.
      */
-    public final void addPluginDefinition(final PluginDefinition pluginDef)
-    {
-        m_mPluginsDefs.put(pluginDef.getName(), pluginDef);
+    public final void addPluginDefinition(final PluginDefinition pluginDef) {
+        pluginsDefinitionsMap.put(pluginDef.getName(), pluginDef);
     }
 
     /**
      * Returns an instance of the plugin declared inside the plugin definition.
      * identificated by the passed name.
      *
-     * @param sName
+     * @param name
      *            The name of the plugin to be instantiated.
      * @return The plugin instance
      */
-    public final IPluginInterface getPlugin(final String sName)
-    {
-        PluginDefinition pluginDef = m_mPluginsDefs.get(sName);
-        if (pluginDef == null)
-        {
+    public final IPluginInterface getPlugin(final String name) {
+        PluginDefinition pluginDef = pluginsDefinitionsMap.get(name);
+        if (pluginDef == null) {
             return null;
         }
 
-        try
-        {
+        try {
             IPluginInterface pluginInterface = pluginDef.getPluginInterface();
 
-            if (pluginInterface == null)
-            {
-                pluginInterface = (IPluginInterface) pluginDef.getPluginClass()
-                        .newInstance();
+            if (pluginInterface == null) {
+                pluginInterface =
+                        (IPluginInterface) pluginDef.getPluginClass()
+                                .newInstance();
             }
             return new PluginProxy(pluginInterface, pluginDef);
-        }
-        catch (Exception e)
-        {
-            // TODO Auto-generated catch block
+        } catch (Exception e) {
+            // FIXME : handle this exception
             e.printStackTrace();
         }
 
@@ -82,8 +75,7 @@ public class PluginRepository
      *
      * @return The collection of plugin definitions.
      */
-    public final Collection<PluginDefinition> getAllPlugins()
-    {
-        return m_mPluginsDefs.values();
+    public final Collection<PluginDefinition> getAllPlugins() {
+        return pluginsDefinitionsMap.values();
     }
 }

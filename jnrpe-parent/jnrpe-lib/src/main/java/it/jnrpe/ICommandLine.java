@@ -15,67 +15,65 @@ package it.jnrpe;
  *
  * @author Massimiliano Ziccardi
  */
-public interface ICommandLine
-{
+public interface ICommandLine {
 
     /**
      * Returns the value of the specified option.
      *
-     * @param sOptionName
+     * @param optionName
      *            The option name
      * @return The value of the option
      */
-    String getOptionValue(String sOptionName);
+    String getOptionValue(String optionName);
 
     /**
      * Returns the value of the specified option. If the option is not present,
      * returns the default value.
      *
-     * @param sOptionName
+     * @param optionName
      *            The option name
-     * @param sDefaultValue
+     * @param defaultValue
      *            The default value
      * @return The option value or, if not specified, the default value
      */
-    String getOptionValue(String sOptionName, String sDefaultValue);
+    String getOptionValue(String optionName, String defaultValue);
 
     /**
      * Returns the value of the specified option.
      *
-     * @param cOption
+     * @param shortOptionName
      *            The option short name
      * @return The option value
      */
-    String getOptionValue(char cOption);
+    String getOptionValue(char shortOptionName);
 
     /**
      * Returns the value of the specified option If the option is not present,
      * returns the default value.
      *
-     * @param cOption
+     * @param shortOptionName
      *            The option short name
-     * @param sDefaultValue
+     * @param defaultValue
      *            The default value
      * @return The option value or, if not specified, the default value
      */
-    String getOptionValue(char cOption, String sDefaultValue);
+    String getOptionValue(char shortOptionName, String defaultValue);
 
     /**
      * Returns <code>true</code> if the option is present.
      *
-     * @param sOptionName
+     * @param optionName
      *            The option name
      * @return <code>true</code> if the option is present
      */
-    boolean hasOption(String sOptionName);
+    boolean hasOption(String optionName);
 
     /**
      * Returns <code>true</code> if the option is present.
      *
-     * @param cOption
+     * @param shortOptionName
      *            The option short name
      * @return <code>true</code> if the specified option is present
      */
-    boolean hasOption(char cOption);
-
+    boolean hasOption(char shortOptionName);
 }

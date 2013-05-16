@@ -20,8 +20,7 @@ import java.math.BigDecimal;
  *
  * @author Massimiliano Ziccardi
  */
-class Threshold
-{
+class Threshold {
     /**
      * When the current state is 'MINVAL', that means that the value we are
      * parsing is the definition of the minimum value.
@@ -35,173 +34,168 @@ class Threshold
     private static final int MAXVAL = 1;
 
     /**
-     * When the current state is 'END', that means that we have finished
-     * parsing the threshold definition.
+     * When the current state is 'END', that means that we have finished parsing
+     * the threshold definition.
      */
     private static final int END = 99;
 
     /**
      * The mimimum value as parsed from the threshold definition.
      */
-    private BigDecimal m_iMinVal = null;
+    private BigDecimal minVal = null;
 
     /**
      * The maximum value as parsed from the threshold definition.
      */
-    private BigDecimal m_iMaxVal = null;
+    private BigDecimal maxVal = null;
 
     /**
      * <code>true</code> if the threshold is negated.
      */
-    private boolean m_bNegate = false;
+    private boolean negateThreshold = false;
 
     /**
      * The current state of the threshold parser.
      */
-    private int m_iCurState = MINVAL;
+    private int curState = MINVAL;
 
     /**
      * Builds the object with the specified range.
      *
-     * @param sRange
+     * @param thresholdString
      *            The range
-     * @throws BadThresholdException 
+     * @throws BadThresholdException
+     *             -
      */
-    Threshold(final String sRange) throws BadThresholdException
-    {
-        parseRange(sRange);
+    Threshold(final String thresholdString) throws BadThresholdException {
+        parseRange(thresholdString);
     }
 
     /**
      * Parses the range definition to evaluate the minimum and maximum
      * thresholds.
      *
-     * @param sRange
+     * @param thresholdString
      *            The range
+     * @throws BadThresholdException
+     *             -
      */
-    private void parseRange(final String sRange) throws BadThresholdException
-    {
-        byte[] vBytes = sRange.getBytes();
-        ByteArrayInputStream bin = new ByteArrayInputStream(vBytes);
+    private void parseRange(final String thresholdString)
+            throws BadThresholdException {
+        byte[] bytesAry = thresholdString.getBytes();
+        ByteArrayInputStream bin = new ByteArrayInputStream(bytesAry);
         PushbackInputStream pb = new PushbackInputStream(bin);
 
-        StringBuffer sbCurrentParsed = new StringBuffer();
-        
+        StringBuffer currentParsedBuffer = new StringBuffer();
+
         byte b = 0;
 
-        try
-        {
-            while ((b = (byte) pb.read()) != -1)
-            {
-                sbCurrentParsed.append(b);
-                if (b == '@')
-                {
-                    if (m_iCurState != MINVAL)
-                    {
-                        throw new BadThresholdException("Unparsable threshold '" + sRange + "'. Error at char " + sbCurrentParsed.length() + ": the '@' should not be there.");
+        try {
+            while ((b = (byte) pb.read()) != -1) {
+                currentParsedBuffer.append(b);
+                if (b == '@') {
+                    if (curState != MINVAL) {
+                        throw new BadThresholdException(
+                                "Unparsable threshold '" + thresholdString
+                                        + "'. Error at char "
+                                        + currentParsedBuffer.length()
+                                        + ": the '@' should not be there.");
                     }
-                    m_bNegate = true;
+                    negateThreshold = true;
                     continue;
                 }
-                if (b == ':')
-                {
+                if (b == ':') {
 
-                    switch (m_iCurState)
-                    {
-                        case MINVAL:
-                            if (m_iMinVal == null)
-                            {
-                                m_iMinVal = new BigDecimal(0);
-                            }
-                            m_iCurState = MAXVAL;
-                            continue;
-                        case MAXVAL:
-                            throw new BadThresholdException("Unparsable threshold '" + sRange + "'. Error at char " + sbCurrentParsed.length() + ": the ':' should not be there.");
-                            //m_iCurState = END;
-                            //continue;
-                        default:
-                            m_iCurState = MAXVAL;
+                    switch (curState) {
+                    case MINVAL:
+                        if (minVal == null) {
+                            minVal = new BigDecimal(0);
+                        }
+                        curState = MAXVAL;
+                        continue;
+                    case MAXVAL:
+                        throw new BadThresholdException(
+                                "Unparsable threshold '" + thresholdString
+                                        + "'. Error at char "
+                                        + currentParsedBuffer.length()
+                                        + ": the ':' should not be there.");
+                        // m_iCurState = END;
+                        // continue;
+                    default:
+                        curState = MAXVAL;
                     }
                 }
-                if (b == '~')
-                {
-                    switch (m_iCurState)
-                    {
-                        case MINVAL:
-                            m_iMinVal = new BigDecimal(Integer.MIN_VALUE);
-                            // m_iCurState = MAXVAL;
-                            continue;
-                        case MAXVAL:
-                            m_iMaxVal = new BigDecimal(Integer.MAX_VALUE);
-                            m_iCurState = END;
-                            continue;
-                        default:
+                if (b == '~') {
+                    switch (curState) {
+                    case MINVAL:
+                        minVal = new BigDecimal(Integer.MIN_VALUE);
+                        // m_iCurState = MAXVAL;
+                        continue;
+                    case MAXVAL:
+                        maxVal = new BigDecimal(Integer.MAX_VALUE);
+                        curState = END;
+                        continue;
+                    default:
                     }
 
                 }
 
-                StringBuffer sNumBuffer = new StringBuffer();
+                StringBuffer numberBuffer = new StringBuffer();
 
                 // while (i < vBytes.length &&
                 // Character.isDigit((char)vBytes[i]))
 
-                do
-                {
-                    sNumBuffer.append((char) b);
-                }
-                while (((b = (byte) pb.read()) != -1)
-                        && (Character.isDigit((char) b) 
+                do {
+                    numberBuffer.append((char) b);
+                } while (((b = (byte) pb.read()) != -1)
+                        && (Character.isDigit((char) b)
                                 || b == '+' || b == '-'));
 
-                if (b != -1)
-                {
+                if (b != -1) {
                     pb.unread((int) b);
                 }
 
-                String sNum = sNumBuffer.toString();
-                if (sNum.trim().length() == 0)
-                {
-                    throw new BadThresholdException("A number was expected after '" + sbCurrentParsed.toString() + "', but an empty string was found");
+                String numberString = numberBuffer.toString();
+                if (numberString.trim().length() == 0) {
+                    throw new BadThresholdException(
+                            "A number was expected after '"
+                                    + currentParsedBuffer.toString()
+                                    + "', but an empty string was found");
                 }
 
-                switch (m_iCurState)
-                {
-                    case MINVAL:
-                        m_iMinVal = new BigDecimal(sNum.trim());
-                        continue;
-                    case MAXVAL:
-                        m_iMaxVal = new BigDecimal(sNum.trim());
-                        continue;
-                    default:
-                        m_iCurState = END;
+                switch (curState) {
+                case MINVAL:
+                    minVal = new BigDecimal(numberString.trim());
+                    continue;
+                case MAXVAL:
+                    maxVal = new BigDecimal(numberString.trim());
+                    continue;
+                default:
+                    curState = END;
                 }
                 // if (i < vBytes.length)
                 // i-=2;
             }
-        }
-        catch (IOException ioe)
-        {
+        } catch (IOException ioe) {
 
         }
 
-        if (m_iCurState == MINVAL)
-        {
-            m_iMaxVal = m_iMinVal;
-            m_iMinVal = new BigDecimal(0);
+        if (curState == MINVAL) {
+            maxVal = minVal;
+            minVal = new BigDecimal(0);
         }
     }
 
     /**
      * Returns <code>true</code> if the value falls inside the range.
      *
-     * @param iVal
+     * @param value
      *            The value
      * @return <code>true</code> if the value falls inside the range.
      *         <code>false</code> otherwise.
      */
-    public boolean isValueInRange(final int iVal)
-    {
-        return isValueInRange(new BigDecimal(iVal));
+    public boolean isValueInRange(final int value) {
+        return isValueInRange(new BigDecimal(value));
     }
 
     /**
@@ -212,21 +206,17 @@ class Threshold
      * @return <code>true</code> if the value falls inside the range.
      *         <code>false</code> otherwise.
      */
-    public boolean isValueInRange(final BigDecimal val)
-    {
+    public boolean isValueInRange(final BigDecimal val) {
         boolean bRes = true;
         // Sets the minimum value of the range
-        if (m_iMinVal != null)
-        {
-            bRes = bRes && (val.compareTo(m_iMinVal) >= 0);
+        if (minVal != null) {
+            bRes = bRes && (val.compareTo(minVal) >= 0);
         }
         // Sets the maximum value of the range
-        if (m_iMaxVal != null)
-        {
-            bRes = bRes && (val.compareTo(m_iMaxVal) <= 0);
+        if (maxVal != null) {
+            bRes = bRes && (val.compareTo(maxVal) <= 0);
         }
-        if (m_bNegate)
-        {
+        if (negateThreshold) {
             return !bRes;
         }
         return bRes;

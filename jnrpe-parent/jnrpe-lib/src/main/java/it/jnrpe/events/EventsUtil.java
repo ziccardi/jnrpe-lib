@@ -18,14 +18,12 @@ import java.util.Set;
  *
  * @author Massimiliano Ziccardi
  */
-public final class EventsUtil
-{
+public final class EventsUtil {
 
     /**
      * Private default constructor.
      */
-    private EventsUtil()
-    {
+    private EventsUtil() {
 
     }
 
@@ -35,24 +33,22 @@ public final class EventsUtil
      * the EventParam object just to send log events. Supported event type are.
      * TRACE, DEBUG, INFO, WARNING, ERROR, FATAL.
      *
-     * @param vListeners
+     * @param listenersList
      *            The list of all the listeners that will receive the event
      * @param sender
      *            The sender of the event (usually <code>this</code>)
      * @param evt
      *            The event type
-     * @param sMessage
+     * @param message
      *            The log message
      */
-    public static void sendEvent(final Set<IJNRPEEventListener> vListeners,
-            final Object sender, final LogEvent evt, final String sMessage)
-    {
-        if (vListeners == null || vListeners.isEmpty())
-        {
+    public static void sendEvent(final Set<IJNRPEEventListener> listenersList,
+            final Object sender, final LogEvent evt, final String message) {
+        if (listenersList == null || listenersList.isEmpty()) {
             return;
         }
 
-        sendEvent(vListeners, sender, evt, sMessage, null);
+        sendEvent(listenersList, sender, evt, message, null);
     }
 
     /**
@@ -61,77 +57,67 @@ public final class EventsUtil
      * the EventParam object just to send log events. Supported event type are.
      * TRACE, DEBUG, INFO, WARNING, ERROR, FATAL.
      *
-     * @param vListeners
+     * @param listenerList
      *            The list of all the listeners that will receive the event
      * @param sender
      *            The sender of the event (usually <code>this</code>)
      * @param evt
      *            The event type
-     * @param sMessage
+     * @param message
      *            The log message
      * @param exception
      *            The exception to be, eventually, logged (can be null).
      */
-    public static void sendEvent(final Set<IJNRPEEventListener> vListeners,
-            final Object sender, final LogEvent evt, final String sMessage,
-            final Throwable exception)
-    {
-        if (vListeners == null || vListeners.isEmpty())
-        {
+    public static void sendEvent(final Set<IJNRPEEventListener> listenerList,
+            final Object sender, final LogEvent evt, final String message,
+            final Throwable exception) {
+        if (listenerList == null || listenerList.isEmpty()) {
             return;
         }
 
-        if (sender == null || evt == null || sMessage == null)
-        {
+        if (sender == null || evt == null || message == null) {
             throw new NullPointerException(
                     "The sender, evt and message parameter can't be null");
         }
 
-        if (exception != null)
-        {
-            sendEvent(vListeners, sender, evt.name(), new EventMessageParam(
-                    sMessage), new EventExceptionParam(exception));
-        }
-        else
-        {
-            sendEvent(vListeners, sender, evt.name(), new EventMessageParam(
-                    sMessage));
+        if (exception != null) {
+            sendEvent(listenerList, sender, evt.name(), new EventMessageParam(
+                    message), new EventExceptionParam(exception));
+        } else {
+            sendEvent(listenerList, sender, evt.name(), new EventMessageParam(
+                    message));
         }
     }
 
     /**
      * This method is used to send custom events to the registered listeners.
-     * The event type can be a freely chosen string. A custom listener
-     * should be instructed to handle such event with its parameters.
+     * The event type can be a freely chosen string. A custom listener should be
+     * instructed to handle such event with its parameters.
      *
-     * @param vListeners
+     * @param listenerList
      *            The list of all the listeners that will receive the event
      * @param sender
      *            The sender of the event (usually <code>this</code>)
-     * @param sCustomEvtType
+     * @param customEvtType
      *            The custom event type
-     * @param vParams
+     * @param paramsList
      *            The event parameters
      */
-    public static void sendEvent(final Set<IJNRPEEventListener> vListeners,
-            final Object sender, final String sCustomEvtType,
-            final EventParam... vParams)
-    {
-        if (sender == null || sCustomEvtType == null)
-        {
+    public static void sendEvent(final Set<IJNRPEEventListener> listenerList,
+            final Object sender, final String customEvtType,
+            final EventParam... paramsList) {
+        if (sender == null || customEvtType == null) {
             throw new NullPointerException(
                     "The sender and event type parameter can't be null");
         }
 
-        if (vListeners == null || vListeners.isEmpty())
-        {
+        if (listenerList == null || listenerList.isEmpty()) {
             return;
         }
 
-        SimpleEvent se = new SimpleEvent(sCustomEvtType, vParams);
+        SimpleEvent se = new SimpleEvent(customEvtType, paramsList);
 
-        for (IJNRPEEventListener listener : vListeners)
-        {
+        for (IJNRPEEventListener listener : listenerList) {
             listener.receive(sender, se);
         }
     }

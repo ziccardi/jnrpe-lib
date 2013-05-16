@@ -10,6 +10,11 @@
  */
 package it.jnrpe;
 
+import it.jnrpe.commands.CommandInvoker;
+import it.jnrpe.commands.CommandRepository;
+import it.jnrpe.events.IJNRPEEventListener;
+import it.jnrpe.plugins.PluginRepository;
+
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,19 +23,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import it.jnrpe.commands.CommandInvoker;
-import it.jnrpe.commands.CommandRepository;
-import it.jnrpe.events.IJNRPEEventListener;
-import it.jnrpe.plugins.PluginRepository;
-
 /**
  * This class is the real JNRPE worker. It must be used to start listening for
  * NRPE requests
  *
  * @author Massimiliano Ziccardi
  */
-public final class JNRPE
-{
+public final class JNRPE {
     /**
      * How many ms to wait for joining a thread.
      */
@@ -39,68 +38,65 @@ public final class JNRPE
     /**
      * The plugin repository to be used to find the requested plugin.
      */
-    private final PluginRepository m_pluginRepository;
+    private final PluginRepository pluginRepository;
     /**
      * The command repository to be used to find the requested command.
      */
-    private final CommandRepository m_commandRepository;
+    private final CommandRepository commandRepository;
 
     /**
      * The list of accepted clients.
      */
-    private List<String> m_vAcceptedHosts = new ArrayList<String>();
+    private final List<String> acceptedHostsList = new ArrayList<String>();
 
     /**
      * All the listeners.
      */
-    private Map<String, IJNRPEListener> m_mInstantiatedListeners
-            = new HashMap<String, IJNRPEListener>();
+    private final Map<String, IJNRPEListener> listenersMap =
+            new HashMap<String, IJNRPEListener>();
 
     /**
      * All the listeners.
      */
-    private Set<IJNRPEEventListener> m_vEventListeners
-            = new HashSet<IJNRPEEventListener>();
+    private final Set<IJNRPEEventListener> eventListenersSet =
+            new HashSet<IJNRPEEventListener>();
 
     /**
      * Initializes the JNRPE worker.
      *
-     * @param pluginRepository
+     * @param pluginRepo
      *            The repository containing all the installed plugins
-     * @param commandRepository
+     * @param commandRepo
      *            The repository containing all the configured commands.
      */
-    public JNRPE(final PluginRepository pluginRepository,
-            final CommandRepository commandRepository)
-    {
-        if (pluginRepository == null)
-        {
+    public JNRPE(final PluginRepository pluginRepo,
+            final CommandRepository commandRepo) {
+        if (pluginRepo == null) {
             throw new IllegalArgumentException(
                     "Plugin repository cannot be null");
         }
-                    
-        if (commandRepository == null)
-        {
+
+        if (commandRepo == null) {
             throw new IllegalArgumentException(
                     "Command repository cannot be null");
         }
-        m_pluginRepository = pluginRepository;
-        m_commandRepository = commandRepository;
+        this.pluginRepository = pluginRepo;
+        this.commandRepository = commandRepo;
     }
 
     /**
      * Instructs the server to listen to the given IP/port.
      *
-     * @param sAddress
+     * @param address
      *            The address to bind to
-     * @param iPort
+     * @param port
      *            The port to bind to
      * @throws UnknownHostException
+     *             -
      */
-    public void listen(final String sAddress, final int iPort)
-            throws UnknownHostException
-    {
-        listen(sAddress, iPort, true);
+    public void listen(final String address, final int port)
+            throws UnknownHostException {
+        listen(address, port, true);
     }
 
     /**
@@ -109,75 +105,66 @@ public final class JNRPE
      * @param listener
      *            The event listener to be added
      */
-    public void addEventListener(final IJNRPEEventListener listener)
-    {
-        m_vEventListeners.add(listener);
+    public void addEventListener(final IJNRPEEventListener listener) {
+        eventListenersSet.add(listener);
     }
 
     /**
      * Starts a new thread that listen for requests. The method is <b>not
      * blocking</b>
      *
-     * @param sAddress
+     * @param address
      *            The address to bind to
-     * @param iPort
+     * @param port
      *            The listening port
-     * @param bSSL
+     * @param useSSL
      *            <code>true</code> if an SSL socket must be created.
-     * @throws UnknownHostException
+     * @throws UnknownHostException -
      */
-    public void listen(final String sAddress, final int iPort,
-            final boolean bSSL) throws UnknownHostException
-    {
-        JNRPEListenerThread bt = new JNRPEListenerThread(m_vEventListeners,
-                sAddress, iPort, new CommandInvoker(m_pluginRepository,
-                        m_commandRepository, m_vEventListeners));
+    public void listen(final String address, final int port,
+            final boolean useSSL) throws UnknownHostException {
+        JNRPEListenerThread bt =
+                new JNRPEListenerThread(eventListenersSet, address, port,
+                        new CommandInvoker(pluginRepository, commandRepository,
+                                eventListenersSet));
 
-        for (String sAddr : m_vAcceptedHosts)
-        {
+        for (String sAddr : acceptedHostsList) {
             bt.addAcceptedHosts(sAddr);
         }
-        if (bSSL)
-        {
+        if (useSSL) {
             bt.enableSSL();
         }
         bt.start();
 
-        try
-        {
+        try {
             // Give time to check if the IP/port configuration ar correctly
             // configured
             bt.join(THREAD_JOIN_TIMEOUT);
+        } catch (InterruptedException e) {
+            // Ignored
         }
-        catch (InterruptedException e)
-        {
-        }
-        m_mInstantiatedListeners.put(sAddress + iPort, bt);
+        listenersMap.put(address + port, bt);
     }
 
     /**
      * Adds an address to the list of accepted hosts.
      *
-     * @param sAddress
+     * @param address
      *            The address to accept
      */
-    public void addAcceptedHost(final String sAddress)
-    {
-        m_vAcceptedHosts.add(sAddress);
+    public void addAcceptedHost(final String address) {
+        acceptedHostsList.add(address);
     }
 
     /**
      * Shuts down all the listener handled by this instance.
      */
-    public void shutdown()
-    {
-        if (m_mInstantiatedListeners.isEmpty()) 
-        {
+    public void shutdown() {
+        if (listenersMap.isEmpty()) {
             return;
         }
 
-        for (IJNRPEListener listener : m_mInstantiatedListeners.values())
-        {
+        for (IJNRPEListener listener : listenersMap.values()) {
             listener.shutdown();
         }
     }

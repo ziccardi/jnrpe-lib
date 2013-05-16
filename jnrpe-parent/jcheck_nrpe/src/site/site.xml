@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <project name="jcheck_nrpe">
-	
+
 
 	<body>
 		<menu name="jcheck_nrpe">
@@ -9,7 +9,7 @@
 		</menu>
 		<menu name="User Guide">
 			<item name="Command Line" href="command_line.html" />
- 			<item name="Embedding" href="embedding.html" /> 
+			<item name="Embedding" href="embedding.html" />
 		</menu>
 	</body>
 	<skin>

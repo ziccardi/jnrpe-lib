@@ -17,73 +17,67 @@ import java.net.Socket;
 /**
  * This class implements a simple thread factory. Each binding has its own
  * thread factory.
- * 
+ *
  * @author Massimiliano Ziccardi
- * 
+ *
  */
-class ThreadFactory
-{
+class ThreadFactory {
     /**
      * How many milliseconds to wait for a thread to stop.
      */
-    private static final int     DEFAULT_THREAD_STOP_TIMEOUT = 5000;
+    private static final int DEFAULT_THREAD_STOP_TIMEOUT = 5000;
 
     /**
      * Timeout handler.
      */
-    private ThreadTimeoutWatcher m_watchDog                  = null;
+    private ThreadTimeoutWatcher watchDog = null;
 
     /**
      * The invoker object.
      */
-    private final CommandInvoker m_commandInvoker;
+    private final CommandInvoker commandInvoker;
 
     /**
      * Constructs a new thread factory.
-     * 
-     * @param iThreadTimeout
+     *
+     * @param threadTimeout
      *            The thread timeout
-     * @param commandInvoker
+     * @param cmdInvoker
      *            The command invoker
      */
-    public ThreadFactory(final int iThreadTimeout,
-            final CommandInvoker commandInvoker)
-    {
-        m_commandInvoker = commandInvoker;
+    public ThreadFactory(final int threadTimeout,
+            final CommandInvoker cmdInvoker) {
+        this.commandInvoker = cmdInvoker;
 
-        m_watchDog = new ThreadTimeoutWatcher();
-        m_watchDog.setThreadTimeout(iThreadTimeout);
-        m_watchDog.start();
+        watchDog = new ThreadTimeoutWatcher();
+        watchDog.setThreadTimeout(threadTimeout);
+        watchDog.start();
     }
 
     /**
      * Asks the system level thread factory for a new thread.
-     * 
-     * @param s
+     *
+     * @param attachedSocket
      *            The socket to be served by the thread
      * @return The newly created thread
      */
-    public JNRPEServerThread createNewThread(final Socket s)
-    {
-        JNRPEServerThread t = JNRPEServerThreadFactory.getInstance(
-                m_commandInvoker).createNewThread(s);
-        m_watchDog.watch(t);
+    public JNRPEServerThread createNewThread(final Socket attachedSocket) {
+        JNRPEServerThread t =
+                JNRPEServerThreadFactory.getInstance(commandInvoker)
+                        .createNewThread(attachedSocket);
+        watchDog.watch(t);
         return t;
     }
 
     /**
      * Stops all the created threads and stops the timeout watcher.
      */
-    public void shutdown()
-    {
-        try
-        {
-            m_watchDog.stopWatching();
+    public void shutdown() {
+        try {
+            watchDog.stopWatching();
             // Waits for the thread to stop.
-            m_watchDog.join(DEFAULT_THREAD_STOP_TIMEOUT);
-        }
-        catch (InterruptedException ie)
-        {
+            watchDog.join(DEFAULT_THREAD_STOP_TIMEOUT);
+        } catch (InterruptedException ie) {
             // This should never happen...
         }
     }

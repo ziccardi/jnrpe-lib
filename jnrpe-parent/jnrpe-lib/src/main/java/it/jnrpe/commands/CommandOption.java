@@ -15,27 +15,25 @@ package it.jnrpe.commands;
  *
  * @author Massimiliano Ziccardi
  */
-public final class CommandOption
-{
+public final class CommandOption {
     /**
      * The option name.
      */
-    private final String m_sOptionName;
+    private final String optionName;
     /**
      * The option value.
      */
-    private final String m_sOptionValue;
+    private final String optionValue;
 
     /**
      * Initializes an option that has no value.
      *
-     * @param sOptionName
+     * @param optName
      *            The option name
      */
-    public CommandOption(final String sOptionName)
-    {
-        m_sOptionName = sOptionName;
-        m_sOptionValue = null;
+    public CommandOption(final String optName) {
+        this.optionName = optName;
+        optionValue = null;
     }
 
     /**
@@ -43,15 +41,14 @@ public final class CommandOption
      * that's the case (and if the server is configured to accept macros), it's
      * value is received by check_nrpe.
      *
-     * @param sOptionName
+     * @param optName
      *            The option name
-     * @param sOptionValue
+     * @param optValue
      *            The option value
      */
-    public CommandOption(final String sOptionName, final String sOptionValue)
-    {
-        m_sOptionName = sOptionName;
-        m_sOptionValue = sOptionValue;
+    public CommandOption(final String optName, final String optValue) {
+        this.optionName = optName;
+        this.optionValue = optValue;
     }
 
     /**
@@ -59,9 +56,8 @@ public final class CommandOption
      *
      * @return The option name
      */
-    public String getName()
-    {
-        return m_sOptionName;
+    public String getName() {
+        return optionName;
     }
 
     /**
@@ -69,8 +65,7 @@ public final class CommandOption
      *
      * @return The argument value
      */
-    public String getValue()
-    {
-        return m_sOptionValue;
+    public String getValue() {
+        return optionValue;
     }
 }

@@ -19,31 +19,31 @@ import java.util.List;
  *
  * @author Massimiliano Ziccardi
  */
-public final class PluginDefinition
-{
+public final class PluginDefinition {
     /**
      * The name of the plugin (as parsed from the XML file).
      */
-    private final String m_sName;
+    private final String name;
     /**
-     *The Class of the plugin.
+     * The Class of the plugin.
      */
-    private final Class<? extends IPluginInterface> m_pluginClass;
+    private final Class<? extends IPluginInterface> pluginClass;
 
     /**
      * The plugin instance.
      */
-    private final IPluginInterface m_pluginInterface;
+    private final IPluginInterface pluginInterface;
 
     /**
      * The plugin description (as parsed from the XML file).
      */
-    private final String m_sDescription;
+    private final String description;
 
     /**
      * All the options this plugin supports (as parsed from the XML file).
      */
-    private List<PluginOption> m_vPluginOptions = new ArrayList<PluginOption>();
+    private List<PluginOption> pluginOptionsList =
+            new ArrayList<PluginOption>();
 
     /**
      * Initializes the plugin definition specifying the Class object that
@@ -51,53 +51,52 @@ public final class PluginDefinition
      * server where all the plugins are described in an XML file and are loaded
      * with potentially different class loaders.
      *
-     * @param sName
+     * @param pluginName
      *            The plugin name
-     * @param sDescription
+     * @param pluginDescription
      *            The plugin description
-     * @param pluginClass
+     * @param pluginClazz
      *            The plugin Class object
      */
-    public PluginDefinition(final String sName, final String sDescription,
-            final Class<? extends IPluginInterface> pluginClass)
-    {
-        m_sName = sName;
-        m_pluginClass = pluginClass;
-        m_sDescription = sDescription;
-        m_pluginInterface = null;
+    public PluginDefinition(final String pluginName,
+            final String pluginDescription,
+            final Class<? extends IPluginInterface> pluginClazz) {
+        this.name = pluginName;
+        this.pluginClass = pluginClazz;
+        this.description = pluginDescription;
+        this.pluginInterface = null;
     }
 
     /**
-     *Initializes the plugin definition specifying a plugin instance. This is.
-     *useful when you embed JNRPE: with this constructor you can pass a <i>pre.
+     * Initializes the plugin definition specifying a plugin instance. This is.
+     * useful when you embed JNRPE: with this constructor you can pass a <i>pre.
      * inizialized/configured</i> instance.
      *
-     * @param sName
+     * @param pluginName
      *            The plugin name
-     * @param sDescription
+     * @param pluginDescription
      *            The plugin description
-     * @param pluginInterface
+     * @param pluginInstance
      *            The plugin instance
      */
-    public PluginDefinition(final String sName, final String sDescription,
-            final IPluginInterface pluginInterface)
-    {
-        m_sName = sName;
-        m_pluginClass = null;
-        m_sDescription = sDescription;
-        m_pluginInterface = pluginInterface;
+    public PluginDefinition(final String pluginName,
+            final String pluginDescription,
+            final IPluginInterface pluginInstance) {
+        this.name = pluginName;
+        this.pluginClass = null;
+        this.description = pluginDescription;
+        this.pluginInterface = pluginInstance;
     }
 
     /**
-     *Adds a new option to the plugin.
+     * Adds a new option to the plugin.
      *
      * @param option
      *            The option
      * @return this
      */
-    public PluginDefinition addOption(final PluginOption option)
-    {
-        m_vPluginOptions.add(option);
+    public PluginDefinition addOption(final PluginOption option) {
+        pluginOptionsList.add(option);
         return this;
     }
 
@@ -106,9 +105,8 @@ public final class PluginDefinition
      *
      * @return the plugin name.
      */
-    public String getName()
-    {
-        return m_sName;
+    public String getName() {
+        return name;
     }
 
     /**
@@ -116,9 +114,8 @@ public final class PluginDefinition
      *
      * @return a List of all the plugin option
      */
-    public List<PluginOption> getOptions()
-    {
-        return m_vPluginOptions;
+    public List<PluginOption> getOptions() {
+        return pluginOptionsList;
     }
 
     /**
@@ -126,9 +123,8 @@ public final class PluginDefinition
      *
      * @return The plugin description
      */
-    public String getDescription()
-    {
-        return m_sDescription;
+    public String getDescription() {
+        return description;
     }
 
     /**
@@ -136,9 +132,8 @@ public final class PluginDefinition
      *
      * @return the plugin class. <code>null</code> if not specified.
      */
-    Class<? extends IPluginInterface> getPluginClass()
-    {
-        return m_pluginClass;
+    Class<? extends IPluginInterface> getPluginClass() {
+        return pluginClass;
     }
 
     /**
@@ -146,8 +141,7 @@ public final class PluginDefinition
      *
      * @return the plugin interface.<code>null</code> if not specified.
      */
-    IPluginInterface getPluginInterface()
-    {
-        return m_pluginInterface;
+    IPluginInterface getPluginInterface() {
+        return pluginInterface;
     }
 }

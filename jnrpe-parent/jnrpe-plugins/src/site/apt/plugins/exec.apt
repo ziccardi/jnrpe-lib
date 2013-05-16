@@ -39,7 +39,7 @@ The EXEC Plugin
  With the following invocation example we want to monitor /tmp and /var at 10% and 5%, and / at 100MB and 50MB.
 
 +----------+ 
-check_nrpe -n -H {JNRPE_SERVER_IP} -c CHECK_DISK -a '10%!5%!100000!50000'
+check_nrpe -n -H {JNRPE_SERVER_IP} -c CHECK_DISK -a  10% 5% 100000 50000
 +----------+ 
 
   Of course, you must replace \{JNRPE_SERVER_IP\} with the IP address of your JNRPE server.

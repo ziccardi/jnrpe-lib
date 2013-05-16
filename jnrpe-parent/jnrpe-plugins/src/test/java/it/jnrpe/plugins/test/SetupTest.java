@@ -1,12 +1,12 @@
 /*
  * Copyright (c) 2008 Massimiliano Ziccardi
- *  
+ *
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
  * You may obtain a copy of the License at 
- * 
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0 
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software 
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
@@ -24,58 +24,55 @@ import it.jnrpe.plugins.PluginRepository;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
 
-
 /**
- * This test class just starts the JNRPE server before running the
- * tests stops it as soon as the tests have finished.
- * 
+ * This test class just starts the JNRPE server before running the tests stops
+ * it as soon as the tests have finished.
+ *
  * @author Massimiliano Ziccardi
  *
  */
 public class SetupTest implements Constants {
 
-	private static JNRPE m_jnrpeServer;
+    private static JNRPE m_jnrpeServer;
 
-	private static PluginRepository m_pluginRepository;
-	private static CommandRepository m_commandRepository;
-	
-	@BeforeSuite
-	public static void setUp() throws Exception {
-		m_pluginRepository = new PluginRepository();
-		m_commandRepository = new CommandRepository();
+    private static PluginRepository m_pluginRepository;
+    private static CommandRepository m_commandRepository;
 
-		m_jnrpeServer = new JNRPE(m_pluginRepository, m_commandRepository);
+    @BeforeSuite
+    public static void setUp() throws Exception {
+        m_pluginRepository = new PluginRepository();
+        m_commandRepository = new CommandRepository();
 
-		m_jnrpeServer.addEventListener(new IJNRPEEventListener() {
+        m_jnrpeServer = new JNRPE(m_pluginRepository, m_commandRepository);
 
-			public void receive(Object sender, IJNRPEEvent event) {
-				System.out.println(event.getEventParams().get("MESSAGE"));
-			}
-		});
+        m_jnrpeServer.addEventListener(new IJNRPEEventListener() {
 
-		m_jnrpeServer.addAcceptedHost(BIND_ADDRESS);
+            public void receive(Object sender, IJNRPEEvent event) {
+                System.out.println(event.getEventParams().get("MESSAGE"));
+            }
+        });
 
-		m_jnrpeServer.listen(BIND_ADDRESS, JNRPE_PORT, false);
-	}
+        m_jnrpeServer.addAcceptedHost(BIND_ADDRESS);
 
-	@AfterSuite
-	public static void shutDown() throws Exception{
-			Thread.sleep(5000);
-		if (m_jnrpeServer != null)
-			m_jnrpeServer.shutdown();
-	}
+        m_jnrpeServer.listen(BIND_ADDRESS, JNRPE_PORT, false);
+    }
 
-	public static JNRPE getServer() {
-		return m_jnrpeServer;
-	}
-	
-	public static PluginRepository getPluginRepository()
-	{
-		return m_pluginRepository;
-	}
+    @AfterSuite
+    public static void shutDown() throws Exception {
+        Thread.sleep(5000);
+        if (m_jnrpeServer != null)
+            m_jnrpeServer.shutdown();
+    }
 
-	public static CommandRepository getCommandRepository()
-	{
-		return m_commandRepository;
-	}
+    public static JNRPE getServer() {
+        return m_jnrpeServer;
+    }
+
+    public static PluginRepository getPluginRepository() {
+        return m_pluginRepository;
+    }
+
+    public static CommandRepository getCommandRepository() {
+        return m_commandRepository;
+    }
 }

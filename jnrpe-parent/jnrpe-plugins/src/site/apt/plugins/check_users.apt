@@ -50,7 +50,7 @@ Example ranges :
  
 +----------+
 
-  check_nrpe -n -H my.jnrpe.server -c check_users -a '!10:!1000:'
+  check_nrpe -n -H my.jnrpe.server -c check_users -a  10: 1000:
 
 +----------+
       

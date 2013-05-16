@@ -21,8 +21,7 @@ import java.util.List;
  *
  * @author Massimiliano Ziccardi
  */
-class ThreadTimeoutWatcher extends Thread
-{
+class ThreadTimeoutWatcher extends Thread {
     /**
      * The default thread timeout (seconds).
      */
@@ -36,42 +35,41 @@ class ThreadTimeoutWatcher extends Thread
     /**
      * The list of the currently executing thread.
      */
-    private List<ThreadData> m_ThreadList = Collections
+    private List<ThreadData> threadList = Collections
             .synchronizedList(new ArrayList<ThreadData>());
 
     /**
      * Checks whether a thread needs to be killed every m_iPollingTime seconds.
      * (defaults to 2).
      */
-    private static int m_iPollingTime = 2;
+    private static int pollingDelay = 2;
 
     /**
      * This variable is used to stop the thread.
      */
-    private static boolean m_bRun = true;
+    private static boolean keepRunning = true;
 
     /**
      * The maximum number of seconds a thread is allowed to run (default to.
      * {@link #DEFAULT_THREAD_TIMEOUT} )
      */
-    private static int m_iThreadTimeout = DEFAULT_THREAD_TIMEOUT;
+    private static int threadRunTimeout = DEFAULT_THREAD_TIMEOUT;
 
     /**
      * Utility class used to store thread informations.
      *
      * @author Massimiliano Ziccardi
      */
-    private static class ThreadData
-    {
+    private static class ThreadData {
         /**
          * The thread being monitored.
          */
-        private Thread m_thread;
+        private Thread thread;
 
         /**
          * The time when the thread started.
          */
-        private long m_lStartTime;
+        private long startTimeMillis;
 
         /**
          * Builds and initialized the object.
@@ -79,10 +77,9 @@ class ThreadTimeoutWatcher extends Thread
          * @param t
          *            The thread to be monitored
          */
-        ThreadData(final Thread t)
-        {
-            m_thread = t;
-            m_lStartTime = System.currentTimeMillis();
+        ThreadData(final Thread t) {
+            thread = t;
+            startTimeMillis = System.currentTimeMillis();
         }
 
         /**
@@ -90,9 +87,8 @@ class ThreadTimeoutWatcher extends Thread
          *
          * @return The time when the thread started
          */
-        public long getStartTime()
-        {
-            return m_lStartTime;
+        public long getStartTime() {
+            return startTimeMillis;
         }
 
         /**
@@ -100,28 +96,26 @@ class ThreadTimeoutWatcher extends Thread
          *
          * @return The thread being monitored
          */
-        public Thread getThread()
-        {
-            return m_thread;
+        public Thread getThread() {
+            return thread;
         }
     }
 
     /**
      * Adds the specified thread to the list of threads to be watched.
      *
-     * @param t The thread to be watched
+     * @param t
+     *            The thread to be watched
      */
-    public void watch(final Thread t)
-    {
-        m_ThreadList.add(new ThreadData(t));
+    public void watch(final Thread t) {
+        threadList.add(new ThreadData(t));
     }
 
     /**
      * Stop the thread execution.
      */
-    public static void stopWatching()
-    {
-        m_bRun = false;
+    public static void stopWatching() {
+        keepRunning = false;
     }
 
     /**
@@ -130,11 +124,9 @@ class ThreadTimeoutWatcher extends Thread
      * @param td
      *            The thread data
      */
-    private void killThread(final ThreadData td)
-    {
+    private void killThread(final ThreadData td) {
         Thread t = td.getThread();
-        if (t.isAlive())
-        {
+        if (t.isAlive()) {
             ((JNRPEServerThread) t).stopNow();
         }
     }
@@ -146,21 +138,20 @@ class ThreadTimeoutWatcher extends Thread
      * @return <code>true</code> if at leas one thread has been removed from the
      *         list.
      */
-    private boolean killOldestThread()
-    {
+    private boolean killOldestThread() {
         // The thread in the first position is always the oldest one
-        ThreadData td = (ThreadData) m_ThreadList.get(0);
+        ThreadData td = (ThreadData) threadList.get(0);
         Thread t = td.getThread();
 
         // If the thread is not alive, or if the thread is older than
         // THREAD_TIMEOUT, it must be killed
         // and removed from the list
-        if (!t.isAlive()
-                || (System.currentTimeMillis() - td.getStartTime()
-                        >= (m_iThreadTimeout * SECOND)))
-        {
+
+        long runningTime = System.currentTimeMillis() - td.getStartTime();
+
+        if (!t.isAlive() || (runningTime >= (threadRunTimeout * SECOND))) {
             killThread(td);
-            m_ThreadList.remove(0);
+            threadList.remove(0);
             return true;
         }
 
@@ -170,46 +161,35 @@ class ThreadTimeoutWatcher extends Thread
     /**
      * Sets how long to wait before killing a stalled thread.
      *
-     * @param iTimeout
+     * @param newTimeout
      *            The timeout (in seconds)
      */
-    public static void setThreadTimeout(final int iTimeout)
-    {
-        m_iThreadTimeout = iTimeout;
+    public static void setThreadTimeout(final int newTimeout) {
+        threadRunTimeout = newTimeout;
     }
 
     /**
      * The run method.
      */
-    public void run()
-    {
-        while (m_bRun)
-        {
-            try
-            {
-                Thread.sleep(m_iPollingTime * SECOND);
-            }
-            catch (InterruptedException e)
-            {
+    public void run() {
+        while (keepRunning) {
+            try {
+                Thread.sleep(pollingDelay * SECOND);
+            } catch (InterruptedException e) {
             }
 
-            try
-            {
+            try {
                 // Keep on killing threads as long as there are threads to kill
-                while (!m_ThreadList.isEmpty() && killOldestThread())
-                {
+                while (!threadList.isEmpty() && killOldestThread()) {
                     // empty block
-                };
-            }
-            catch (Throwable thr)
-            {
+                }
+            } catch (Throwable thr) {
                 // This thread must never die
             }
         }
 
         // Stops all the threads currently running
-        for (ThreadData td : m_ThreadList)
-        {
+        for (ThreadData td : threadList) {
             killThread(td);
         }
     }

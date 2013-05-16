@@ -21,12 +21,11 @@ import it.jnrpe.ICommandLine;
  * @author Massimiliano Ziccardi
  *
  */
-class PluginCommandLine implements ICommandLine
-{
+class PluginCommandLine implements ICommandLine {
     /**
      * The Apache Commons Cli {@link CommandLine} object.
      */
-    private CommandLine m_CommandLine = null;
+    private CommandLine commandLine = null;
 
     /**
      * Incapsulate the given command line.
@@ -34,64 +33,90 @@ class PluginCommandLine implements ICommandLine
      * @param cl
      *            The command line to be incapsulated
      */
-    public PluginCommandLine(final CommandLine cl)
-    {
-        m_CommandLine = cl;
+    public PluginCommandLine(final CommandLine cl) {
+        commandLine = cl;
     }
 
     /**
-     * @see it.jnrpe.core.ICommandLine#getOptionValue(java.lang.String)
+     * Returns the value of the specified option.
+     *
+     * @param optionName
+     *            The option name
+     * @return The value of the option
      */
-    public String getOptionValue(final String sOptionName)
-    {
-        if (sOptionName.length() == 1)
-            return getOptionValue(sOptionName.charAt(0));
-        return (String) m_CommandLine.getValue("--" + sOptionName);
+    public String getOptionValue(final String optionName) {
+        if (optionName.length() == 1) {
+            return getOptionValue(optionName.charAt(0));
+        }
+        return (String) commandLine.getValue("--" + optionName);
     }
 
     /**
-     * @see it.jnrpe.core.ICommandLine#getOptionValue(java.lang.String,
-     *      java.lang.String)
+     * Returns the value of the specified option. If the option is not present,
+     * returns the default value.
+     *
+     * @param optionName
+     *            The option name
+     * @param defaultValue
+     *            The default value
+     * @return The option value or, if not specified, the default value
      */
-    public String getOptionValue(final String sOptionName,
-            final String sDefaultValue)
-    {
-        if (sOptionName.length() == 1)
-            return getOptionValue(sOptionName.charAt(0), sDefaultValue);
-        return (String) m_CommandLine.getValue("--" + sOptionName, sDefaultValue);
+    public String getOptionValue(final String optionName,
+            final String defaultValue) {
+        if (optionName.length() == 1) {
+            return getOptionValue(optionName.charAt(0), defaultValue);
+        }
+        return (String) commandLine.getValue("--" + optionName, defaultValue);
     }
 
     /**
-     * @see it.jnrpe.core.ICommandLine#getOptionValue(char)
+     * Returns the value of the specified option.
+     *
+     * @param shortOption
+     *            The option short name
+     * @return The option value
      */
-    public String getOptionValue(final char cOption)
-    {
-        return (String)m_CommandLine.getValue("-" + cOption);
+    public String getOptionValue(final char shortOption) {
+        return (String) commandLine.getValue("-" + shortOption);
     }
 
     /**
-     * @see it.jnrpe.core.ICommandLine#getOptionValue(char, java.lang.String)
+     * Returns the value of the specified option If the option is not present,
+     * returns the default value.
+     *
+     * @param shortOption
+     *            The option short name
+     * @param defaultValue
+     *            The default value
+     * @return The option value or, if not specified, the default value
      */
-    public String getOptionValue(final char cOption, final String sDefaultValue)
-    {
-        return (String)m_CommandLine.getValue("-" + cOption, sDefaultValue);
+    public String getOptionValue(final char shortOption,
+            final String defaultValue) {
+        return (String) commandLine.getValue("-" + shortOption, defaultValue);
     }
 
     /**
-     * @see it.jnrpe.core.ICommandLine#hasOption(java.lang.String)
+     * Returns <code>true</code> if the option is present.
+     *
+     * @param optionName
+     *            The option name
+     * @return <code>true</code> if the option is present
      */
-    public boolean hasOption(final String sOptionName)
-    {
-        if (sOptionName.length() == 1)
-            return hasOption(sOptionName.charAt(0));
-        return m_CommandLine.hasOption("--" + sOptionName);
+    public boolean hasOption(final String optionName) {
+        if (optionName.length() == 1) {
+            return hasOption(optionName.charAt(0));
+        }
+        return commandLine.hasOption("--" + optionName);
     }
 
     /**
-     * @see it.jnrpe.core.ICommandLine#hasOption(char)
+     * Returns <code>true</code> if the option is present.
+     *
+     * @param shortOption
+     *            The option short name
+     * @return <code>true</code> if the specified option is present
      */
-    public boolean hasOption(final char cOption)
-    {
-        return m_CommandLine.hasOption("-" + cOption);
+    public boolean hasOption(final char shortOption) {
+        return commandLine.hasOption("-" + shortOption);
     }
 }

@@ -14,18 +14,18 @@ The CHECK_PGSQL plugin
     
 	* <<--password/-p [PASSWORD]>>: Use the indicated password to authenticate the connection
     
-	* <<--warning/-w >>: Response time to result in warning status (seconds)
+	* <<--warning/-w >>: Response time to result in warning status (seconds). The syntax to be used is the Nagios threshold syntax
     
-	* <<--critical/-c >>: Response time to result in critical status (seconds)
+	* <<--critical/-c >>: Response time to result in critical status (seconds). The syntax to be used is the Nagios threshold syntax
 	
 	* <<--timeout/-t >>: Seconds before connection times out (default: 10)
 
 	
-	You need a pgsql connector jar file in the same directory that this plugin is installed.
+	You need a the pgsql JDBC Driver jar file in the same directory that this plugin is installed.
 
 * Usage Example
 	
-  	In the following example, we will check the connection to a mysql database.
+  	In the following example, we will check the connection to a PostgreSQL database.
 
 ** Configuring using the XML configuration style
 
@@ -59,6 +59,6 @@ The CHECK_PGSQL plugin
  
 +----------+
 
-  check_nrpe -H 127.0.0.1 -c check_pgsql -a 'localhost!5432!database!username!password!2:!10:' -n 
+  check_nrpe -n -H 127.0.0.1 -c check_pgsql -a localhost 5432 database username password 2: 10: 
 
 +----------+

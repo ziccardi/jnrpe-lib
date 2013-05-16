@@ -18,13 +18,11 @@ import org.apache.commons.lang.text.StrTokenizer;
  *
  * @author Massimiliano Ziccardi
  */
-public final class StringUtils
-{
+public final class StringUtils {
     /**
      * Private default constructor to avoid instantiation.
      */
-    private StringUtils()
-    {
+    private StringUtils() {
 
     }
 
@@ -37,26 +35,33 @@ public final class StringUtils
      * <li>Otherwise, the split occurres as soon as a space is found.
      * </ul>
      *
-     * @param sString
+     * @param string
      *            The string to split
-     * @param bIgnoreQuotes
+     * @param ignoreQuotes
      *            For future implementation
      * @return The splitted string
      *
      * @since JNRPE Server 1.04
      */
-    public static String[] split(final String sString,
-            final boolean bIgnoreQuotes)
-    {
-        return split (sString, ' ', bIgnoreQuotes);
+    public static String[]
+            split(final String string, final boolean ignoreQuotes) {
+        return split(string, ' ', ignoreQuotes);
     }
-    
-    public static String[] split(final String sString, char separator,
-            final boolean bIgnoreQuotes)
-    {
-        StrTokenizer strtok = new StrTokenizer(sString,
-                StrMatcher.charMatcher(separator),
-                StrMatcher.quoteMatcher());
+
+    /**
+     * Splits the given string using as separator the
+     * <code>separator</code> character.
+     * @param string The string to be splitted
+     * @param separator The separator character
+     * @param ignoreQuotes <code>true</code> if the quotes
+     * must be ignored.
+     * @return The splitted string
+     */
+    public static String[] split(final String string, final char separator,
+            final boolean ignoreQuotes) {
+        StrTokenizer strtok =
+                new StrTokenizer(string, StrMatcher.charMatcher(separator),
+                        StrMatcher.quoteMatcher());
         return strtok.getTokenArray();
     }
 }
