@@ -14,11 +14,11 @@ The CHECK_PGSQL plugin
     
 	* <<--password/-p [PASSWORD]>>: Use the indicated password to authenticate the connection
     
-	* <<--warning/-w >>: Response time to result in warning status (seconds). The syntax to be used is the Nagios threshold syntax
+	* <<--warning/-w [WARNING]>>: Response time to result in warning status (seconds). The syntax to be used is the Nagios threshold syntax
     
-	* <<--critical/-c >>: Response time to result in critical status (seconds). The syntax to be used is the Nagios threshold syntax
+	* <<--critical/-c [CRITICAL]>>: Response time to result in critical status (seconds). The syntax to be used is the Nagios threshold syntax
 	
-	* <<--timeout/-t >>: Seconds before connection times out (default: 10)
+	* <<--timeout/-t [TIMEOUT]>>: Seconds before connection times out (default: 10)
 
 	
 	You need a the pgsql JDBC Driver jar file in the same directory that this plugin is installed.
