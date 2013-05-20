@@ -1,27 +1,27 @@
 The CHECK_PGSQL plugin
+  
+	This plugin tests connections to a PostgreSQL database server
+	
+	Supporte parameters are:
+	
+	* <<--hostname/-H [HOSTNAME]>>: Host name, IP Address, or unix socket (must be an absolute path). Default is 'localhost'.
 
-  This plugin tests connections to a PostgreSQL database server
+	* <<--port/-P [PORT]>>: Port number (default: 5432)
+    
+	* <<--database/-d [DATABASE]>>: Check database with indicated name
+    
+	* <<--logname/-l [LOGNAME]>>: Login name of user
+    
+	* <<--password/-p [PASSWORD]>>: Use the indicated password to authenticate the connection
+    
+	* <<--warning/-w [WARNING]>>: Response time to result in warning status (seconds). The syntax to be used is the Nagios threshold syntax
+    
+	* <<--critical/-c [CRITICAL]>>: Response time to result in critical status (seconds). The syntax to be used is the Nagios threshold syntax
+	
+	* <<--timeout/-t [TIMEOUT]>>: Seconds before connection times out (default: 10)
 
-  Supporte parameters are:
-
-  * <<--hostname/-H [HOSTNAME]>>: Host name, IP Address, or unix socket (must be an absolute path). Default is 'localhost'.
-
-  * <<--port/-P [PORT]>>: Port number (default: 5432)
-
-  * <<--database/-d [DATABASE]>>: Check database with indicated name
-
-  * <<--logname/-l [LOGNAME]>>: Login name of user
-
-  * <<--password/-p [PASSWORD]>>: Use the indicated password to authenticate the connection
-
-  * <<--warning/-w >>: Response time to result in warning status (seconds). The syntax to be used is the Nagios threshold syntax
-
-  * <<--critical/-c >>: Response time to result in critical status (seconds). The syntax to be used is the Nagios threshold syntax
-
-  * <<--timeout/-t >>: Seconds before connection times out (default: 10)
-
-
-  You need a pgsql JDBC Driver jar file in the same directory that this plugin is installed.
+	
+	You need a the pgsql JDBC Driver jar file in the same directory that this plugin is installed.
 
 * Usage Example
 

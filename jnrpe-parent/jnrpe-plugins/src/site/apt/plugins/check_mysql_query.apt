@@ -14,9 +14,9 @@ The CHECK_MYSQL_QUERY plugin
     
 	* <<--query/-q "[QUERY]">>: SQL query to run. Only first column in first row will be read
     
-	* <<--warning/-w >>: WARNING range
+	* <<--warning/-w [WARNING]>>: WARNING range
     
-	* <<--critical/-c >>: CRITICAL range
+	* <<--critical/-c [CRITICAL]>>: CRITICAL range
     
     
 	You need a mysql connector jar file in the same directory that this plugin is installed.

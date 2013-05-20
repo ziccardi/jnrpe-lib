@@ -22,10 +22,10 @@ The CHECK_MYSQL plugin
     
 	* <<--check-slave/-S >>: Check if the slave thread is running properly.
     
-	* <<--warning/-w >>: Exit with WARNING status if slave server "seconds behind master" (if --check-slave is specified) or
+	* <<--warning/-w [WARNING]>>: Exit with WARNING status if slave server "seconds behind master" (if --check-slave is specified) or
 	  the number of seconds required to connect (if --check-slave is NOT specified) falls inside the given range.
     
-	* <<--critical/-c >>: Exit with CRITICAL status if slave server "seconds behind master" (--check-slave is specified) or
+	* <<--critical/-c [CRITICAL]>>: Exit with CRITICAL status if slave server "seconds behind master" (--check-slave is specified) or
 	  the number of seconds required to connect (--check-slave is NOT specified) falls inside the given range.
 
 	You need a mysql connector jar file	in the same directory that this plugin is installed.
