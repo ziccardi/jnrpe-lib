@@ -35,6 +35,13 @@ import org.testng.annotations.Test;
 public class CheckTomcatTest implements Constants {
 
     /**
+     * The full path to the already existing tomcat installation.
+     * If this variable is null, than tomcat gets automatically
+     * downloaded during test execution phase.
+     */
+    private String existingTomcatInstance = null;
+
+    /**
      * The tomcat download url.
      */
     private static final String TOMCAT_DOWNLOAD_URL =
@@ -77,7 +84,7 @@ public class CheckTomcatTest implements Constants {
     @BeforeClass
     public final void setup() {
         try {
-            ClassLoader cl = CheckFilePluginTest.class.getClassLoader();
+            ClassLoader cl = CheckTomcatTest.class.getClassLoader();
 
             PluginDefinition checkTomcat =
                     PluginRepositoryUtil.parseXmlPluginDefinition(cl,
@@ -85,14 +92,21 @@ public class CheckTomcatTest implements Constants {
 
             SetupTest.getPluginRepository().addPluginDefinition(checkTomcat);
 
-            File tomcatDir = new File("./target/tomcat");
+            String tomcatHome = null;
 
-            tomcatDir.mkdirs();
+            if (existingTomcatInstance == null) {
+                File tomcatDir = new File("./target/tomcat");
 
-            ZipURLInstaller installer =
-                    new ZipURLInstaller(new URL(TOMCAT_DOWNLOAD_URL));
-            installer.setExtractDir(tomcatDir.getAbsolutePath());
-            installer.install();
+                tomcatDir.mkdirs();
+
+                ZipURLInstaller installer =
+                        new ZipURLInstaller(new URL(TOMCAT_DOWNLOAD_URL));
+                installer.setExtractDir(tomcatDir.getAbsolutePath());
+                installer.install();
+                tomcatHome = installer.getHome();
+            } else {
+                tomcatHome = existingTomcatInstance;
+            }
 
             DefaultConfigurationFactory factory =
                     new DefaultConfigurationFactory();
@@ -113,7 +127,7 @@ public class CheckTomcatTest implements Constants {
                                     "tomcat7x", ContainerType.INSTALLED,
                                     configuration);
 
-            container.setHome(installer.getHome());
+            container.setHome(tomcatHome);
 
             ((Tomcat7xConf) configuration).realConfigure(container);
             enableTomcatConsole(new File(new File(configuration.getHome(),

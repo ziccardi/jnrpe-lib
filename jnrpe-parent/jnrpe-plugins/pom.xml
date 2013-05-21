@@ -34,7 +34,6 @@
     <plugins>
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
-
         <configuration>
           <descriptorRefs>
             <descriptorRef>src</descriptorRef>
@@ -72,24 +71,27 @@
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>2.8</version>
+        <executions>
+          <execution>
+            <id>copydeps</id>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+            <phase>package</phase>
+          </execution>
+        </executions>
         <configuration>
-          <archive>
-            <index>true</index>
-            <manifest>
-              <addClasspath>true</addClasspath>
-              <classpathPrefix>lib/</classpathPrefix>
-              <mainClass>it.jnrpe.server.JNRPEServer</mainClass>
-            </manifest>
-            <manifestEntries>
-              <mode>development</mode>
-              <url>${project.url}</url>
-            </manifestEntries>
-          </archive>
+          <includeScope>compile</includeScope>
+          <excludeGroupIds>net.sf.jnrpe</excludeGroupIds>
+          <excludeTransitive>true</excludeTransitive>
         </configuration>
       </plugin>
-
-
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+      </plugin>
     </plugins>
 
   </build>
@@ -115,6 +117,7 @@
     <dependency>
       <groupId>net.sf.jnrpe</groupId>
       <artifactId>jnrpe-lib</artifactId>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>commons-codec</groupId>
@@ -127,11 +130,11 @@
       <version>2.4</version>
     </dependency>
     <dependency>
-    <groupId>org.codehaus.cargo</groupId>
-    <artifactId>cargo-core-uberjar</artifactId>
-    <version>1.4.0</version>
-    <scope>test</scope>
-</dependency>
+      <groupId>org.codehaus.cargo</groupId>
+      <artifactId>cargo-core-uberjar</artifactId>
+      <version>1.4.0</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <parent>
