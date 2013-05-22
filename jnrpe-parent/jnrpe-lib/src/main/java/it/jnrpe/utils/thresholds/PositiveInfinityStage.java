@@ -74,4 +74,9 @@ class PositiveInfinityStage  extends Stage {
     public String expects() {
         return "[+]inf";
     }
+
+    @Override
+    public boolean isLeaf() {
+        return true;
+    }
 }

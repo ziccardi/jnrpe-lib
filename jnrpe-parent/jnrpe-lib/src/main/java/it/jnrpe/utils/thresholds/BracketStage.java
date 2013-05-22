@@ -21,7 +21,7 @@ package it.jnrpe.utils.thresholds;
  *
  * @author Massimiliano Ziccardi
  */
-class BracketStage extends Stage {
+abstract class BracketStage extends Stage {
 
     /**
      * The bracket to search for (open or closed).
@@ -54,7 +54,7 @@ class BracketStage extends Stage {
     @Override
     public String parse(final String threshold, final RangeConfig tc) {
         if (canParse(threshold)) {
-            tc.setRightInclusive(false);
+            configure(tc);
             return threshold.substring(1);
         }
 
@@ -86,6 +86,14 @@ class BracketStage extends Stage {
     }
 
     /**
+     * Sets the {@link RangeConfig} object as not
+     * left/right inclusive.
+     *
+     * @param rc The range configuration
+     */
+    protected abstract void configure(final RangeConfig rc);
+
+    /**
      * This class implements a 'closed brace stage'. It consumes, if present, a
      * closed brace at the beginning of the received threshold chunk.
      *
@@ -106,6 +114,16 @@ class BracketStage extends Stage {
          */
         public final boolean isLeaf() {
             return true;
+        }
+
+        /**
+         * Sets the {@link RangeConfig} object as not
+         * right inclusive.
+         *
+         * @param rc The range configuration
+         */
+        protected final void configure(final RangeConfig rc) {
+            rc.setRightInclusive(false);
         }
     }
 
@@ -129,6 +147,17 @@ class BracketStage extends Stage {
         public OpenBracketStage() {
             super("openbracket", '(');
         }
+
+        /**
+         * Sets the {@link RangeConfig} object as not
+         * left inclusive.
+         *
+         * @param rc The range configuration
+         */
+        protected final void configure(final RangeConfig rc) {
+            rc.setLeftInclusive(false);
+        }
+
     }
 
 }

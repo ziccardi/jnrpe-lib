@@ -42,7 +42,7 @@ public class InvalidRangeSyntaxException extends RangeException {
      * The error message pattern.
      */
     private static final String MESSAGE_PATTERN =
-            "{0} - Expected one of ''{1}'' but found ''{2}'' instead.";
+         "{0} - Stage {1} expected one of ''{2}'' but found ''{3}'' instead.";
 
     /**
      * Builds the exception specifying the stage and the range string.
@@ -99,12 +99,13 @@ public class InvalidRangeSyntaxException extends RangeException {
         if (getWholeRangeString() != null) {
             invalidRange =
                     MessageFormat
-                         .format(INVALID_RANGE_STRING, getWholeRangeString());
+                      .format(INVALID_RANGE_STRING, getWholeRangeString());
         } else {
             invalidRange = INVALID_RANGE;
         }
 
-        return MessageFormat.format(MESSAGE_PATTERN, invalidRange,
+        return MessageFormat.format(MESSAGE_PATTERN,
+                getFailedStage().getName(), invalidRange,
                 parseExpecting(getFailedStage()), getBadString());
     }
 }

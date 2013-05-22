@@ -91,6 +91,15 @@ class RangeConfig {
     }
 
     /**
+     * Returns whether the right boundary is inclusive.
+     *
+     * @return whether the right boundary is inclusive.
+     */
+    public boolean isRightInclusive() {
+        return rightInclusive;
+    }
+
+    /**
      * Sets if the left boundary must be inclusive.
      *
      * @param leftBoundaryInclusive
@@ -155,4 +164,22 @@ class RangeConfig {
     public void setRightInclusive(final boolean rightIncl) {
         rightInclusive = rightIncl;
     }
+
+    protected BigDecimal getLeftBoundary() {
+        return startBoundary;
+    }
+
+    protected BigDecimal getRightBoundary() {
+        return rightBoundary;
+    }
+
+    protected boolean isNegativeInfinity() {
+        return negativeInfinity;
+    }
+
+    protected boolean isPositiveInfinity() {
+        return positiveInfinity;
+    }
+
+
 }
