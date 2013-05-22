@@ -1,3 +1,18 @@
+/*
+ * Copyright (c) 2013 Massimiliano Ziccardi
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package it.jnrpe.utils.thresholds;
 
 import java.util.HashMap;
@@ -80,7 +95,7 @@ abstract class Stage {
 
     /**
      * Consumes a part of the threshold and configure the
-     * {@link ThresholdConfig} object according to the swallowed part of the
+     * {@link RangeConfig} object according to the swallowed part of the
      * threshold.
      *
      * @param threshold
@@ -88,13 +103,21 @@ abstract class Stage {
      * @param tc
      *            The threshold configuration object
      * @return The remaining unparsed part of the threshold
-     * @throws BadThresholdSyntaxException
+     * @throws RangeException
      *             -
      */
-    public abstract String parse(final String threshold, ThresholdConfig tc)
-            throws BadThresholdSyntaxException;
+    public abstract String parse(final String threshold, RangeConfig tc)
+            throws RangeException;
 
+    /**
+     * Tells if the current stage is able to parse the given threshold.
+     * @param threshold The threshold to be parsed
+     * @return The remaining tokens
+     */
     public abstract boolean canParse(String threshold);
 
+    /**
+     * @return The list of tokens expected by this stage.
+     */
     public abstract String expects();
 }

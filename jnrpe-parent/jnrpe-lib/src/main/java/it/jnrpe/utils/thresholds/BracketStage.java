@@ -1,3 +1,18 @@
+/*
+ * Copyright (c) 2013 Massimiliano Ziccardi
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package it.jnrpe.utils.thresholds;
 
 /**
@@ -37,7 +52,7 @@ class BracketStage extends Stage {
      * @return the remaining part of the threshold
      */
     @Override
-    public String parse(final String threshold, final ThresholdConfig tc) {
+    public String parse(final String threshold, final RangeConfig tc) {
         if (canParse(threshold)) {
             tc.setRightInclusive(false);
             return threshold.substring(1);
@@ -84,6 +99,14 @@ class BracketStage extends Stage {
         public ClosedBracketStage() {
             super("closedbracket", ')');
         }
+
+        /**
+         * Closed bracket can be the end of the range.
+         * @return <code>true</code>
+         */
+        public final boolean isLeaf() {
+            return true;
+        }
     }
 
     /**
@@ -93,7 +116,7 @@ class BracketStage extends Stage {
      * Example Input : (0..100
      *
      * Produced Output : 0..100 and calls the
-     * {@link ThresholdConfig#setLeftInclusive(boolean)} passing
+     * {@link RangeConfig#setLeftInclusive(boolean)} passing
      * <code>true</code>
      *
      * @author Massimiliano Ziccardi

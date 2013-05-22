@@ -1,4 +1,22 @@
+/*
+ * Copyright (c) 2013 Massimiliano Ziccardi
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package it.jnrpe.utils.thresholds;
+
+import it.jnrpe.ReturnValue.UnitOfMeasure;
+import it.jnrpe.utils.BadThresholdException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,22 +37,10 @@ import java.util.List;
  * <li>Otherwise return OK
  * </ul>
  *
- * @author ziccardi
+ * @author Massimiliano Ziccardi
  *
  */
 public class Threshold {
-
-    /**
-     * According to the nagios specifications:
-     *
-     * <blockquote> the unit can be specified with plugins that do not know
-     * about the type of value returned (SNMP, Windows performance counters,
-     * etc.). </blockquote>
-     */
-    private enum units {
-        yotta, zetta, exa, peta, tera, giga, mega, kilo, hecto, deca, deci,
-        centi, milli, micro, nano, pico, femto, atto, zepto, yocto
-    };
 
     /**
      * According to the nagios specifications:
@@ -48,7 +54,8 @@ public class Threshold {
      * </blockquote>
      */
     private enum prefixes {
-        kibi, mebi, gibi, tebi, pebi, exbi
+        yotta, zetta, exa, peta, tera, giga, mega, kilo, hecto, deca, deci,
+        centi, milli, micro, nano, pico, femto, atto, zepto, yocto, kibi, mebi, gibi, tebi, pebi, exbi
     };
 
     /**
@@ -59,20 +66,20 @@ public class Threshold {
     /**
      * The list of ok ranges.
      */
-    private List<ThresholdImpl> okThresholdList =
-            new ArrayList<ThresholdImpl>();
+    private List<Range> okThresholdList =
+            new ArrayList<Range>();
     /**
      * The list of warning ranges.
      */
-    private List<ThresholdImpl> warningThresholdList =
-            new ArrayList<ThresholdImpl>();
+    private List<Range> warningThresholdList =
+            new ArrayList<Range>();
     /**
      * The list of critical ranges.
      */
-    private List<ThresholdImpl> criticalThresholdList =
-            new ArrayList<ThresholdImpl>();
+    private List<Range> criticalThresholdList =
+            new ArrayList<Range>();
 
-    private units unit = null;
+    private UnitOfMeasure unit = null;
     private prefixes prefix = null;
 
     /**
@@ -103,11 +110,11 @@ public class Threshold {
      *
      * @param definition
      *            The threshold string
-     * @throws BadThresholdSyntaxException
+     * @throws BadThresholdException
      *             -
      */
     public Threshold(final String definition)
-            throws BadThresholdSyntaxException {
+            throws BadThresholdException {
         parse(definition);
     }
 
@@ -116,11 +123,11 @@ public class Threshold {
      *
      * @param definition
      *            The threshold definition
-     * @throws BadThresholdSyntaxException
+     * @throws BadThresholdException
      *             -
      */
     private void parse(final String definition)
-            throws BadThresholdSyntaxException {
+            throws BadThresholdException {
         String[] thresholdComponentAry = definition.split(",");
 
         for (String thresholdComponent : thresholdComponentAry) {
@@ -132,7 +139,7 @@ public class Threshold {
             }
             if (nameValuePair[0].equalsIgnoreCase("ok")) {
 
-                ThresholdImpl thr = new ThresholdImpl(nameValuePair[1]);
+                Range thr = new Range(nameValuePair[1]);
 
                 okThresholdList.add(thr);
                 continue;
@@ -140,19 +147,19 @@ public class Threshold {
             if (nameValuePair[0].equalsIgnoreCase("warning")
                     || nameValuePair[0].equalsIgnoreCase("warn")
                     || nameValuePair[0].equalsIgnoreCase("w")) {
-                ThresholdImpl thr = new ThresholdImpl(nameValuePair[1]);
+                Range thr = new Range(nameValuePair[1]);
                 warningThresholdList.add(thr);
                 continue;
             }
             if (nameValuePair[0].equalsIgnoreCase("critical")
                     || nameValuePair[0].equalsIgnoreCase("crit")
                     || nameValuePair[0].equalsIgnoreCase("c")) {
-                ThresholdImpl thr = new ThresholdImpl(nameValuePair[1]);
+                Range thr = new Range(nameValuePair[1]);
                 criticalThresholdList.add(thr);
                 continue;
             }
             if (nameValuePair[0].equalsIgnoreCase("unit")) {
-                unit = units.valueOf(nameValuePair[1].toLowerCase());
+                unit = UnitOfMeasure.valueOf(nameValuePair[1].toLowerCase());
                 continue;
             }
             if (nameValuePair[0].equalsIgnoreCase("prefix")) {

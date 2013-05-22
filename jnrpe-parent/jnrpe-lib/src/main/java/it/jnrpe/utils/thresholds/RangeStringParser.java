@@ -1,23 +1,45 @@
+/*
+ * Copyright (c) 2013 Massimiliano Ziccardi
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package it.jnrpe.utils.thresholds;
 
 /**
- * The configured threshold parser. Different threads must use different
- * instances of the object.
+ * The configured threshold parser.
  *
  * @author Massimiliano Ziccardi
  */
-class ThresholdParser {
+class RangeStringParser {
 
     /**
      * The root of the parsing state machine.
      */
-    private Stage startStage;
+    private static final Stage ROOT_STAGE = configureParser();
 
     /**
      * Builds and configure the parser.
      */
-    public ThresholdParser() {
-        startStage = new StartStage();
+    public RangeStringParser() {
+
+    }
+
+    /**
+     * Configures the state machine.
+     * @return The configured state machine.
+     */
+    private static Stage configureParser() {
+        Stage startStage = new StartStage();
         Stage negativeInfinityStage = new NegativeInfinityStage();
         Stage positiveInfinityStage = new PositiveInfinityStage();
         NegateStage negateStage = new NegateStage();
@@ -49,6 +71,8 @@ class ThresholdParser {
 
         positiveInfinityStage.addTransition(closedBraketStage);
         rightBoundaryStage.addTransition(closedBraketStage);
+
+        return startStage;
     }
 
     /**
@@ -58,11 +82,11 @@ class ThresholdParser {
      *            The threshold to be parsed
      * @param tc
      *            The configuration
-     * @throws BadThresholdSyntaxException
+     * @throws RangeException
      *             -
      */
-    public final void parse(final String range, final ThresholdConfig tc)
-            throws BadThresholdSyntaxException {
-        startStage.parse(range, tc);
+    public final void parse(final String range, final RangeConfig tc)
+            throws RangeException {
+        ROOT_STAGE.parse(range, tc);
     }
 }

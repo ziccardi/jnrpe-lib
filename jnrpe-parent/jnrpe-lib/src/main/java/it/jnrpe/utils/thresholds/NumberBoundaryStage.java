@@ -1,3 +1,18 @@
+/*
+ * Copyright (c) 2013 Massimiliano Ziccardi
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package it.jnrpe.utils.thresholds;
 
 import java.math.BigDecimal;
@@ -18,8 +33,8 @@ abstract class NumberBoundaryStage extends Stage {
     }
 
     @Override
-    public String parse(final String threshold, final ThresholdConfig tc)
-            throws BadThresholdSyntaxException {
+    public String parse(final String threshold, final RangeConfig tc)
+            throws InvalidRangeSyntaxException {
         if (canParse(threshold)) {
             StringBuffer numberString = new StringBuffer();
             for (int i = 0; i < threshold.length(); i++) {
@@ -40,19 +55,18 @@ abstract class NumberBoundaryStage extends Stage {
                     if (numberString.length() == 0) {
                         numberString.append(threshold.charAt(i));
                         continue;
-                    } else {
-                        throw new BadThresholdSyntaxException(
-                                threshold.substring(numberString.length()));
                     }
                 }
-
+//                throw new InvalidRangeSyntaxException(this,
+//                        threshold.substring(numberString.length()));
+                break;
             }
             if (numberString.length() != 0) {
                 BigDecimal bd = new BigDecimal(numberString.toString());
                 setBoundary(tc, bd);
                 return threshold.substring(numberString.length());
             } else {
-                throw new BadThresholdSyntaxException(threshold);
+                throw new InvalidRangeSyntaxException(this, threshold);
             }
         }
 
@@ -61,8 +75,7 @@ abstract class NumberBoundaryStage extends Stage {
 
     @Override
     public boolean canParse(final String threshold) {
-        switch (threshold.charAt(0))
-        {
+        switch (threshold.charAt(0)) {
         case '+':
         case '-':
             return !(threshold.startsWith("-inf") || threshold
@@ -80,14 +93,14 @@ abstract class NumberBoundaryStage extends Stage {
     /**
      * This object can be used to set both left or right boundary of a range. It
      * is left to the implementing class to set the right boundary inside the
-     * {@link ThresholdConfig} object;
+     * {@link RangeConfig} object;
      *
      * @param tc
      *            The threshold configuration
      * @param boundary
      *            The boundary value
      */
-    public abstract void setBoundary(final ThresholdConfig tc,
+    public abstract void setBoundary(final RangeConfig tc,
             final BigDecimal boundary);
 
     /**
@@ -108,7 +121,7 @@ abstract class NumberBoundaryStage extends Stage {
         }
 
         @Override
-        public void setBoundary(final ThresholdConfig tc,
+        public void setBoundary(final RangeConfig tc,
                 final BigDecimal boundary) {
             tc.setLeftBoundary(boundary);
         }
@@ -132,9 +145,17 @@ abstract class NumberBoundaryStage extends Stage {
         }
 
         @Override
-        public void setBoundary(final ThresholdConfig tc,
+        public void setBoundary(final RangeConfig tc,
                 final BigDecimal boundary) {
             tc.setRightBoundary(boundary);
+        }
+
+        /**
+         * Right boundary can be the end of the range.
+         * @return <code>true</code>
+         */
+        public final boolean isLeaf() {
+            return true;
         }
     }
 }

@@ -1,3 +1,18 @@
+/*
+ * Copyright (c) 2013 Massimiliano Ziccardi
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package it.jnrpe.utils.thresholds;
 
 /**
@@ -14,72 +29,42 @@ class StartStage extends Stage {
         super("root");
     }
 
-    /**
-     * The current stage during the parsing.
-     */
-    private Stage currentStage = this;
-
-    /**
-     * Try to move to the next stage according to the content of the received
-     * threshold.
-     *
-     * @param threshold
-     *            The threshold
-     * @param tc
-     *            The threshold configuration
-     * @return The remaining part of the threshold. If there are no errors,
-     *         returns an empty string.
-     * @throws BadThresholdSyntaxException -
-     */
-    private String moveNext(final String threshold, final ThresholdConfig tc)
-            throws BadThresholdSyntaxException {
-        for (String transitionName : currentStage.getTransitionNames()) {
-            Stage transition = currentStage.getTransition(transitionName);
-            if (transition.canParse(threshold)) {
-                String res = transition.parse(threshold, tc);
-                currentStage = transition;
-                return res;
-            }
-        }
-
-        throw new BadThresholdSyntaxException("Found '" + threshold
-                + "' while expecting one of " + parseExpecting());
-    }
-
     @Override
     public boolean canParse(final String threshold) {
         // TODO Auto-generated method stub
         return false;
     }
 
-    /**
-     * Utility method for error messages.
-     * @return The list of expected tokens
-     */
-    private String parseExpecting() {
-        StringBuffer expected = new StringBuffer();
-
-        for (String key : currentStage.getTransitionNames()) {
-            expected.append(",").append(
-                    currentStage.getTransition(key).expects());
-        }
-
-        return expected.substring(1);
-    }
-
     @Override
-    public String parse(final String threshold, final ThresholdConfig tc)
-            throws BadThresholdSyntaxException {
+    public String parse(final String threshold, final RangeConfig tc)
+            throws RangeException {
+
+        Stage currentStage = this;
+
         String parsedThreshold = threshold;
 
+        boolean stageParsed;
+
         while (parsedThreshold.length() != 0) {
-            parsedThreshold = moveNext(parsedThreshold, tc);
+            stageParsed = false;
+            for (String transitionName : currentStage.getTransitionNames()) {
+                Stage transition = currentStage.getTransition(transitionName);
+                if (transition.canParse(parsedThreshold)) {
+                    parsedThreshold = transition.parse(parsedThreshold, tc);
+                    currentStage = transition;
+                    stageParsed = true;
+                    break;
+                }
+            }
+
+            if (!stageParsed) {
+                throw new InvalidRangeSyntaxException(currentStage,
+                        parsedThreshold, threshold);
+            }
         }
 
         if (!currentStage.isLeaf()) {
-            throw new BadThresholdSyntaxException(
-                    "Premature end of range. Expected one of : "
-                            + parseExpecting());
+            throw new PrematureEndOfRangeException(currentStage, threshold);
         }
 
         return parsedThreshold;
@@ -88,12 +73,5 @@ class StartStage extends Stage {
     @Override
     public String expects() {
         return null;
-    }
-
-    /**
-     * Resets the parser.
-     */
-    void reset() {
-        currentStage = this;
     }
 }

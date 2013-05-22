@@ -1,3 +1,18 @@
+/*
+ * Copyright (c) 2013 Massimiliano Ziccardi
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package it.jnrpe.utils.thresholds;
 
 /**
@@ -8,13 +23,22 @@ package it.jnrpe.utils.thresholds;
  * Example Input : -inf..100
  *
  * Produced Output : ..100 and calls the
- * {@link ThresholdConfig#setNegativeInfinity(boolean)} passing
+ * {@link RangeConfig#setNegativeInfinity(boolean)} passing
  * <code>true</code>
  *
  * @author Massimiliano Ziccardi
  */
 class NegativeInfinityStage extends Stage {
 
+    /**
+     * The infinity sign.
+     */
+    private static final  String INFINITY = "inf";
+
+    /**
+     * The negative infinity sign.
+     */
+    private static final String NEG_INFINITY = "-inf";
     /**
      *
      */
@@ -30,21 +54,21 @@ class NegativeInfinityStage extends Stage {
      * @param tc
      *            The threshold config object. This object will be populated
      *            according to the passed in threshold.
-     * @see ThresholdConfig#setNegativeInfinity(boolean)
+     * @see RangeConfig#setNegativeInfinity(boolean)
      * @return the remaining part of the threshold
      */
     @Override
-    public String parse(final String threshold, final ThresholdConfig tc) {
+    public String parse(final String threshold, final RangeConfig tc) {
 
         if (canParse(threshold)) {
             tc.setNegativeInfinity(true);
 
-            if (threshold.startsWith("inf")) {
-                return threshold.substring(3);
+            if (threshold.startsWith(INFINITY)) {
+                return threshold.substring(INFINITY.length());
             }
 
-            if (threshold.startsWith("-inf")) {
-                return threshold.substring(4);
+            if (threshold.startsWith(NEG_INFINITY)) {
+                return threshold.substring(NEG_INFINITY.length());
             }
         }
 
