@@ -87,7 +87,10 @@ public class InvalidRangeSyntaxException extends RangeException {
                     stage.getTransition(key).expects());
         }
 
-        return expected.substring(1);
+        if (expected.length() > 1) {
+            return expected.substring(1);
+        }
+        return "{END OF RANGE}";
     }
 
     /**

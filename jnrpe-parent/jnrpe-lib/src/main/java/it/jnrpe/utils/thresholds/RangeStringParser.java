@@ -36,6 +36,7 @@ class RangeStringParser {
 
     /**
      * Configures the state machine.
+     *
      * @return The configured state machine.
      */
     private static Stage configureParser() {
@@ -69,7 +70,6 @@ class RangeStringParser {
         separatorStage.addTransition(positiveInfinityStage);
         separatorStage.addTransition(rightBoundaryStage);
 
-        positiveInfinityStage.addTransition(closedBraketStage);
         rightBoundaryStage.addTransition(closedBraketStage);
 
         return startStage;
@@ -88,5 +88,32 @@ class RangeStringParser {
     public final void parse(final String range, final RangeConfig tc)
             throws RangeException {
         ROOT_STAGE.parse(range, tc);
+        checkBoundaries(tc);
+    }
+
+    /**
+     * Checks that right boundary is greater than left boundary.
+     * @param rc The range configuration
+     * @throws RangeException If right < left
+     */
+    private void checkBoundaries(final RangeConfig rc) throws RangeException {
+        if (rc.isNegativeInfinity()) {
+            // No other checks necessary. Negative infinity is less than any
+            // number
+            return;
+        }
+
+        if (rc.isPositiveInfinity()) {
+            // No other checks necessary. Positive infinity is greater than any
+            // number
+            return;
+        }
+
+        if (rc.getLeftBoundary().compareTo(rc.getRightBoundary()) > 0) {
+            throw new RangeException(
+                    "Left boundary must be less than right boundary (left:"
+                            + rc.getLeftBoundary() + ", right:"
+                            + rc.getRightBoundary() + ")");
+        }
     }
 }

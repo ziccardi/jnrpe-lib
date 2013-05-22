@@ -34,7 +34,7 @@ abstract class NumberBoundaryStage extends Stage {
 
     @Override
     public String parse(final String threshold, final RangeConfig tc)
-            throws InvalidRangeSyntaxException {
+            throws RangeException {
         if (canParse(threshold)) {
             StringBuffer numberString = new StringBuffer();
             for (int i = 0; i < threshold.length(); i++) {
@@ -55,10 +55,14 @@ abstract class NumberBoundaryStage extends Stage {
                     if (numberString.length() == 0) {
                         numberString.append(threshold.charAt(i));
                         continue;
+                    } else {
+                        throw new RangeException("Unexpected '"
+                                + threshold.charAt(i)
+                                + "' sign parsing boundary");
                     }
                 }
-//                throw new InvalidRangeSyntaxException(this,
-//                        threshold.substring(numberString.length()));
+                // throw new InvalidRangeSyntaxException(this,
+                // threshold.substring(numberString.length()));
                 break;
             }
             if (numberString.length() != 0) {
@@ -152,6 +156,7 @@ abstract class NumberBoundaryStage extends Stage {
 
         /**
          * Right boundary can be the end of the range.
+         *
          * @return <code>true</code>
          */
         public final boolean isLeaf() {

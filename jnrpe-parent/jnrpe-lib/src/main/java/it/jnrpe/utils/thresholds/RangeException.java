@@ -22,13 +22,26 @@ public class RangeException extends BadThresholdException {
     /**
      * The stage that raised the exception.
      */
-    private final Stage failedStage;
+    private Stage failedStage;
 
 
     /**
      * The erroneous tokens.
      */
     private final String badString;
+
+    /**
+     * Generic exception message.
+     */
+    private String message = null;
+
+    public RangeException(final String errorMessage) {
+        super();
+        failedStage = null;
+        badString = null;
+        wholeRangeString = null;
+        message = errorMessage;
+    }
 
     /**
      * Builds the exception specifying the stage, the bad tokens and the whole
@@ -102,5 +115,17 @@ public class RangeException extends BadThresholdException {
      */
     protected final String getExpectedTokens() {
         return parseExpecting(failedStage);
+    }
+
+    void setFailedStage(Stage failedStage) {
+        this.failedStage = failedStage;
+    }
+
+    /**
+     * @return the error message.
+     */
+    @Override
+    public String getMessage() {
+        return message;
     }
 }
