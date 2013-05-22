@@ -35,6 +35,10 @@ public class RangeException extends BadThresholdException {
      */
     private String message = null;
 
+    /**
+     * Builds and initialize the exception with the error message.
+     * @param errorMessage The message
+     */
     public RangeException(final String errorMessage) {
         super();
         failedStage = null;
@@ -117,8 +121,12 @@ public class RangeException extends BadThresholdException {
         return parseExpecting(failedStage);
     }
 
-    void setFailedStage(Stage failedStage) {
-        this.failedStage = failedStage;
+    /**
+     * Sets the stage that failed.
+     * @param stage The failed stage
+     */
+    final void setFailedStage(final Stage stage) {
+        this.failedStage = stage;
     }
 
     /**

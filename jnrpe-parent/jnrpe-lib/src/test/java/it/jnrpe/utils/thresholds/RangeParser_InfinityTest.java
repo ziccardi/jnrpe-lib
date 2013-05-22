@@ -9,11 +9,10 @@ public class RangeParser_InfinityTest {
 
     @Test
     public void testImplicitNegativeInfinity() throws RangeException {
-        RangeStringParser parser = new RangeStringParser();
 
         RangeConfig rc = new RangeConfig();
 
-        parser.parse("inf..5000.1", rc);
+        RangeStringParser.parse("inf..5000.1", rc);
 
         Assert.assertTrue(rc.isLeftInclusive());
         Assert.assertTrue(rc.isRightInclusive());
@@ -26,11 +25,10 @@ public class RangeParser_InfinityTest {
 
     @Test
     public void testExlicitNegativeInfinity() throws RangeException {
-        RangeStringParser parser = new RangeStringParser();
 
         RangeConfig rc = new RangeConfig();
 
-        parser.parse("-inf..5000.1", rc);
+        RangeStringParser.parse("-inf..5000.1", rc);
 
         Assert.assertTrue(rc.isLeftInclusive());
         Assert.assertTrue(rc.isRightInclusive());
@@ -43,11 +41,10 @@ public class RangeParser_InfinityTest {
 
     @Test
     public void testImplicitPositiveInfinity() throws RangeException {
-        RangeStringParser parser = new RangeStringParser();
 
         RangeConfig rc = new RangeConfig();
 
-        parser.parse("50..inf", rc);
+        RangeStringParser.parse("50..inf", rc);
 
         Assert.assertTrue(rc.isLeftInclusive());
         Assert.assertTrue(rc.isRightInclusive());
@@ -60,11 +57,10 @@ public class RangeParser_InfinityTest {
 
     @Test
     public void testExplicitPositiveInfinity() throws RangeException {
-        RangeStringParser parser = new RangeStringParser();
 
         RangeConfig rc = new RangeConfig();
 
-        parser.parse("50..+inf", rc);
+        RangeStringParser.parse("50..+inf", rc);
 
         Assert.assertTrue(rc.isLeftInclusive());
         Assert.assertTrue(rc.isRightInclusive());
@@ -77,11 +73,10 @@ public class RangeParser_InfinityTest {
 
     @Test
     public void testImplicitPositiveNegativeInfinity() throws RangeException {
-        RangeStringParser parser = new RangeStringParser();
 
         RangeConfig rc = new RangeConfig();
 
-        parser.parse("inf..inf", rc);
+        RangeStringParser.parse("inf..inf", rc);
 
         Assert.assertTrue(rc.isLeftInclusive());
         Assert.assertTrue(rc.isRightInclusive());
@@ -94,11 +89,10 @@ public class RangeParser_InfinityTest {
 
     @Test
     public void testExplicitPositiveNegativeInfinity() throws RangeException {
-        RangeStringParser parser = new RangeStringParser();
 
         RangeConfig rc = new RangeConfig();
 
-        parser.parse("-inf..+inf", rc);
+        RangeStringParser.parse("-inf..+inf", rc);
 
         Assert.assertTrue(rc.isLeftInclusive());
         Assert.assertTrue(rc.isRightInclusive());

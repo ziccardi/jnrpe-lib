@@ -9,11 +9,9 @@ public class RangeParser_InclusiveTest {
 
     @Test
     public void testInclusiveOk() throws RangeException {
-        RangeStringParser parser = new RangeStringParser();
-
         RangeConfig rc = new RangeConfig();
 
-        parser.parse("10.23..5000.1", rc);
+        RangeStringParser.parse("10.23..5000.1", rc);
 
         Assert.assertTrue(rc.isLeftInclusive());
         Assert.assertTrue(rc.isRightInclusive());
@@ -26,11 +24,9 @@ public class RangeParser_InclusiveTest {
 
     @Test
     public void testInclusiveLeftOk() throws RangeException {
-        RangeStringParser parser = new RangeStringParser();
-
         RangeConfig rc = new RangeConfig();
 
-        parser.parse("10.23..5000.1)", rc);
+        RangeStringParser.parse("10.23..5000.1)", rc);
 
         Assert.assertTrue(rc.isLeftInclusive());
         Assert.assertFalse(rc.isRightInclusive());
@@ -43,11 +39,9 @@ public class RangeParser_InclusiveTest {
 
     @Test
     public void testInclusiveRightOk() throws RangeException {
-        RangeStringParser parser = new RangeStringParser();
-
         RangeConfig rc = new RangeConfig();
 
-        parser.parse("(10.23..5000.1", rc);
+        RangeStringParser.parse("(10.23..5000.1", rc);
 
         Assert.assertFalse(rc.isLeftInclusive());
         Assert.assertTrue(rc.isRightInclusive());
@@ -60,11 +54,10 @@ public class RangeParser_InclusiveTest {
 
     @Test
     public void testExclusiveBothOk() throws RangeException {
-        RangeStringParser parser = new RangeStringParser();
 
         RangeConfig rc = new RangeConfig();
 
-        parser.parse("(10.23..5000.1)", rc);
+        RangeStringParser.parse("(10.23..5000.1)", rc);
 
         Assert.assertFalse(rc.isLeftInclusive());
         Assert.assertFalse(rc.isRightInclusive());
@@ -77,11 +70,10 @@ public class RangeParser_InclusiveTest {
 
     @Test
     public void testExplicitSignBothOk() throws RangeException {
-        RangeStringParser parser = new RangeStringParser();
 
         RangeConfig rc = new RangeConfig();
 
-        parser.parse("(-10.23..+5000.1)", rc);
+        RangeStringParser.parse("(-10.23..+5000.1)", rc);
 
         Assert.assertFalse(rc.isLeftInclusive());
         Assert.assertFalse(rc.isRightInclusive());

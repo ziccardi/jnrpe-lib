@@ -15,6 +15,8 @@
  */
 package it.jnrpe.utils.thresholds;
 
+import java.math.BigDecimal;
+
 /**
  * Builds the range object parsing the range passed inside the threshold
  * definition.
@@ -63,6 +65,84 @@ class Range extends RangeConfig {
      */
     private void parse(final String range)
             throws RangeException {
-        new RangeStringParser().parse(range, this);
+        RangeStringParser.parse(range, this);
+    }
+
+    /**
+     * Evaluates if the passed in value falls inside the range.
+     * The negation is ignored.
+     *
+     * @param value The value to evaluate
+     * @return <code>true</code> if the value falls inside the range. The
+     * negation ('^') is ignored.
+     */
+    private boolean evaluate(final BigDecimal value) {
+        if (value == null) {
+            throw new NullPointerException("Passed in value can't be null");
+        }
+
+        if (!isNegativeInfinity()) {
+            switch (value.compareTo(getLeftBoundary())) {
+            case 0:
+                if (!isLeftInclusive()) {
+                    return false;
+                }
+                break;
+            case -1:
+                return false;
+            default:
+            }
+        }
+
+        if (!isPositiveInfinity()) {
+            switch (value.compareTo(getRightBoundary())) {
+            case 0:
+                if (!isRightInclusive()) {
+                    return false;
+                }
+                break;
+            case 1:
+                return false;
+            default:
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Evaluates if the passed in value falls inside the range.
+     *
+     * @param value The value to evaluate
+     * @return <code>true</code> if the value falls inside the range.
+     */
+    public boolean isValueInside(final BigDecimal value) {
+        boolean res = evaluate(value);
+
+        if (isNegate()) {
+            return !res;
+        } else {
+            return res;
+        }
+    }
+
+    /**
+     * Evaluates if the passed in value falls inside the range.
+     *
+     * @param value The value to evaluate
+     * @return <code>true</code> if the value falls inside the range.
+     */
+    public boolean isValueInside(final int value) {
+        return isValueInside(new BigDecimal(value));
+    }
+
+    /**
+     * Evaluates if the passed in value falls inside the range.
+     *
+     * @param value The value to evaluate
+     * @return <code>true</code> if the value falls inside the range.
+     */
+    public boolean isValueInside(final long value) {
+        return isValueInside(new BigDecimal(value));
     }
 }

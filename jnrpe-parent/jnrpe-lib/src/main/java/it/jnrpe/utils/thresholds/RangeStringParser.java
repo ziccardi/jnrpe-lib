@@ -20,7 +20,7 @@ package it.jnrpe.utils.thresholds;
  *
  * @author Massimiliano Ziccardi
  */
-class RangeStringParser {
+final class RangeStringParser {
 
     /**
      * The root of the parsing state machine.
@@ -28,9 +28,9 @@ class RangeStringParser {
     private static final Stage ROOT_STAGE = configureParser();
 
     /**
-     * Builds and configure the parser.
+     * Private default constructor.
      */
-    public RangeStringParser() {
+    private RangeStringParser() {
 
     }
 
@@ -85,7 +85,7 @@ class RangeStringParser {
      * @throws RangeException
      *             -
      */
-    public final void parse(final String range, final RangeConfig tc)
+    public static void parse(final String range, final RangeConfig tc)
             throws RangeException {
         ROOT_STAGE.parse(range, tc);
         checkBoundaries(tc);
@@ -93,10 +93,14 @@ class RangeStringParser {
 
     /**
      * Checks that right boundary is greater than left boundary.
-     * @param rc The range configuration
-     * @throws RangeException If right < left
+     *
+     * @param rc
+     *            The range configuration
+     * @throws RangeException
+     *             If right < left
      */
-    private void checkBoundaries(final RangeConfig rc) throws RangeException {
+    private static void checkBoundaries(final RangeConfig rc)
+            throws RangeException {
         if (rc.isNegativeInfinity()) {
             // No other checks necessary. Negative infinity is less than any
             // number

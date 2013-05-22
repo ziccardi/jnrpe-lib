@@ -15,8 +15,6 @@
  */
 package it.jnrpe.utils.thresholds;
 
-import javax.transaction.InvalidTransactionException;
-
 /**
  * The root of the parsing state machine.
  *

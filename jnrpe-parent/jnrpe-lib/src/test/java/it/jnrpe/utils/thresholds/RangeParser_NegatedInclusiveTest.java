@@ -9,11 +9,10 @@ public class RangeParser_NegatedInclusiveTest {
 
     @Test
     public void testNegatedInclusiveOk() throws RangeException {
-        RangeStringParser parser = new RangeStringParser();
 
         RangeConfig rc = new RangeConfig();
 
-        parser.parse("^10.23..5000.1", rc);
+        RangeStringParser.parse("^10.23..5000.1", rc);
 
         Assert.assertTrue(rc.isLeftInclusive());
         Assert.assertTrue(rc.isRightInclusive());
@@ -26,11 +25,10 @@ public class RangeParser_NegatedInclusiveTest {
 
     @Test
     public void testNegatedInclusiveLeftOk() throws RangeException {
-        RangeStringParser parser = new RangeStringParser();
 
         RangeConfig rc = new RangeConfig();
 
-        parser.parse("^10.23..5000.1)", rc);
+        RangeStringParser.parse("^10.23..5000.1)", rc);
 
         Assert.assertTrue(rc.isLeftInclusive());
         Assert.assertFalse(rc.isRightInclusive());
@@ -43,11 +41,10 @@ public class RangeParser_NegatedInclusiveTest {
 
     @Test
     public void testNegatedInclusiveRightOk() throws RangeException {
-        RangeStringParser parser = new RangeStringParser();
 
         RangeConfig rc = new RangeConfig();
 
-        parser.parse("^(10.23..5000.1", rc);
+        RangeStringParser.parse("^(10.23..5000.1", rc);
 
         Assert.assertFalse(rc.isLeftInclusive());
         Assert.assertTrue(rc.isRightInclusive());
@@ -60,11 +57,10 @@ public class RangeParser_NegatedInclusiveTest {
 
     @Test
     public void testNegatedExclusiveBothOk() throws RangeException {
-        RangeStringParser parser = new RangeStringParser();
 
         RangeConfig rc = new RangeConfig();
 
-        parser.parse("^(10.23..5000.1)", rc);
+        RangeStringParser.parse("^(10.23..5000.1)", rc);
 
         Assert.assertFalse(rc.isLeftInclusive());
         Assert.assertFalse(rc.isRightInclusive());

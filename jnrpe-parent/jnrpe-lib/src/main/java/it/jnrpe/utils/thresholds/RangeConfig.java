@@ -165,21 +165,31 @@ class RangeConfig {
         rightInclusive = rightIncl;
     }
 
+    /**
+     * @return The value of the left boundary. <code>null</code> if -inf.
+     */
     protected BigDecimal getLeftBoundary() {
         return startBoundary;
     }
 
+    /**
+     * @return The value of the right boundary. <code>null</code> if -inf.
+     */
     protected BigDecimal getRightBoundary() {
         return rightBoundary;
     }
 
+    /**
+     * @return <code>true</code> if the left boundary is -inf.
+     */
     protected boolean isNegativeInfinity() {
         return negativeInfinity;
     }
 
+    /**
+     * @return <code>true</code> if the right boundary is +inf.
+     */
     protected boolean isPositiveInfinity() {
         return positiveInfinity;
     }
-
-
 }
