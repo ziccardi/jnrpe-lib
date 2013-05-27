@@ -45,6 +45,11 @@ import java.math.BigDecimal;
 class Range extends RangeConfig {
 
     /**
+     * The unparsed range string.
+     */
+    private String rangeString;
+
+    /**
      *
      * @param range
      *            The range to be parsed
@@ -53,6 +58,7 @@ class Range extends RangeConfig {
      */
     public Range(final String range)
             throws RangeException {
+        rangeString = range;
         parse(range);
     }
 
@@ -69,6 +75,20 @@ class Range extends RangeConfig {
     }
 
     /**
+     * Multiply the value with the right multiplier based on the prefix.
+     * @param value The value
+     * @param prefix The prefix
+     * @return The result
+     */
+    private BigDecimal convert(final BigDecimal value, final Prefixes prefix) {
+        if (prefix == null) {
+            return value;
+        }
+
+        return prefix.convert(value);
+    }
+
+    /**
      * Evaluates if the passed in value falls inside the range.
      * The negation is ignored.
      *
@@ -76,13 +96,13 @@ class Range extends RangeConfig {
      * @return <code>true</code> if the value falls inside the range. The
      * negation ('^') is ignored.
      */
-    private boolean evaluate(final BigDecimal value) {
+    private boolean evaluate(final BigDecimal value, final Prefixes prefix) {
         if (value == null) {
             throw new NullPointerException("Passed in value can't be null");
         }
 
         if (!isNegativeInfinity()) {
-            switch (value.compareTo(getLeftBoundary())) {
+            switch (value.compareTo(convert(getLeftBoundary(), prefix))) {
             case 0:
                 if (!isLeftInclusive()) {
                     return false;
@@ -95,7 +115,7 @@ class Range extends RangeConfig {
         }
 
         if (!isPositiveInfinity()) {
-            switch (value.compareTo(getRightBoundary())) {
+            switch (value.compareTo(convert(getRightBoundary(), prefix))) {
             case 0:
                 if (!isRightInclusive()) {
                     return false;
@@ -117,7 +137,11 @@ class Range extends RangeConfig {
      * @return <code>true</code> if the value falls inside the range.
      */
     public boolean isValueInside(final BigDecimal value) {
-        boolean res = evaluate(value);
+        return isValueInside(value, null);
+    }
+
+    public boolean isValueInside(final BigDecimal value, Prefixes prefix) {
+        boolean res = evaluate(value, prefix);
 
         if (isNegate()) {
             return !res;
@@ -125,6 +149,7 @@ class Range extends RangeConfig {
             return res;
         }
     }
+
 
     /**
      * Evaluates if the passed in value falls inside the range.
@@ -144,5 +169,12 @@ class Range extends RangeConfig {
      */
     public boolean isValueInside(final long value) {
         return isValueInside(new BigDecimal(value));
+    }
+
+    /**
+     * @return The unparsed range string.
+     */
+    String getRangeString() {
+        return rangeString;
     }
 }

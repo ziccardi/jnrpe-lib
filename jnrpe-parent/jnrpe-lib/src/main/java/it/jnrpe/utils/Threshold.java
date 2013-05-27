@@ -92,7 +92,7 @@ class Threshold {
 
         try {
             while ((b = (byte) pb.read()) != -1) {
-                currentParsedBuffer.append(b);
+                currentParsedBuffer.append((char)b);
                 if (b == '@') {
                     if (curState != MINVAL) {
                         throw new BadThresholdException(
@@ -156,7 +156,9 @@ class Threshold {
                 }
 
                 String numberString = numberBuffer.toString();
-                if (numberString.trim().length() == 0) {
+                if (numberString.trim().length() == 0
+                        || numberString.equals("+")
+                        || numberString.equals("-")) {
                     throw new BadThresholdException(
                             "A number was expected after '"
                                     + currentParsedBuffer.toString()
@@ -184,6 +186,13 @@ class Threshold {
             maxVal = minVal;
             minVal = new BigDecimal(0);
         }
+
+        if (curState == MAXVAL && maxVal == null
+                && thresholdString.startsWith(":")) {
+            throw new BadThresholdException(
+                 "At least one of maximum or minimum value must me specified.");
+        }
+
     }
 
     /**

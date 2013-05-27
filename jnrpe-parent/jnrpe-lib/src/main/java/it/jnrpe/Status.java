@@ -19,19 +19,19 @@ public enum Status {
     /**
      * Service status 'OK'.
      */
-    OK(0),
+    OK(0, 0),
     /**
      * Service status 'WARNING'.
      */
-    WARNING(1),
+    WARNING(1, 2),
     /**
      * Service status 'CRITICAL'.
      */
-    CRITICAL(2),
+    CRITICAL(2, 3),
     /**
      * Service status 'UNKNOWN'.
      */
-    UNKNOWN(3);
+    UNKNOWN(3, 1);
 
     /**
      * Integer constant for the OK status.
@@ -56,13 +56,21 @@ public enum Status {
     private final int intValue;
 
     /**
+     * The serverity value.
+     */
+    private final int severityValue;
+
+    /**
      * Builds an enumeration with the given int value.
      *
      * @param iValue
      *            The value
+     * @param severity
+     *            The severity of the status
      */
-    Status(final int iValue) {
+    Status(final int iValue, final int severity) {
         intValue = iValue;
+        severityValue = severity;
     }
 
     /**
@@ -93,5 +101,12 @@ public enum Status {
         default:
             return UNKNOWN;
         }
+    }
+
+    /**
+     * @return The severity as an int value (higher is more severe)
+     */
+    public int getSeverity() {
+        return severityValue;
     }
 }

@@ -28,12 +28,12 @@ package it.jnrpe.utils.thresholds;
  *
  * @author Massimiliano Ziccardi
  */
-class PositiveInfinityStage  extends Stage {
+class PositiveInfinityStage extends Stage {
 
     /**
      * The infinity sign.
      */
-    private static final  String INFINITY = "inf";
+    private static final String INFINITY = "inf";
 
     /**
      * The negative infinity sign.
@@ -47,26 +47,37 @@ class PositiveInfinityStage  extends Stage {
         super("positiveinfinity");
     }
 
+    /**
+     * Parses the threshold to remove the matched 'inf' or '+inf' string.
+     *
+     * No checks are performed against the passed in string: the object
+     * assumes that the string is correct since the {@link #canParse(String)}
+     * method <b>must</b> be called <b>before</b> this method.
+     *
+     * @param threshold
+     *            The threshold chunk to be parsed
+     * @param tc
+     *            The threshold config object. This object will be populated
+     *            according to the passed in threshold.
+     * @return the remaining part of the threshold
+     */
     @Override
     public String parse(final String threshold, final RangeConfig tc) {
 
-        if (canParse(threshold)) {
-            tc.setPositiveInfinity(true);
+        tc.setPositiveInfinity(true);
 
-            if (threshold.startsWith(INFINITY)) {
-                return threshold.substring(INFINITY.length());
-            }
-
-            if (threshold.startsWith(POS_INFINITY)) {
-                return threshold.substring(POS_INFINITY.length());
-            }
+        if (threshold.startsWith(INFINITY)) {
+            return threshold.substring(INFINITY.length());
+        } else {
+            return threshold.substring(POS_INFINITY.length());
         }
-
-        return threshold;
     }
 
     @Override
     public boolean canParse(final String threshold) {
+        if (threshold == null) {
+            return false;
+        }
         return threshold.startsWith("inf") || threshold.startsWith("+inf");
     }
 

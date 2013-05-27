@@ -44,8 +44,15 @@ class PerformanceData {
     /**
      * The Unit of Measure of {@link #performanceValue}, {@link #minimumValue}
      * and {@link #maximumValue}.
+     * With the new threshold format this won't be used anymore.
      */
     private final UnitOfMeasure unitOfMeasure;
+
+    /**
+     * The unit of {@link #performanceValue}, {@link #minimumValue}
+     * and {@link #maximumValue}.
+     */
+    private final String unit;
 
     /**
      * The warning range passed to the plugin that produced this performance
@@ -112,7 +119,46 @@ class PerformanceData {
         this.criticalRange = critRange;
         this.minimumValue = minValue;
         this.maximumValue = maxValue;
+        this.unit = null;
     }
+
+    /**
+     * Creates a performance data object.
+     *
+     * @param perfLabel
+     *            The label identifying this performance data
+     * @param value
+     *            The performance value
+     * @param unitofMeasure
+     *            The Unit of Measure of <code>value</code>,
+     *            <code>minValue</code> and <code>maxValue</code>
+     * @param warnRange
+     *            the warning range passed to the plugin that is generating this
+     *            performance data. Can be null.
+     * @param critRange
+     *            the critical range passed to the plugin that is generating
+     *            this performance data. Can be null.
+     * @param minValue
+     *            the minimum value that this performance data can reach. Can be
+     *            null.
+     * @param maxValue
+     *            the maximum value that this performance data can reach. Can be
+     *            null.
+     */
+    public PerformanceData(final String perfLabel, final BigDecimal value,
+            final String unitofMeasure, final String warnRange,
+            final String critRange, final BigDecimal minValue,
+            final BigDecimal maxValue) {
+        this.label = perfLabel;
+        this.performanceValue = value;
+        this.unitOfMeasure = null;
+        this.warningRange = warnRange;
+        this.criticalRange = critRange;
+        this.minimumValue = minValue;
+        this.maximumValue = maxValue;
+        this.unit = unitofMeasure;
+    }
+
 
     /**
      * Produce a performance string accordin to Nagios specification based on
@@ -159,6 +205,10 @@ class PerformanceData {
                 break;
             default:
             }
+        }
+
+        if (unit != null) {
+            res.append(unit);
         }
 
         res.append(";");

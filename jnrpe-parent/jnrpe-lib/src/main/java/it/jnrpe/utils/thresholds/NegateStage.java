@@ -37,6 +37,10 @@ class NegateStage extends Stage {
     /**
      * Parses the threshold to remove the matched '^' char.
      *
+     * No checks are performed against the passed in string: the object
+     * assumes that the string is correct since the {@link #canParse(String)}
+     * method <b>must</b> be called <b>before</b> this method.
+
      * @param threshold
      *            The threshold chunk to be parsed
      * @param tc
@@ -46,12 +50,8 @@ class NegateStage extends Stage {
      */
     @Override
     public String parse(final String threshold, final RangeConfig tc) {
-        if (canParse(threshold)) {
-            tc.setNegate(true);
-            return threshold.substring(1);
-        }
-
-        return threshold;
+        tc.setNegate(true);
+        return threshold.substring(1);
     }
 
     /**
@@ -64,6 +64,9 @@ class NegateStage extends Stage {
      *         threshold
      */
     public boolean canParse(final String threshold) {
+        if (threshold == null) {
+            return false;
+        }
         return threshold.startsWith("^");
     }
 

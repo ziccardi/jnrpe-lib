@@ -23,8 +23,7 @@ package it.jnrpe.utils.thresholds;
  * Example Input : -inf..100
  *
  * Produced Output : ..100 and calls the
- * {@link RangeConfig#setNegativeInfinity(boolean)} passing
- * <code>true</code>
+ * {@link RangeConfig#setNegativeInfinity(boolean)} passing <code>true</code>
  *
  * @author Massimiliano Ziccardi
  */
@@ -33,12 +32,13 @@ class NegativeInfinityStage extends Stage {
     /**
      * The infinity sign.
      */
-    private static final  String INFINITY = "inf";
+    private static final String INFINITY = "inf";
 
     /**
      * The negative infinity sign.
      */
     private static final String NEG_INFINITY = "-inf";
+
     /**
      *
      */
@@ -48,6 +48,10 @@ class NegativeInfinityStage extends Stage {
 
     /**
      * Parses the threshold to remove the matched '-inf' or 'inf' string.
+     *
+     * No checks are performed against the passed in string: the object
+     * assumes that the string is correct since the {@link #canParse(String)}
+     * method <b>must</b> be called <b>before</b> this method.
      *
      * @param threshold
      *            The threshold chunk to be parsed
@@ -60,19 +64,13 @@ class NegativeInfinityStage extends Stage {
     @Override
     public String parse(final String threshold, final RangeConfig tc) {
 
-        if (canParse(threshold)) {
-            tc.setNegativeInfinity(true);
+        tc.setNegativeInfinity(true);
 
-            if (threshold.startsWith(INFINITY)) {
-                return threshold.substring(INFINITY.length());
-            }
-
-            if (threshold.startsWith(NEG_INFINITY)) {
-                return threshold.substring(NEG_INFINITY.length());
-            }
+        if (threshold.startsWith(INFINITY)) {
+            return threshold.substring(INFINITY.length());
+        } else {
+            return threshold.substring(NEG_INFINITY.length());
         }
-
-        return threshold;
     }
 
     /**
@@ -86,6 +84,9 @@ class NegativeInfinityStage extends Stage {
      */
     @Override
     public boolean canParse(final String threshold) {
+        if (threshold == null) {
+            return false;
+        }
         return threshold.startsWith("inf") || threshold.startsWith("-inf");
     }
 

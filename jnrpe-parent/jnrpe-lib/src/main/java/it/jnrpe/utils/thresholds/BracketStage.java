@@ -44,6 +44,10 @@ abstract class BracketStage extends Stage {
     /**
      * Parses the threshold to remove the matched braket.
      *
+     * No checks are performed against the passed in string: the object
+     * assumes that the string is correct since the {@link #canParse(String)}
+     * method <b>must</b> be called <b>before</b> this method.
+     *
      * @param threshold
      *            The threshold to parse
      * @param tc
@@ -53,12 +57,8 @@ abstract class BracketStage extends Stage {
      */
     @Override
     public String parse(final String threshold, final RangeConfig tc) {
-        if (canParse(threshold)) {
-            configure(tc);
-            return threshold.substring(1);
-        }
-
-        return threshold;
+        configure(tc);
+        return threshold.substring(1);
     }
 
     /**
@@ -72,6 +72,10 @@ abstract class BracketStage extends Stage {
      */
     @Override
     public boolean canParse(final String threshold) {
+        if (threshold == null) {
+            return false;
+        }
+
         return threshold.startsWith(bracket);
     }
 
