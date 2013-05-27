@@ -32,11 +32,7 @@ class SeparatorStage extends Stage {
 
     @Override
     public String parse(final String threshold, final RangeConfig tc) {
-        if (canParse(threshold)) {
-            return threshold.substring(2);
-        }
-
-        return threshold;
+        return threshold.substring(2);
     }
 
     @Override

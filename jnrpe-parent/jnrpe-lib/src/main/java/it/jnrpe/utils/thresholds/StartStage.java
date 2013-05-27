@@ -31,13 +31,16 @@ class StartStage extends Stage {
 
     @Override
     public boolean canParse(final String threshold) {
-        // TODO Auto-generated method stub
         return false;
     }
 
     @Override
     public String parse(final String threshold, final RangeConfig tc)
             throws RangeException {
+
+        if (threshold == null) {
+            throw new RangeException("Range can't be null");
+        }
 
         Stage currentStage = this;
 

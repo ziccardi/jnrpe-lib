@@ -114,4 +114,39 @@ public class RangeTest {
         Assert.assertFalse(range.isValueInside(new BigDecimal("50")));
         Assert.assertFalse(range.isValueInside(new BigDecimal("150.0000")));
     }
+
+    @Test
+    public void testNegatedAllInt() throws Exception {
+        Range range = new Range("^-inf..+inf");
+        Assert.assertFalse(range.isValueInside(-1000000));
+
+        Assert.assertFalse(range.isValueInside(50));
+        Assert.assertFalse(range.isValueInside(150));
+    }
+
+    @Test
+    public void testNegatedAllLong() throws Exception {
+        Range range = new Range("^-inf..+inf");
+        Assert.assertFalse(range.isValueInside(-1000000L));
+
+        Assert.assertFalse(range.isValueInside(50L));
+        Assert.assertFalse(range.isValueInside(150L));
+    }
+
+    @Test(expectedExceptions=RangeException.class)
+    public void testNull() throws Exception {
+        Range range = new Range(null);
+    }
+
+    @Test(expectedExceptions=NullPointerException.class)
+    public void testEvaluateNull() throws Exception {
+        Range range = new Range("10..200");
+        range.isValueInside(null);
+    }
+
+    @Test(expectedExceptions=InvalidRangeSyntaxException.class)
+    public void testWhiteString() throws Exception {
+        Range range = new Range("   ");
+    }
+
 }

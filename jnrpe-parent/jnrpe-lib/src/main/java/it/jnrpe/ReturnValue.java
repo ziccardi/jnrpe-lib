@@ -289,4 +289,37 @@ public final class ReturnValue {
                 warningRange, criticalRange, minimumValue, maximumValue));
         return this;
     }
+
+    /**
+     * Adds performance data to the plugin result. Thos data will be added to
+     * the output formatted as specified in Nagios specifications
+     * (http://nagiosplug.sourceforge.net/developer-guidelines.html#AEN201)
+     *
+     * @param label
+     *            The label of the performance data we are adding
+     * @param value
+     *            The performance data value
+     * @param unit
+     *            The Unit Of Measure
+     * @param warningRange
+     *            The warning threshold used to check this metric (can be null)
+     * @param criticalRange
+     *            The critical threshold used to check this value (can be null)
+     * @param minimumValue
+     *            The minimum value for this metric (can be null if not
+     *            applicable)
+     * @param maximumValue
+     *            The maximum value for this metric (can be null if not
+     *            applicable)
+     * @return this
+     */
+    public ReturnValue withPerformanceData(final String label,
+            final BigDecimal value, final String unit,
+            final String warningRange, final String criticalRange,
+            final BigDecimal minimumValue, final BigDecimal maximumValue) {
+
+        performanceDataList.add(new PerformanceData(label, value, unit,
+                warningRange, criticalRange, minimumValue, maximumValue));
+        return this;
+    }
 }

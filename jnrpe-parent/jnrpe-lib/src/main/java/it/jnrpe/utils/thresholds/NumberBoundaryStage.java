@@ -32,53 +32,76 @@ abstract class NumberBoundaryStage extends Stage {
         super(stageName);
     }
 
+    /**
+     * Parses the threshold to remove the matched number string.
+     *
+     * No checks are performed against the passed in string: the object
+     * assumes that the string is correct since the {@link #canParse(String)}
+     * method <b>must</b> be called <b>before</b> this method.
+     *
+     * @param threshold
+     *            The threshold chunk to be parsed
+     * @param tc
+     *            The threshold config object. This object will be populated
+     *            according to the passed in threshold.
+     * @return the remaining part of the threshold
+     * @throws RangeException if the threshold can't be parsed
+     */
     @Override
     public String parse(final String threshold, final RangeConfig tc)
             throws RangeException {
-        if (canParse(threshold)) {
-            StringBuffer numberString = new StringBuffer();
-            for (int i = 0; i < threshold.length(); i++) {
-                if (Character.isDigit(threshold.charAt(i))) {
+        StringBuffer numberString = new StringBuffer();
+        for (int i = 0; i < threshold.length(); i++) {
+            if (Character.isDigit(threshold.charAt(i))) {
+                numberString.append(threshold.charAt(i));
+                continue;
+            }
+            if (threshold.charAt(i) == '.') {
+                if (numberString.toString().endsWith(".")) {
+                    numberString.deleteCharAt(numberString.length() - 1);
+                    break;
+                } else {
                     numberString.append(threshold.charAt(i));
                     continue;
                 }
-                if (threshold.charAt(i) == '.') {
-                    if (numberString.toString().endsWith(".")) {
-                        numberString.deleteCharAt(numberString.length() - 1);
-                        break;
-                    } else {
-                        numberString.append(threshold.charAt(i));
-                        continue;
-                    }
-                }
-                if (threshold.charAt(i) == '+' || threshold.charAt(i) == '-') {
-                    if (numberString.length() == 0) {
-                        numberString.append(threshold.charAt(i));
-                        continue;
-                    } else {
-                        throw new RangeException("Unexpected '"
-                                + threshold.charAt(i)
-                                + "' sign parsing boundary");
-                    }
-                }
-                // throw new InvalidRangeSyntaxException(this,
-                // threshold.substring(numberString.length()));
-                break;
             }
-            if (numberString.length() != 0) {
-                BigDecimal bd = new BigDecimal(numberString.toString());
-                setBoundary(tc, bd);
-                return threshold.substring(numberString.length());
-            } else {
-                throw new InvalidRangeSyntaxException(this, threshold);
+            if (threshold.charAt(i) == '+' || threshold.charAt(i) == '-') {
+                if (numberString.length() == 0) {
+                    numberString.append(threshold.charAt(i));
+                    continue;
+                } else {
+                    throw new RangeException("Unexpected '"
+                            + threshold.charAt(i)
+                            + "' sign parsing boundary");
+                }
             }
+            // throw new InvalidRangeSyntaxException(this,
+            // threshold.substring(numberString.length()));
+            break;
         }
+        if (numberString.length() != 0
+                && !justSign(numberString.toString())) {
+            BigDecimal bd = new BigDecimal(numberString.toString());
+            setBoundary(tc, bd);
+            return threshold.substring(numberString.length());
+        } else {
+            throw new InvalidRangeSyntaxException(this, threshold);
+        }
+    }
 
-        return threshold;
+    /**
+     * @param string The string to be evaluated
+     * @return <code>true</code> if the string is just a sign.
+     */
+    private boolean justSign(final String string) {
+        return string.equals("+") || string.equals("-");
     }
 
     @Override
     public boolean canParse(final String threshold) {
+        if (threshold == null || threshold.isEmpty()) {
+            return false;
+        }
         switch (threshold.charAt(0)) {
         case '+':
         case '-':
