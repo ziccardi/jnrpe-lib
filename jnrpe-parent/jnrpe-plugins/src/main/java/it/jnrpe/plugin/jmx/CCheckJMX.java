@@ -110,4 +110,9 @@ public class CCheckJMX extends JMXQuery implements IPluginInterface {
             }
         }
     }
+
+    @Override
+    protected String getPluginName() {
+        return "CHECK_JMX";
+    }
 }

@@ -142,4 +142,8 @@ public class CheckUsers extends PluginBase {
         return userCount;
     }
 
+    @Override
+    protected String getPluginName() {
+        return "CHECK_USERS";
+    }
 }

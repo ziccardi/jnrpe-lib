@@ -40,8 +40,8 @@ public class ThresholdsEvaluator {
     /**
      * This map contains all the pair METRIC-THRESHOLD.
      */
-    private Map<String, Threshold> thresholdsMap =
-            new HashMap<String, Threshold>();
+    private Map<String, IThreshold> thresholdsMap =
+            new HashMap<String, IThreshold>();
 
     /**
      * Adds a threshold to the list of handled thresholds.
@@ -49,7 +49,7 @@ public class ThresholdsEvaluator {
      * @param thr
      *            The threshold to add
      */
-    public final void addThreshold(final Threshold thr) {
+    final void addThreshold(final IThreshold thr) {
         thresholdsMap.put(thr.getMetric(), thr);
     }
 
@@ -60,7 +60,7 @@ public class ThresholdsEvaluator {
      *            The name of the metric
      * @return <code>true</code> if the metric is required.
      */
-    public final boolean isMetricRequired(final String metricName) {
+    final boolean isMetricRequired(final String metricName) {
         return thresholdsMap.containsKey(metricName);
     }
 
@@ -71,21 +71,37 @@ public class ThresholdsEvaluator {
      *            The metric name attached to the threshold.
      * @return The threshold
      */
-    final Threshold getThreshold(final String metric) {
+    final IThreshold getThreshold(final String metric) {
         return thresholdsMap.get(metric);
     }
 
     /**
-     * Evaluates a value agains all the thresholds defined for the specified
-     * metric.
+     * Evaluates the passed in value against the threshold configured
+     * inside this evaluator.
+     * If the threshold do not refer the passed in metric, than it is
+     * ignored and the next threshold is checked.
      *
-     * @param metric
-     *            The metric name
-     * @param value
-     *            The value
-     * @return The right status
+     * @param metric The metric name
+     * @param value The value to be checked
+     * @return The status computed accordin to the rules specified for
+     * {@link IThreshold#evaluate(BigDecimal)}
      */
-    public final Status evaluate(final String metric, final BigDecimal value) {
+    final Status evaluate(final String metric, final int value) {
+        return evaluate(metric, new BigDecimal(value));
+    }
+
+    /**
+     * Evaluates the passed in value against the threshold configured
+     * inside this evaluator.
+     * If the threshold do not refer the passed in metric, than it is
+     * ignored and the next threshold is checked.
+     *
+     * @param metric The metric name
+     * @param value The value to be checked
+     * @return The status computed accordin to the rules specified for
+     * {@link IThreshold#evaluate(BigDecimal)}
+     */
+    final Status evaluate(final String metric, final BigDecimal value) {
 
         if (value == null) {
             throw new NullPointerException(
@@ -94,11 +110,10 @@ public class ThresholdsEvaluator {
 
         if (metric == null) {
             throw new NullPointerException(
-                    "Metric name can't be null"
-                    );
+                    "Metric name can't be null");
         }
 
-        Threshold thr = thresholdsMap.get(metric);
+        IThreshold thr = thresholdsMap.get(metric);
         if (thr == null) {
             return Status.OK;
         }

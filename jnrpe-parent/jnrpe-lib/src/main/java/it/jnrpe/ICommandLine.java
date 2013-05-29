@@ -10,6 +10,8 @@
  */
 package it.jnrpe;
 
+import java.util.List;
+
 /**
  * This interface represents the command line received by plugin instances.
  *
@@ -25,6 +27,14 @@ public interface ICommandLine {
      * @return The value of the option
      */
     String getOptionValue(String optionName);
+
+    /**
+     * Returns the values associated with the specified option.
+     *
+     * @param optionName The option name
+     * @return An ordered list of values
+     */
+    List getOptionValues(String optionName);
 
     /**
      * Returns the value of the specified option. If the option is not present,
@@ -46,6 +56,14 @@ public interface ICommandLine {
      * @return The option value
      */
     String getOptionValue(char shortOptionName);
+
+    /**
+     * Returns the values associated with the specified option.
+     *
+     * @param shortOptionName The option short name
+     * @return An ordered list of values
+     */
+    List getOptionValues(char shortOptionName);
 
     /**
      * Returns the value of the specified option If the option is not present,

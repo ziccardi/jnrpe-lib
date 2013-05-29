@@ -21,9 +21,11 @@ import java.math.BigDecimal;
  * Builds the range object parsing the range passed inside the threshold
  * definition.
  *
- * A range can have the following format:<p>
+ * A range can have the following format:
+ * <p>
  *
- * [^](start..end)<p>
+ * [^](start..end)
+ * <p>
  *
  * Where:
  * <ul>
@@ -76,8 +78,11 @@ class Range extends RangeConfig {
 
     /**
      * Multiply the value with the right multiplier based on the prefix.
-     * @param value The value
-     * @param prefix The prefix
+     *
+     * @param value
+     *            The value
+     * @param prefix
+     *            The prefix
      * @return The result
      */
     private BigDecimal convert(final BigDecimal value, final Prefixes prefix) {
@@ -89,12 +94,15 @@ class Range extends RangeConfig {
     }
 
     /**
-     * Evaluates if the passed in value falls inside the range.
-     * The negation is ignored.
+     * Evaluates if the passed in value falls inside the range. The negation is
+     * ignored.
      *
-     * @param value The value to evaluate
+     * @param value
+     *            The value to evaluate
+     * @param prefix
+     *            Used to multiply the range boundaries.
      * @return <code>true</code> if the value falls inside the range. The
-     * negation ('^') is ignored.
+     *         negation ('^') is ignored.
      */
     private boolean evaluate(final BigDecimal value, final Prefixes prefix) {
         if (value == null) {
@@ -131,16 +139,23 @@ class Range extends RangeConfig {
     }
 
     /**
-     * Evaluates if the passed in value falls inside the range.
-     *
-     * @param value The value to evaluate
-     * @return <code>true</code> if the value falls inside the range.
+     * @param value
+     *            The value to be evaluated.
+     * @return Whether the passed in value falls inside this range.
      */
     public boolean isValueInside(final BigDecimal value) {
         return isValueInside(value, null);
     }
 
-    public boolean isValueInside(final BigDecimal value, Prefixes prefix) {
+    /**
+     * @param value
+     *            The value to be evaluated.
+     * @param prefix
+     *            Used to multiply the range boundaries.
+     * @return Whether the passed in value falls inside this range.
+     */
+    public boolean isValueInside(final BigDecimal value,
+                                    final Prefixes prefix) {
         boolean res = evaluate(value, prefix);
 
         if (isNegate()) {
@@ -150,22 +165,19 @@ class Range extends RangeConfig {
         }
     }
 
-
     /**
-     * Evaluates if the passed in value falls inside the range.
-     *
-     * @param value The value to evaluate
-     * @return <code>true</code> if the value falls inside the range.
+     * @param value
+     *            The value to be evaluated.
+     * @return Whether the passed in value falls inside this range.
      */
     public boolean isValueInside(final int value) {
         return isValueInside(new BigDecimal(value));
     }
 
     /**
-     * Evaluates if the passed in value falls inside the range.
-     *
-     * @param value The value to evaluate
-     * @return <code>true</code> if the value falls inside the range.
+     * @param value
+     *            The value to be evaluated.
+     * @return Whether the passed in value falls inside this range.
      */
     public boolean isValueInside(final long value) {
         return isValueInside(new BigDecimal(value));

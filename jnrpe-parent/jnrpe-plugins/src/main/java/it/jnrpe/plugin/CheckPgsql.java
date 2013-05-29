@@ -203,6 +203,10 @@ public class CheckPgsql extends PluginBase {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
 
+    @Override
+    protected String getPluginName() {
+        return "CHECK_PGSQL";
     }
 }

@@ -140,4 +140,8 @@ public class CheckMysqlQuery extends PluginBase {
         }
     }
 
+    @Override
+    protected String getPluginName() {
+        return "CHECK_MYSQL_QUERY";
+    }
 }

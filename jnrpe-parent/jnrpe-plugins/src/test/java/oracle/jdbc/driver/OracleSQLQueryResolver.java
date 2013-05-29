@@ -10,6 +10,16 @@ import it.jnrpe.plugins.mocks.sql.ResultSetMockRowBuilder;
 class OracleSQLQueryResolver implements ISQLQueryResolver {
 
     public List<ResultSetMockRow> resolveSQL(String sSQL) {
+
+        if (OracleDriver.QUERY_TIME > 0) {
+            try {
+                Thread.sleep(OracleDriver.QUERY_TIME);
+            } catch (InterruptedException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+
         List<ResultSetMockRow> vResult = new ArrayList<ResultSetMockRow>();
 
         if (sSQL.equalsIgnoreCase("SELECT SYSDATE FROM DUAL")) {
@@ -46,6 +56,27 @@ class OracleSQLQueryResolver implements ISQLQueryResolver {
             vResult.add(new ResultSetMockRowBuilder()
                     .widthValue("NVL(b.free,0.0)", 10).widthValue("total", 100)
                     .widthValue("prc", 90).create());
+        }
+
+        String sQry1 =
+                "select (1-(pr.value/(dbg.value+cg.value)))*100"
+                        + " from v$sysstat pr, v$sysstat dbg, v$sysstat cg"
+                        + " where pr.name='physical reads'"
+                        + " and dbg.name='db block gets'"
+                        + " and cg.name='consistent gets'";
+
+        if (sSQL.equalsIgnoreCase(sQry1)) {
+            vResult.add(new ResultSetMockRowBuilder()
+                            .widthValue("(1-(pr.value/(dbg.value+cg.value)))*100", 10).create());
+        }
+
+        String sQry2 =
+                "select sum(lc.pins)/(sum(lc.pins)"
+                        + "+sum(lc.reloads))*100 from v$librarycache lc";
+
+        if (sSQL.equalsIgnoreCase(sQry2)) {
+            vResult.add(new ResultSetMockRowBuilder()
+                            .widthValue("sum(lc.pins)/(sum(lc.pins)+sum(lc.reloads))*100", 40).create());
         }
 
         return vResult;

@@ -7,6 +7,9 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 public abstract class MockDriver implements Driver {
+
+    public static int QUERY_TIME = 0;
+
     private static int CONNECTION_TIME = 0;
 
     public Connection connect(String url, Properties info) throws SQLException {

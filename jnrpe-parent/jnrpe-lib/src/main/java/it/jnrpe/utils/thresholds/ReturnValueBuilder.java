@@ -17,8 +17,11 @@ package it.jnrpe.utils.thresholds;
 
 import it.jnrpe.ReturnValue;
 import it.jnrpe.Status;
+import it.jnrpe.plugins.Metric;
 
 import java.math.BigDecimal;
+
+import org.apache.commons.lang.StringUtils;
 
 /**
  * This object takes the responsability to build and configure the return value
@@ -28,16 +31,16 @@ import java.math.BigDecimal;
  *
  * @author Massimiliano Ziccardi
  */
-public class ReturnValueBuilder {
+public final class ReturnValueBuilder {
     /**
      * The return value that we are configuring.
      */
-    private ReturnValue retVal = new ReturnValue();
+    private ReturnValue retVal = new ReturnValue().withStatus(Status.OK);
 
     /**
      * The thresholds that must be used to compute the Status result.
      */
-    private ThresholdsEvaluator thresholds = null;
+    private final ThresholdsEvaluator thresholds;
 
     /**
      * The status.
@@ -45,68 +48,174 @@ public class ReturnValueBuilder {
     private Status status = Status.OK;
 
     /**
-     * Contructs the object passing the thresholds.
-     *
-     * @param thr
-     *            The thresholds.
+     * The status to force.
      */
-    public ReturnValueBuilder(final ThresholdsEvaluator thr) {
+    private Status forcedStatus = null;
+
+    /**
+     * The name of the plugin that is generating this result.
+     */
+    private String pluginName = null;
+
+    /**
+     * The value of the message to return to Nagios.
+     */
+    private String retValMessage = "";
+
+    /**
+     * Constructs the object passing the thresholds evaluator.
+     *
+     * @param name
+     *            The name of the plugin that is creating this result
+     * @param thr
+     *            The threshold evaluator.
+     */
+    private ReturnValueBuilder(final String name,
+            final ThresholdsEvaluator thr) {
+        pluginName = name;
         thresholds = thr;
+    }
+
+    /**
+     * Constructs the object with an empty threshold evaluator.
+     *
+     * @param name
+     *            The name of the plugin that is creating this result
+     * @return the newly created instance.
+     */
+    public static ReturnValueBuilder forPlugin(final String name) {
+        return forPlugin(name, null);
+    }
+
+    /**
+     * Constructs the object with the given threshold evaluator.
+     *
+     * @param name
+     *            The name of the plugin that is creating this result
+     * @param thr
+     *            The threshold evaluator.
+     * @return the newly created instance.
+     */
+    public static ReturnValueBuilder forPlugin(final String name,
+            final ThresholdsEvaluator thr) {
+        if (thr != null) {
+            return new ReturnValueBuilder(name, thr);
+        }
+        return new ReturnValueBuilder(name,
+                new ThresholdsEvaluatorBuilder().create());
     }
 
     /**
      * Configure the {@link ReturnValue} we are building with the specified
      * value.
      *
-     * @param metric
-     *            The metric name.
-     * @param value
-     *            The value.
-     * @param minValue
-     *            The maximum value (can be null)
-     * @param maxValue
-     *            The minimum value (can be null)
+     * @param pluginMetric
+     *            The metric for wich we want to compute the result Status.
      * @return this
      */
-    public final ReturnValueBuilder withValue(final String metric,
-            final BigDecimal value,
-            final BigDecimal minValue, final BigDecimal maxValue) {
-        if (thresholds.isMetricRequired(metric)) {
-            Status newStatus = thresholds.evaluate(metric, value);
+    public ReturnValueBuilder withValue(final Metric pluginMetric) {
+        if (thresholds.isMetricRequired(pluginMetric.getMetricName())) {
+            Status newStatus =
+                    thresholds.evaluate(pluginMetric.getMetricName(),
+                            pluginMetric.getMetricValue());
             if (newStatus.getSeverity() > status.getSeverity()) {
                 status = newStatus;
             }
 
-            Threshold thr = thresholds.getThreshold(metric);
+            IThreshold thr =
+                    thresholds.getThreshold(pluginMetric.getMetricName());
 
-            retVal.withPerformanceData(metric, value, thr.getFormattedUnit(),
+            formatResultMessage(pluginMetric);
+
+            retVal.withPerformanceData(pluginMetric.getMetricName(),
+                    pluginMetric.getMetricValue(), thr.getUnitString(),
                     thr.getRangesAsString(Status.WARNING),
-                    thr.getRangesAsString(Status.CRITICAL), minValue, maxValue);
+                    thr.getRangesAsString(Status.CRITICAL),
+                    pluginMetric.getMinValue(), pluginMetric.getMaxValue());
         }
         return this;
     }
 
     /**
-     * Configures the message to be returned to Nagios.
+     * Formats the message to return to Nagios according to the specifications
+     * contained inside the pluginMetric object.
+     * @param pluginMetric The metric.
+     */
+    private void formatResultMessage(final Metric pluginMetric) {
+        if (StringUtils.isEmpty(pluginMetric.getMessage())) {
+            return;
+        }
+
+        if (StringUtils.isEmpty(retValMessage)) {
+            retValMessage = pluginMetric.getMessage();
+            return;
+        }
+        retValMessage += " " + pluginMetric.getMessage();
+    }
+
+    /**
+     * Convert a non null value into a BigDecimal.
+     * @param value The value to be converted.
+     * @return The converted value.
+     */
+    private BigDecimal toBigDecimal(final Long value) {
+        if (value != null) {
+            return new BigDecimal(value);
+        }
+
+        return null;
+    }
+
+    /**
+     * Force the message to return to Nagios. Instead of computing
+     * the message using the {@link Metric} object received in the
+     * {@link #withValue(Metric)} methods, this value will be
+     * returned.
      *
      * @param message
-     *            The message
+     *            The message to return.
      * @return this
      */
-    public final ReturnValueBuilder withMessage(final String message) {
-        retVal.withMessage(message);
+    public ReturnValueBuilder withForcedMessage(final String message) {
+        this.retValMessage = message;
+        return this;
+    }
+
+    /**
+     * Use this method if you want to force the status to be returned. This can
+     * be useful if, for example, your check got an error and has no metric to
+     * be evaluated to automatically compute the status.
+     *
+     * @param forceStatus
+     *            The status to be forced
+     * @return this
+     */
+    public ReturnValueBuilder withStatus(final Status forceStatus) {
+        this.forcedStatus = forceStatus;
         return this;
     }
 
     /**
      * Builds the configured {@link ReturnValue} object.
+     *
      * @return The {@link ReturnValue} object
      */
-    public final ReturnValue create() {
-        if (retVal.getMessage() == null) {
-            throw new IllegalArgumentException(
-                    "Return value message can't be null");
+    public ReturnValue create() {
+        if (forcedStatus == null) {
+            retVal.withStatus(status);
+        } else {
+            retVal.withStatus(forcedStatus);
         }
-        return retVal.withStatus(status);
+
+        StringBuffer msg =
+                new StringBuffer(pluginName + " : "
+                        + retVal.getStatus().toString());
+        if (!StringUtils.isEmpty(retValMessage)) {
+            msg.append(" - " + retValMessage);
+        }
+
+        retVal.withMessage(msg.toString());
+
+        return retVal;
     }
 }

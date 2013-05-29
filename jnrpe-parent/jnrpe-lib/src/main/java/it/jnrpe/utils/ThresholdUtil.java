@@ -10,6 +10,10 @@
  */
 package it.jnrpe.utils;
 
+import it.jnrpe.utils.thresholds.LegacyRange;
+import it.jnrpe.utils.thresholds.ReturnValueBuilder;
+import it.jnrpe.utils.thresholds.ThresholdsEvaluatorBuilder;
+
 import java.math.BigDecimal;
 
 /**
@@ -30,6 +34,8 @@ import java.math.BigDecimal;
  * start and ":" is not required if start=0.
  *
  * @author Massimiliano Ziccardi
+ * @deprecated Use the {@link ReturnValueBuilder} together with the
+ * {@link ThresholdsEvaluatorBuilder} instead.
  */
 public final class ThresholdUtil {
     /**
@@ -53,7 +59,7 @@ public final class ThresholdUtil {
      */
     public static boolean isValueInRange(final String thresholdString,
             final int value) throws BadThresholdException {
-        return new Threshold(thresholdString).isValueInRange(value);
+        return new LegacyRange(thresholdString).isValueInside(value);
     }
 
     /**
@@ -70,7 +76,7 @@ public final class ThresholdUtil {
      */
     public static boolean isValueInRange(final String thresholdString,
             final BigDecimal value) throws BadThresholdException {
-        return new Threshold(thresholdString).isValueInRange(value);
+        return new LegacyRange(thresholdString).isValueInside(value);
     }
 
     /**
@@ -87,7 +93,7 @@ public final class ThresholdUtil {
      */
     public static boolean isValueInRange(final String thresholdString,
             final Long value) throws BadThresholdException {
-        return new Threshold(thresholdString).isValueInRange(new BigDecimal(
+        return new LegacyRange(thresholdString).isValueInside(new BigDecimal(
                 value));
     }
 }

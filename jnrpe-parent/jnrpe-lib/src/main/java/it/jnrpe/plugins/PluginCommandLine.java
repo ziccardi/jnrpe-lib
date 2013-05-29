@@ -10,6 +10,8 @@
  */
 package it.jnrpe.plugins;
 
+import java.util.List;
+
 import org.apache.commons.cli2.CommandLine;
 
 import it.jnrpe.ICommandLine;
@@ -52,6 +54,19 @@ class PluginCommandLine implements ICommandLine {
     }
 
     /**
+     * @param optionName
+     *            The name of the option whose values we are searching for.
+     * @return The list of the values.
+     */
+    public List getOptionValues(final String optionName) {
+        if (optionName.length() == 1) {
+            return getOptionValues(optionName.charAt(0));
+        }
+
+        return (List) commandLine.getValues("--" + optionName);
+    }
+
+    /**
      * Returns the value of the specified option. If the option is not present,
      * returns the default value.
      *
@@ -78,6 +93,15 @@ class PluginCommandLine implements ICommandLine {
      */
     public String getOptionValue(final char shortOption) {
         return (String) commandLine.getValue("-" + shortOption);
+    }
+
+    /**
+     * @param shortOption
+     *            The name of the option whose values we are searching for.
+     * @return The list of the values.
+     */
+    public List getOptionValues(final char shortOption) {
+        return (List) commandLine.getValues("-" + shortOption);
     }
 
     /**

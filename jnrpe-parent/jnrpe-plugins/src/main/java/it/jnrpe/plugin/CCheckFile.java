@@ -377,4 +377,9 @@ public class CCheckFile extends PluginBase {
 
         return res;
     }
+
+    @Override
+    protected String getPluginName() {
+        return "CHECK_FILE";
+    }
 }

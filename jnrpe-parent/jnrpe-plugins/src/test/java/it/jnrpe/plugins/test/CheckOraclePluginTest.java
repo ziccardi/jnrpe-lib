@@ -56,7 +56,7 @@ public class CheckOraclePluginTest implements Constants {
         ReturnValue ret =
                 client.sendCommand("CHECK_ORACLE_ALIVE", "scott", "tiger",
                         "mockdb", "127.0.0.1");
-        Assert.assertEquals(ret.getStatus(), Status.OK);
+        Assert.assertEquals(ret.getStatus(), Status.OK, ret.getMessage());
     }
 
     @Test
@@ -66,7 +66,7 @@ public class CheckOraclePluginTest implements Constants {
         ReturnValue ret =
                 client.sendCommand("CHECK_ORACLE_ALIVE", "scott", "tiger",
                         "mockdbko", "127.0.0.1");
-        Assert.assertEquals(ret.getStatus(), Status.CRITICAL);
+        Assert.assertEquals(ret.getStatus(), Status.CRITICAL, ret.getMessage());
     }
 
     @Test
@@ -84,7 +84,7 @@ public class CheckOraclePluginTest implements Constants {
         ReturnValue ret =
                 client.sendCommand("CHECK_TABLESPACE", "scott", "tiger",
                         "mockdb", "127.0.0.1", "system");
-        Assert.assertEquals(ret.getStatus(), Status.OK);
+        Assert.assertEquals(ret.getStatus(), Status.OK, ret.getMessage());
     }
 
     @Test
@@ -102,7 +102,7 @@ public class CheckOraclePluginTest implements Constants {
         ReturnValue ret =
                 client.sendCommand("CHECK_TABLESPACE", "scott", "tiger",
                         "mockdb", "127.0.0.1", "user");
-        Assert.assertEquals(ret.getStatus(), Status.WARNING);
+        Assert.assertEquals(ret.getStatus(), Status.WARNING, ret.getMessage());
     }
 
     @Test
@@ -120,7 +120,7 @@ public class CheckOraclePluginTest implements Constants {
         ReturnValue ret =
                 client.sendCommand("CHECK_TABLESPACE", "scott", "tiger",
                         "mockdb", "127.0.0.1", "temp");
-        Assert.assertEquals(ret.getStatus(), Status.CRITICAL);
+        Assert.assertEquals(ret.getStatus(), Status.CRITICAL, ret.getMessage());
     }
 
 }

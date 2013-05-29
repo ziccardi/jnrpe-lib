@@ -281,4 +281,8 @@ public class CheckTomcat extends PluginBase {
         return val;
     }
 
+    @Override
+    protected String getPluginName() {
+        return "CHECK_TOMCAT";
+    }
 }
