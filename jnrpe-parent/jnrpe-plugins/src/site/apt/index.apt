@@ -35,4 +35,6 @@ JNRPE Plugin package
    
    * <<CheckPgsql>> : tests PostgreSQL database connection status
    
+   * <<CheckTomcat>> : checks status of a tomcat instance
+   
    

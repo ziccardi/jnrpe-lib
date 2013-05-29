@@ -17,6 +17,7 @@
             <item name="The CHECK_MYSQL plugin" href="plugins/check_mysql.html" />
             <item name="The CHECK_MYSQL_QUERY plugin" href="plugins/check_mysql_query.html" />
             <item name="The CHECK_PGSQL plugin" href="plugins/check_pgsql.html" />
+            <item name="The CHECK_TOMCAT plugin" href="plugins/check_tomcat.html" />
         </menu>
     </body>
     <skin>

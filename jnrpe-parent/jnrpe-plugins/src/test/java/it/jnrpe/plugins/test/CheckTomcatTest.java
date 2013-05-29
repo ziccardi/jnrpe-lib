@@ -92,6 +92,7 @@ public class CheckTomcatTest implements Constants {
 
             SetupTest.getPluginRepository().addPluginDefinition(checkTomcat);
 
+
             String tomcatHome = null;
 
             if (existingTomcatInstance == null) {
@@ -163,7 +164,169 @@ public class CheckTomcatTest implements Constants {
 
         Assert.assertEquals(ret.getStatus(), Status.OK, ret.getMessage());
     }
+    
+    /**
+     * check if 1 or more of threads are available, assert status is warning
+     * @throws Exception
+     * void
+     */
+    public final void checkTomcatThreadsWarning() throws Exception {
+        CommandRepository cr = SetupTest.getCommandRepository();
 
+        cr.addCommandDefinition(new CommandDefinition("CHECK_THREAD_WARN", "CHECK_TOMCAT")
+        		.addArgument(new CommandOption("threads"))
+                .addArgument(new CommandOption("hostname", "$ARG1$"))
+                .addArgument(new CommandOption("port", "$ARG2$"))
+                .addArgument(new CommandOption("username", "$ARG3$"))
+                .addArgument(new CommandOption("password", "$ARG4$"))
+                .addArgument(new CommandOption("warning", "$ARG5$"))
+                );
+
+        JNRPEClient client = new JNRPEClient(BIND_ADDRESS, JNRPE_PORT, false);
+        ReturnValue ret = client.sendCommand("CHECK_THREAD_WARN", "127.0.0.1", "8080", "tomcat", "tomcat", "1:"); 
+
+        Assert.assertEquals(ret.getStatus(), Status.WARNING, ret.getMessage());
+    }
+
+
+    /**
+     * check 1 or more threads are available, assert status is critical
+     * @throws Exception
+     * void
+     */
+    public final void checkTomcatThreadsCritical() throws Exception {
+    	try{
+	        CommandRepository cr = SetupTest.getCommandRepository();
+	
+	        cr.addCommandDefinition(new CommandDefinition("CHECK_THREAD_CRIT", "CHECK_TOMCAT")
+	        		.addArgument(new CommandOption("threads"))
+	                .addArgument(new CommandOption("hostname", "$ARG1$"))
+	                .addArgument(new CommandOption("port", "$ARG2$"))
+	                .addArgument(new CommandOption("username", "$ARG3$"))
+	                .addArgument(new CommandOption("password", "$ARG4$"))
+	                .addArgument(new CommandOption("critical", "$ARG5$"))
+	                );
+	
+	        JNRPEClient client = new JNRPEClient(BIND_ADDRESS, JNRPE_PORT, false);
+	        ReturnValue ret = client.sendCommand("CHECK_THREAD_CRIT", "127.0.0.1", "8080", "tomcat", "tomcat", "1:"); 
+	
+	        Assert.assertEquals(ret.getStatus(), Status.CRITICAL, ret.getMessage());
+    	}catch(Exception e){
+    		e.printStackTrace();
+    	}
+    }
+
+    /**
+     * check if 99.9%  or less of maximum threads are available, assert status is warning
+     * @throws Exception
+     * void
+     */
+    public final void checkTomcatThreadsWarningPercentage() throws Exception {
+        CommandRepository cr = SetupTest.getCommandRepository();
+
+        cr.addCommandDefinition(new CommandDefinition("CHECK_THREAD_PERC_WARN", "CHECK_TOMCAT")
+        		.addArgument(new CommandOption("threads"))
+                .addArgument(new CommandOption("hostname", "$ARG1$"))
+                .addArgument(new CommandOption("port", "$ARG2$"))
+                .addArgument(new CommandOption("username", "$ARG3$"))
+                .addArgument(new CommandOption("password", "$ARG4$"))
+                .addArgument(new CommandOption("warning", "$ARG5$"))
+                );
+
+        JNRPEClient client = new JNRPEClient(BIND_ADDRESS, JNRPE_PORT, false);
+        ReturnValue ret = client.sendCommand("CHECK_THREAD_PERC_WARN", "127.0.0.1", "8080", "tomcat", "tomcat", ":99.9%"); 
+
+        Assert.assertEquals(ret.getStatus(), Status.WARNING, ret.getMessage());
+    }
+
+    /**
+     * check if 99.9% or less of maximum threads are available, assert status is critical
+     * @throws Exception
+     * void
+     */
+    public final void checkTomcatThreadsCriticalPercentage() throws Exception {
+        CommandRepository cr = SetupTest.getCommandRepository();
+
+        cr.addCommandDefinition(new CommandDefinition("CHECK_THREAD_PERC_CRIT", "CHECK_TOMCAT")
+        		.addArgument(new CommandOption("threads"))
+                .addArgument(new CommandOption("hostname", "$ARG1$"))
+                .addArgument(new CommandOption("port", "$ARG2$"))
+                .addArgument(new CommandOption("username", "$ARG3$"))
+                .addArgument(new CommandOption("password", "$ARG4$"))
+                .addArgument(new CommandOption("critical", "$ARG5$"))
+                );
+
+        JNRPEClient client = new JNRPEClient(BIND_ADDRESS, JNRPE_PORT, false);
+        ReturnValue ret = client.sendCommand("CHECK_THREAD_PERC_CRIT", "127.0.0.1", "8080", "tomcat", "tomcat", ":99.9%"); 
+
+        Assert.assertEquals(ret.getStatus(), Status.CRITICAL, ret.getMessage());
+    }
+    
+
+    public final void checkTomcatMemoryWarningPercentage() throws Exception {
+        CommandRepository cr = SetupTest.getCommandRepository();
+
+        cr.addCommandDefinition(new CommandDefinition("CHECK_MEM_PERC_WARNING", "CHECK_TOMCAT")
+        		.addArgument(new CommandOption("memory"))
+                .addArgument(new CommandOption("hostname", "$ARG1$"))
+                .addArgument(new CommandOption("port", "$ARG2$"))
+                .addArgument(new CommandOption("username", "$ARG3$"))
+                .addArgument(new CommandOption("password", "$ARG4$"))
+                .addArgument(new CommandOption("warning", "$ARG5$"))
+                );
+
+        JNRPEClient client = new JNRPEClient(BIND_ADDRESS, JNRPE_PORT, false);
+        ReturnValue ret = client.sendCommand("CHECK_MEM_PERC_WARNING", "127.0.0.1", "8080", "tomcat", "tomcat", ":99.9%"); 
+
+        Assert.assertEquals(ret.getStatus(), Status.WARNING, ret.getMessage());
+    }
+    
+    /**
+     * check if less than 99.9% of maximum memory is avaliable, assert status is critical
+     * @throws Exception
+     * void
+     */
+    public final void checkTomcatMemoryCriticalPercentage() throws Exception {
+        CommandRepository cr = SetupTest.getCommandRepository();
+
+        cr.addCommandDefinition(new CommandDefinition("CHECK_MEM_PERC_WARNING", "CHECK_TOMCAT")
+        		.addArgument(new CommandOption("memory"))
+                .addArgument(new CommandOption("hostname", "$ARG1$"))
+                .addArgument(new CommandOption("port", "$ARG2$"))
+                .addArgument(new CommandOption("username", "$ARG3$"))
+                .addArgument(new CommandOption("password", "$ARG4$"))
+                .addArgument(new CommandOption("critical", "$ARG5$"))
+                );
+
+        JNRPEClient client = new JNRPEClient(BIND_ADDRESS, JNRPE_PORT, false);
+        ReturnValue ret = client.sendCommand("CHECK_MEM_PERC_WARNING", "127.0.0.1", "8080", "tomcat", "tomcat", ":99.9%"); 
+
+        Assert.assertEquals(ret.getStatus(), Status.CRITICAL, ret.getMessage());
+    }
+    /**
+     * Check 50% or less of memory is available
+     * @throws Exception
+     * void
+     */
+    public final void checkTomcatMemoryOKPercentage() throws Exception {
+        CommandRepository cr = SetupTest.getCommandRepository();
+
+        cr.addCommandDefinition(new CommandDefinition("CHECK_MEM_PERC_OK", "CHECK_TOMCAT")
+        		.addArgument(new CommandOption("memory"))
+                .addArgument(new CommandOption("hostname", "$ARG1$"))
+                .addArgument(new CommandOption("port", "$ARG2$"))
+                .addArgument(new CommandOption("username", "$ARG3$"))
+                .addArgument(new CommandOption("password", "$ARG4$"))
+                .addArgument(new CommandOption("critical", "$ARG5$"))
+                );
+
+        JNRPEClient client = new JNRPEClient(BIND_ADDRESS, JNRPE_PORT, false);
+        ReturnValue ret = client.sendCommand("CHECK_MEM_PERC_OK", "127.0.0.1", "8080", "tomcat", "tomcat", ":50%"); 
+
+        Assert.assertEquals(ret.getStatus(), Status.OK, ret.getMessage());
+    }
+    
+    
     /**
      * Stop tomcat.
      */
