@@ -87,8 +87,8 @@ public class CheckTomcat extends PluginBase {
 
         String port = cl.getOptionValue("port", DEFAULT_PORT);
         String uri = cl.getOptionValue("uri", DEFAULT_URI);
-        String warning = cl.getOptionValue("warning") != null ? cl.getOptionValue("warning") : null;
-        String critical = cl.getOptionValue("critical") != null ? cl.getOptionValue("critical") : null;
+        String warning = cl.getOptionValue("warning");
+        String critical = cl.getOptionValue("critical");
 
         int timeout =
                 Integer.parseInt(cl.getOptionValue("timeout", DEFAULT_TIMEOUT));
