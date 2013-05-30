@@ -16,14 +16,17 @@
 package it.jnrpe.plugin;
 
 import it.jnrpe.ICommandLine;
-import it.jnrpe.ReturnValue;
-import it.jnrpe.ReturnValue.UnitOfMeasure;
-import it.jnrpe.Status;
-import it.jnrpe.plugins.IPluginInterface;
+import it.jnrpe.plugins.Metric;
+import it.jnrpe.plugins.MetricGatheringException;
+import it.jnrpe.plugins.PluginBase;
 import it.jnrpe.utils.BadThresholdException;
-import it.jnrpe.utils.ThresholdUtil;
+import it.jnrpe.utils.thresholds.ThresholdsEvaluatorBuilder;
 
 import java.io.File;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * Checks the disk space.
@@ -31,7 +34,7 @@ import java.io.File;
  * @author Massimiliano Ziccardi
  *
  */
-public class CheckDisk implements IPluginInterface {
+public class CheckDisk extends PluginBase {
 
     /**
      * Number of bytes in a Kilobyte.
@@ -67,20 +70,24 @@ public class CheckDisk implements IPluginInterface {
         return (int) (dVal / dTotal * 100);
     }
 
-    /**
-     * Executes the check.
-     *
-     * @param cl
-     *            the command line
-     * @return the check return code
-     * @throws BadThresholdException
-     *             -
-     */
-    public final ReturnValue execute(final ICommandLine cl)
+    @Override
+    public final void configureThresholdEvaluatorBuilder(
+            final ThresholdsEvaluatorBuilder thrb,
+            final ICommandLine cl)
             throws BadThresholdException {
+        if (cl.hasOption("th")) {
+            super.configureThresholdEvaluatorBuilder(thrb, cl);
+        } else {
+            thrb.withLegacyThreshold("freepct", null,
+                    cl.getOptionValue("warning"),
+                    cl.getOptionValue("critical"));
+        }
+    }
+
+    @Override
+    public final Collection<Metric> gatherMetrics(final ICommandLine cl)
+            throws MetricGatheringException {
         String sPath = cl.getOptionValue("path");
-        String sWarning = cl.getOptionValue("warning");
-        String sCritical = cl.getOptionValue("critical");
 
         File f = new File(sPath);
 
@@ -96,40 +103,18 @@ public class CheckDisk implements IPluginInterface {
         String sUsedPercent =
                 "" + percent(lTotalSpace - lBytes, lTotalSpace) + "%";
 
-        if (ThresholdUtil.isValueInRange(sCritical, iFreePercent)) {
-            return new ReturnValue(Status.CRITICAL,
-                    "CHECK_DISK CRITICAL - Used: " + sUsedSpace + "("
-                            + sUsedPercent + ") Free: " + sFreeSpace + "("
-                            + sFreePercent + ")").withPerformanceData("used",
-                    (long) percent(lTotalSpace - lBytes, lTotalSpace),
-                    UnitOfMeasure.percentage, null, null, 0L, 100L)
-                    .withPerformanceData("free", (long) iFreePercent,
-                            UnitOfMeasure.percentage, sWarning, sCritical, 0L,
-                            100L);
+        List<Metric> res = new ArrayList<Metric>();
 
-        }
+        String msg = "Used: " + sUsedSpace + "("
+                + sUsedPercent + ") Free: " + sFreeSpace + "("
+                + sFreePercent + ")";
 
-        if (ThresholdUtil.isValueInRange(sWarning, iFreePercent)) {
-            return new ReturnValue(Status.WARNING,
-                    "CHECK_DISK WARNING - Used: " + sUsedSpace + "("
-                            + sUsedPercent + ") Free: " + sFreeSpace + "("
-                            + sFreePercent + ")").withPerformanceData("used",
-                    (long) percent(lTotalSpace - lBytes, lTotalSpace),
-                    UnitOfMeasure.percentage, null, null, 0L, 100L)
-                    .withPerformanceData("free", (long) iFreePercent,
-                            UnitOfMeasure.percentage, sWarning, sCritical, 0L,
-                            100L);
-        }
+        res.add(new Metric("freepct", msg, new BigDecimal(iFreePercent),
+                new BigDecimal(0), new BigDecimal(100)));
+        res.add(new Metric("freespace", msg, new BigDecimal(iFreePercent),
+                new BigDecimal(0), new BigDecimal(lTotalSpace)));
 
-        return new ReturnValue(Status.OK, "CHECK_DISK OK - Used: " + sUsedSpace
-                + "(" + sUsedPercent + ") Free: " + sFreeSpace + "("
-                + sFreePercent + ")")
-                .withPerformanceData("used",
-                        (long) percent(lTotalSpace - lBytes, lTotalSpace),
-                        UnitOfMeasure.percentage, null, null, 0L, 100L)
-                .withPerformanceData("free", (long) iFreePercent,
-                        UnitOfMeasure.percentage, sWarning,
-                                sCritical, 0L, 100L);
+        return res;
     }
 
     /**
@@ -144,6 +129,11 @@ public class CheckDisk implements IPluginInterface {
             return "" + (bytes / MB) + " MB";
         }
         return "" + (bytes / KB) + " KB";
+    }
+
+    @Override
+    protected String getPluginName() {
+        return "CHECK_DISK";
     }
 
 }

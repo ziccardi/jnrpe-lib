@@ -1,27 +1,30 @@
 <plugin name="CHECK_USERS" class="it.jnrpe.plugin.CheckUsers">
-	<description>
+  <description>
 <![CDATA[
     This plugin checks the number of users currently logged in on the local system and generates an error if the number exceeds the thresholds specified.
     EXAMPLES
     The example will be based upon the following command definition (ini file)
-    
+
     check_user : CHECK_USER --warning $ARG1$ --critical $ARG2$
-    
+
     * Example 1 (Windows and Unix)
     The following example will give a WARNING if the number of logged in users exceeds 10 and a CRITICAL message if the number of users exceeds 20
-    
+
     check_nrpe -H myjnrpeserver -c check_users -a '10:!20:'
-    
+
 ]]>
-	</description>
-	<command-line>
-		<options>
-			<option shortName="w" longName="warning"
-				description="Set WARNING status if more than INTEGER users are logged in"
-				required="true" hasArgs="true" argName="warning" optionalArgs="false" />
-			<option shortName="c" longName="critical"
-				description="Set CRITICAL status if more than INTEGER users are logged in"
-				required="true" hasArgs="true" argName="critical" optionalArgs="false" />
-		</options>
-	</command-line>
-</plugin>    
+  </description>
+  <command-line>
+    <options>
+      <option shortName="w" longName="warning"
+        description="Set WARNING status if more than INTEGER users are logged in"
+        required="false" hasArgs="true" argName="warning" optionalArgs="false" />
+      <option shortName="c" longName="critical"
+        description="Set CRITICAL status if more than INTEGER users are logged in"
+        required="false" hasArgs="true" argName="critical" optionalArgs="false" />
+      <option shortName="T" longName="th"
+        description="Configure a threshold. Format : metric={metric},ok={range},warn={range},crit={range},unit={unit},prefix={SI prefix}" hasArgs="true"
+        required="false" />
+    </options>
+  </command-line>
+</plugin>

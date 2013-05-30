@@ -8,15 +8,8 @@ import it.jnrpe.plugins.mocks.sql.ResultSetMockRow;
 import it.jnrpe.plugins.mocks.sql.ResultSetMockRowBuilder;
 
 public class MySQLQueryResolver implements ISQLQueryResolver {
-    private static boolean _slaveIoRunning = true;
-    private static boolean _slaveSQLRunning = true;
-    private static int _slaveBehindSeconds = 0;
 
-    public MySQLQueryResolver(boolean slaveIoRunning, boolean slaveSQLRunning,
-            int slaveBehindSeconds) {
-        _slaveIoRunning = slaveIoRunning;
-        _slaveSQLRunning = slaveSQLRunning;
-        _slaveBehindSeconds = slaveBehindSeconds;
+    public MySQLQueryResolver() {
     }
 
     public List<ResultSetMockRow> resolveSQL(String sSQL) {
@@ -37,8 +30,8 @@ public class MySQLQueryResolver implements ISQLQueryResolver {
                     .widthValue("Relay_Log_File", "gbichot-relay-bin.005")
                     .widthValue("Relay_Log_Pos", 548)
                     .widthValue("Relay_Master_Log_File", "gbichot-bin.005")
-                    .widthValue("Slave_IO_Running", _slaveIoRunning ? 1 : 0)
-                    .widthValue("Slave_SQL_Running", _slaveSQLRunning ? 1 : 0)
+                    .widthValue("Slave_IO_Running", Driver._slaveIoRunning ? 1 : 0)
+                    .widthValue("Slave_SQL_Running", Driver._slaveSQLRunning ? 1 : 0)
                     .widthValue("Last_Errno", 0).widthValue("Skip_Counter", 0)
                     .widthValue("Exec_Master_Log_Pos", 79)
                     .widthValue("Relay_Log_Space", 552)
@@ -46,7 +39,7 @@ public class MySQLQueryResolver implements ISQLQueryResolver {
                     .widthValue("Until_Log_Pos", 0)
                     .widthValue("Master_SSL_Allowed", "No")
                     .widthValue("Until_Log_Pos", 0)
-                    .widthValue("Seconds_Behind_Master", _slaveBehindSeconds)
+                    .widthValue("Seconds_Behind_Master", Driver._slaveBehindSeconds)
                     .create());
         }
 

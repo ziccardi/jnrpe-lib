@@ -21,6 +21,8 @@ import java.util.Properties;
 public class DbConnectionMock implements Connection {
     private final ISQLQueryResolver m_queryResolver;
 
+    private boolean open = true;
+
     public DbConnectionMock(ISQLQueryResolver queryResolver) {
         m_queryResolver = queryResolver;
     }
@@ -75,13 +77,11 @@ public class DbConnectionMock implements Connection {
     }
 
     public void close() throws SQLException {
-        // TODO Auto-generated method stub
-
+        open = false;
     }
 
     public boolean isClosed() throws SQLException {
-        // TODO Auto-generated method stub
-        return false;
+        return !open;
     }
 
     public DatabaseMetaData getMetaData() throws SQLException {
