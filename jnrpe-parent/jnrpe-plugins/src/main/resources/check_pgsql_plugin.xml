@@ -40,6 +40,10 @@ check_pgsql : CHECK_PSQL --database $ARG1$ --hostname $ARG2$ --port $ARG3$ --log
         description="Response time to result in critical status (seconds)"
         required="false" hasArgs="true" argName="critical" optionalArgs="false" />
 
+<option shortName="T" longName="th"
+        description="Configure a threshold. Format : metric={metric},ok={range},warn={range},crit={range},unit={unit},prefix={SI prefix}" hasArgs="true"
+        required="false" />
+
     </options>
   </command-line>
 </plugin>
