@@ -160,4 +160,9 @@ public final class PluginProxy extends PluginBase {
     public ReturnValue execute(final ICommandLine cl) {
         return null;
     }
+
+    @Override
+    protected String getPluginName() {
+        return null;
+    }
 }

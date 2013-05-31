@@ -1,11 +1,12 @@
 package it.jnrpe.utils.thresholds;
 
+import static org.testng.Assert.assertEquals;
 import it.jnrpe.Status;
 import it.jnrpe.utils.BadThresholdException;
 
 import java.math.BigDecimal;
+
 import org.testng.annotations.Test;
-import static org.testng.Assert.*;
 
 public class ThresholdEvaluatorTest {
 

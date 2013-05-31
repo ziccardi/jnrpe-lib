@@ -68,6 +68,7 @@ public class CheckMySQLPluginTest implements Constants {
     public void checkConnectionWarning() throws JNRPEClientException {
         try {
             Driver.setConnectionTime(3000);
+            Driver.QUERY_TIME = 0;
             JNRPEClient client =
                     new JNRPEClient(BIND_ADDRESS, JNRPE_PORT, false);
             client.setTimeout(120);

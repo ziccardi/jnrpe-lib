@@ -17,17 +17,21 @@
 package it.jnrpe.plugin;
 
 import it.jnrpe.ICommandLine;
-import it.jnrpe.ReturnValue;
 import it.jnrpe.Status;
-import it.jnrpe.events.LogEvent;
+import it.jnrpe.plugins.Metric;
+import it.jnrpe.plugins.MetricGatheringException;
 import it.jnrpe.plugins.PluginBase;
 import it.jnrpe.utils.BadThresholdException;
-import it.jnrpe.utils.ThresholdUtil;
+import it.jnrpe.utils.thresholds.ThresholdsEvaluatorBuilder;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -61,6 +65,80 @@ public class CheckPgsql extends PluginBase {
      */
     private static final String DEFAULT_TIMEOUT = "10";
 
+    @Override
+    public void configureThresholdEvaluatorBuilder(
+            final ThresholdsEvaluatorBuilder thrb,
+            final ICommandLine cl)
+            throws BadThresholdException {
+        if (cl.hasOption("th")) {
+            super.configureThresholdEvaluatorBuilder(thrb, cl);
+        } else {
+            thrb.withLegacyThreshold("conn", null,
+                    cl.getOptionValue("warning"),
+                    cl.getOptionValue("critical"));
+        }
+    }
+
+    @Override
+    public Collection<Metric> gatherMetrics(ICommandLine cl)
+            throws MetricGatheringException {
+
+        List<Metric> metricList = new ArrayList<Metric>();
+
+        Connection conn = null;
+        Long start = System.currentTimeMillis();
+
+        try {
+            conn = getConnection(cl);
+            // elapsed = (System.currentTimeMillis() - start) / 1000l;
+        } catch (ClassNotFoundException e) {
+            log.error("PostgreSQL driver library not found into the classpath: "
+                    + "download and put it in the same directory of "
+                    + "this plugin");
+            throw new MetricGatheringException("Error accessing the PostgreSQL "
+                    + "server - JDBC driver not installed", Status.CRITICAL, e);
+        } catch (Exception e) {
+            log.error("Error accessing the PostgreSQL server", e);
+            throw new MetricGatheringException("Error accessing the PostgreSQL "
+                    + "server - ", Status.CRITICAL, e);
+        }
+        finally {
+            closeConnection(conn);
+        }
+
+        Long end = System.currentTimeMillis();
+        Long elapsed = new Long((end - start) / 1000);
+
+        metricList.add(new Metric("conn", "Connection time : " + elapsed + "s",
+                new BigDecimal(elapsed), new BigDecimal(0), null));
+
+        return metricList;
+
+//        Status status = null;
+//
+//        if (critical != null
+//                && ThresholdUtil.isValueInRange(critical, elapsed)) {
+//            status = Status.CRITICAL;
+//        }
+//
+//        if (warning != null
+//                && (ThresholdUtil.isValueInRange(warning, elapsed))) {
+//            status = Status.WARNING;
+//        }
+//
+//        closeConnection(conn);
+//        if (status == null) {
+//            status = Status.OK;
+//        }
+//        String database = DEFAULT_TABLE;
+//        if (cl.hasOption("database")) {
+//            database = cl.getOptionValue("database");
+//        }
+//        return new ReturnValue(status, "Database " + database + " " + elapsed
+//                + " secs.").withPerformanceData("time", elapsed,
+//                ReturnValue.UnitOfMeasure.seconds, warning, critical, 0L, null);
+    }
+
     /**
      * Executes the plugin.
      *
@@ -70,63 +148,63 @@ public class CheckPgsql extends PluginBase {
      * @throws BadThresholdException
      *             -
      */
-    public final ReturnValue execute(final ICommandLine cl)
-            throws BadThresholdException {
-
-        String warning = cl.getOptionValue("warning");
-        String critical = cl.getOptionValue("critical");
-        Connection conn = null;
-        Long start = System.currentTimeMillis();
-
-        try {
-            conn = getConnection(cl);
-            // elapsed = (System.currentTimeMillis() - start) / 1000l;
-        } catch (ClassNotFoundException e) {
-            log.error("PostgreSQL driver library not found into the classpath: "
-                            + "download and put it in the same directory of "
-                            + "this plugin");
-            return new ReturnValue(
-                    Status.CRITICAL,
-                    "CHECK_PGSQL - CRITICAL: Error accessing the PostgreSQL "
-                            + "server - JDBC driver not installed");
-        } catch (Exception e) {
-            log.error("Error accessing the PostgreSQL server", e);
-            return new ReturnValue(Status.CRITICAL,
-                    "CHECK_PGSQL - CRITICAL: Error accessing the PostgreSQL "
-                            + "server - " + e.getMessage());
-        }
-
-        // if (conn == null){
-        // return new ReturnValue(Status.CRITICAL,
-        // "CHECK_PGSQL - CRITICAL: No database connection - " + error);
-        // }
-
-        Long end = System.currentTimeMillis();
-        Long elapsed = new Long((end - start) / 1000);
-        Status status = null;
-
-        if (critical != null
-                && ThresholdUtil.isValueInRange(critical, elapsed)) {
-            status = Status.CRITICAL;
-        }
-
-        if (warning != null
-                && (ThresholdUtil.isValueInRange(warning, elapsed))) {
-            status = Status.WARNING;
-        }
-
-        closeConnection(conn);
-        if (status == null) {
-            status = Status.OK;
-        }
-        String database = DEFAULT_TABLE;
-        if (cl.hasOption("database")) {
-            database = cl.getOptionValue("database");
-        }
-        return new ReturnValue(status, "Database " + database + " " + elapsed
-                + " secs.").withPerformanceData("time", elapsed,
-                ReturnValue.UnitOfMeasure.seconds, warning, critical, 0L, null);
-    }
+//    public final ReturnValue execute(final ICommandLine cl)
+//            throws BadThresholdException {
+//
+//        String warning = cl.getOptionValue("warning");
+//        String critical = cl.getOptionValue("critical");
+//        Connection conn = null;
+//        Long start = System.currentTimeMillis();
+//
+//        try {
+//            conn = getConnection(cl);
+//            // elapsed = (System.currentTimeMillis() - start) / 1000l;
+//        } catch (ClassNotFoundException e) {
+//            log.error("PostgreSQL driver library not found into the classpath: "
+//                    + "download and put it in the same directory of "
+//                    + "this plugin");
+//            return new ReturnValue(
+//                    Status.CRITICAL,
+//                    "CHECK_PGSQL - CRITICAL: Error accessing the PostgreSQL "
+//                            + "server - JDBC driver not installed");
+//        } catch (Exception e) {
+//            log.error("Error accessing the PostgreSQL server", e);
+//            return new ReturnValue(Status.CRITICAL,
+//                    "CHECK_PGSQL - CRITICAL: Error accessing the PostgreSQL "
+//                            + "server - " + e.getMessage());
+//        }
+//
+//        // if (conn == null){
+//        // return new ReturnValue(Status.CRITICAL,
+//        // "CHECK_PGSQL - CRITICAL: No database connection - " + error);
+//        // }
+//
+//        Long end = System.currentTimeMillis();
+//        Long elapsed = new Long((end - start) / 1000);
+//        Status status = null;
+//
+//        if (critical != null
+//                && ThresholdUtil.isValueInRange(critical, elapsed)) {
+//            status = Status.CRITICAL;
+//        }
+//
+//        if (warning != null
+//                && (ThresholdUtil.isValueInRange(warning, elapsed))) {
+//            status = Status.WARNING;
+//        }
+//
+//        closeConnection(conn);
+//        if (status == null) {
+//            status = Status.OK;
+//        }
+//        String database = DEFAULT_TABLE;
+//        if (cl.hasOption("database")) {
+//            database = cl.getOptionValue("database");
+//        }
+//        return new ReturnValue(status, "Database " + database + " " + elapsed
+//                + " secs.").withPerformanceData("time", elapsed,
+//                ReturnValue.UnitOfMeasure.seconds, warning, critical, 0L, null);
+//    }
 
     /**
      * Connect to the server.
@@ -143,7 +221,8 @@ public class CheckPgsql extends PluginBase {
      * @throws ClassNotFoundException
      *             -
      */
-    private Connection getConnection(final ICommandLine cl) throws SQLException,
+    private Connection getConnection(final ICommandLine cl)
+            throws SQLException,
             InstantiationException, IllegalAccessException,
             ClassNotFoundException {
         String database = DEFAULT_TABLE;
@@ -193,7 +272,9 @@ public class CheckPgsql extends PluginBase {
 
     /**
      * Closes the connection.
-     * @param conn The connectiont o be closed
+     *
+     * @param conn
+     *            The connectiont o be closed
      */
     private void closeConnection(final Connection conn) {
         try {
@@ -203,6 +284,10 @@ public class CheckPgsql extends PluginBase {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
 
+    @Override
+    protected String getPluginName() {
+        return "CHECK_PGSQL";
     }
 }

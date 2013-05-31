@@ -43,7 +43,7 @@ import org.apache.commons.lang.StringUtils;
  * @author Massimiliano Ziccardi
  *
  */
-public class Threshold {
+class Threshold implements IThreshold {
 
     /**
      * The name of the metric attached to this threshold.
@@ -83,7 +83,7 @@ public class Threshold {
      * Build a threshold object parsing the string received. A threshold can be
      * in the format: <blockquote>
      * metric={metric},ok={range},warn={range},crit={
-     * range},unit={unit}prefix={SI prefix} </blockquote>
+     * range},unit={unit},prefix={SI prefix} </blockquote>
      *
      * Where :
      * <ul>
@@ -176,9 +176,7 @@ public class Threshold {
     }
 
     /**
-     * Returns the metric attached with this threshold.
-     *
-     * @return The metric
+     * @return The name of the metric associated to this threshold.
      */
     public final String getMetric() {
         return metricName;
@@ -188,7 +186,7 @@ public class Threshold {
      * @return The unit of measure attached to the appropriate prefix if
      *         specified.
      */
-    final String getFormattedUnit() {
+    public final String getUnitString() {
         StringBuffer res = new StringBuffer();
         if (prefix != null) {
             res.append(prefix.toString());
@@ -211,7 +209,7 @@ public class Threshold {
      *            The status for wich we are requesting the ranges.
      * @return the requested range list as comma separated string.
      */
-    final String getRangesAsString(final Status status) {
+    public final String getRangesAsString(final Status status) {
         List<String> ranges = new ArrayList<String>();
 
         List<Range> rangeList = null;
@@ -241,11 +239,21 @@ public class Threshold {
     }
 
     /**
-     * Evaluates a value among all the ranges specified for all the levels.
-     *
-     * @param value
-     *            The value
-     * @return The status as a {@link Status} enumeration
+     * Evaluates this threshold against the passed in value.
+     * The returned status is computed this way:
+     * <ol>
+     * <li>If at least one ok range is specified, if the value falls inside
+     * one of the ok ranges, {@link Status#OK} is returned.
+     * <li>If at lease one critical range is specified, if the value falls
+     * inside one of the critical ranges, {@link Status#CRITICAL} is returned.
+     * <li>If at lease one warning range is specified, if the value falls
+     * inside one of the warning ranges, {@link Status#WARNING} is returned.
+     * <li>If neither of the previous match, but at least an OK range has
+     * been specified, return {@link Status#CRITICAL}.
+     * <li>Otherwise return {@link Status#OK}
+     * </ol>
+     * @param value The value to be evaluated.
+     * @return The computes status.
      */
     public final Status evaluate(final BigDecimal value) {
         if (okThresholdList.isEmpty() && warningThresholdList.isEmpty()
@@ -254,11 +262,6 @@ public class Threshold {
         }
 
         BigDecimal convertedValue = value;
-//        if (prefix != null) {
-//            convertedValue = prefix.convert(value);
-//        } else {
-//            convertedValue = value;
-//        }
 
         // Perform evaluation escalation
         for (Range range : okThresholdList) {
@@ -284,5 +287,14 @@ public class Threshold {
         }
 
         return Status.OK;
+    }
+
+    /**
+     * @param metric The name of the metric we want to evaluate.
+     * @return <code>true</code> if this threshold is about the passed in
+     * metric.
+     */
+    public final boolean isAboutMetric(final String metric) {
+        return metric.equalsIgnoreCase(metricName);
     }
 }

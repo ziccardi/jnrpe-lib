@@ -1,4 +1,4 @@
-package oracle.jdbc.driver;
+package org.postgresql;
 
 import it.jnrpe.plugins.mocks.sql.DbConnectionMock;
 import it.jnrpe.plugins.mocks.sql.MockDriver;
@@ -7,11 +7,12 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Properties;
 
-public class OracleDriver extends MockDriver {
+public class Driver extends MockDriver {
 
-    public Connection newConnection(String url, Properties info) throws SQLException {
-        if (url.equals("jdbc:oracle:thin:@127.0.0.1:1521:mockdb")) {
-            return new DbConnectionMock(new OracleSQLQueryResolver());
+
+    protected Connection newConnection(String url, Properties info) throws SQLException {
+        if (url.equalsIgnoreCase("jdbc:postgresql://localhost:5001/mockdb")) {
+            return new DbConnectionMock(null);
         }
 
         throw new SQLException(
@@ -20,7 +21,7 @@ public class OracleDriver extends MockDriver {
 
     @Override
     public boolean acceptsURL(String url) throws SQLException {
-        return url.startsWith("jdbc:oracle:");
+        return url.startsWith("jdbc:postgresql:");
     }
 
 }

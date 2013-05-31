@@ -18,7 +18,6 @@ package it.jnrpe.plugin;
 import it.jnrpe.ICommandLine;
 import it.jnrpe.ReturnValue;
 import it.jnrpe.Status;
-import it.jnrpe.events.LogEvent;
 import it.jnrpe.plugins.PluginBase;
 import it.jnrpe.utils.StreamManager;
 import it.jnrpe.utils.StringUtils;
@@ -75,5 +74,10 @@ public class CNativePlugin extends PluginBase {
         } finally {
             streamMgr.closeAll();
         }
+    }
+
+    @Override
+    protected String getPluginName() {
+        return "NATIVE";
     }
 }

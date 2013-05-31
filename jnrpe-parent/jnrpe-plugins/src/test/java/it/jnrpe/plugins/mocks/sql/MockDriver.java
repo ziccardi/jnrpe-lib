@@ -7,27 +7,38 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 public abstract class MockDriver implements Driver {
-    private static int CONNECTION_TIME = 0;
 
-    public Connection connect(String url, Properties info) throws SQLException {
-        if (CONNECTION_TIME > 0) {
-            try {
-                Thread.sleep(CONNECTION_TIME);
-            } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
+    public static int QUERY_TIME = 0;
+
+    private static int CONNECTION_TIME = 0;
+    private Connection conn = null;
+
+    private void delay() {
+        try {
+            Thread.sleep(CONNECTION_TIME);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
-        return null;
     }
+
+    public final Connection connect(String url, Properties info) throws SQLException {
+        if (!acceptsURL(url))
+            return null;
+        if (conn != null && !conn.isClosed()) {
+            return conn;
+        }
+        delay();
+        return conn = newConnection(url, info);
+    }
+
+    protected abstract Connection newConnection(String url, Properties info) throws SQLException;
 
     public static void setConnectionTime(int millis) {
         CONNECTION_TIME = millis;
     }
 
-    public boolean acceptsURL(String url) throws SQLException {
-        return false;
-    }
+    public abstract boolean acceptsURL(String url) throws SQLException;
+
 
     public DriverPropertyInfo[] getPropertyInfo(String url, Properties info)
             throws SQLException {
@@ -35,7 +46,7 @@ public abstract class MockDriver implements Driver {
     }
 
     public int getMajorVersion() {
-        return 0;
+        return 1;
     }
 
     public int getMinorVersion() {
@@ -44,5 +55,16 @@ public abstract class MockDriver implements Driver {
 
     public boolean jdbcCompliant() {
         return true;
+    }
+
+    public boolean isConnectionClosed() throws SQLException {
+        return conn.isClosed();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null)
+            return false;
+        return obj.getClass().getName().equals(this.getClass().getName());
     }
 }

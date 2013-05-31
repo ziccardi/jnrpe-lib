@@ -220,4 +220,8 @@ public class CheckMysql extends PluginBase {
         return map;
     }
 
+    @Override
+    protected String getPluginName() {
+        return "CHECK_MYSQL";
+    }
 }

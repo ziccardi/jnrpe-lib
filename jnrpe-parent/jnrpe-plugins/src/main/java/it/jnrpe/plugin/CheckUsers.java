@@ -16,19 +16,20 @@
 package it.jnrpe.plugin;
 
 import it.jnrpe.ICommandLine;
-import it.jnrpe.ReturnValue;
 import it.jnrpe.Status;
-import it.jnrpe.ReturnValue.UnitOfMeasure;
-import it.jnrpe.events.LogEvent;
+import it.jnrpe.plugins.Metric;
+import it.jnrpe.plugins.MetricGatheringException;
 import it.jnrpe.plugins.PluginBase;
 import it.jnrpe.utils.BadThresholdException;
-import it.jnrpe.utils.ThresholdUtil;
+import it.jnrpe.utils.thresholds.ThresholdsEvaluatorBuilder;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -41,55 +42,43 @@ import java.util.List;
  */
 public class CheckUsers extends PluginBase {
 
-    /**
-     * Executes the plugin.
-     *
-     * @param cl
-     *            The parsified command line arguments
-     * @return The result of the plugin
-     * @throws BadThresholdException
-     *             -
-     */
-    public final ReturnValue execute(final ICommandLine cl)
+    @Override
+    public void configureThresholdEvaluatorBuilder(
+            ThresholdsEvaluatorBuilder thrb, ICommandLine cl)
             throws BadThresholdException {
-        String warning = cl.getOptionValue("warning");
-        String critical = cl.getOptionValue("critical");
 
-        int totalLoggedIn = -1;
+        if (cl.hasOption("th")) {
+            super.configureThresholdEvaluatorBuilder(thrb, cl);
+        } else {
+            thrb.withLegacyThreshold("users", null,
+                    cl.getOptionValue("warning"), cl.getOptionValue("critical"));
+        }
 
+    }
+
+    @Override
+    public Collection<Metric> gatherMetrics(ICommandLine cl)
+            throws MetricGatheringException {
+
+        List<Metric> metricList = new ArrayList<Metric>();
         String os = System.getProperty("os.name").toLowerCase();
         try {
             if (os.contains("linux")) {
-                totalLoggedIn = getLinuxLoggedInUsers();
+                metricList.add(new Metric("users", "", new BigDecimal(
+                        getLinuxLoggedInUsers()), null, null));
             } else if (os.contains("windows")) {
-                totalLoggedIn = getWindowsLoggedInUsers();
+                metricList.add(new Metric("users", "", new BigDecimal(
+                        getWindowsLoggedInUsers()), null, null));
             }
+
+            return metricList;
         } catch (IOException e) {
             log.warn("CheckUser plugin execution error: "
                     + e.getMessage(), e);
-            return new ReturnValue(Status.UNKNOWN,
-                    "CHECK_USER - UNKNOWN: An error has occurred : "
-                            + e.getMessage());
-        }
 
-        if (ThresholdUtil.isValueInRange(critical, totalLoggedIn)) {
-            return new ReturnValue(Status.CRITICAL, "CHECK_USER - CRITICAL: "
-                    + totalLoggedIn + " users currently logged in")
-                    .withPerformanceData("users", (long) totalLoggedIn,
-                            UnitOfMeasure.counter, warning, critical, 0L, null);
+            throw new MetricGatheringException("An error has occurred : "
+                    + e.getMessage(), Status.UNKNOWN, e);
         }
-
-        if (ThresholdUtil.isValueInRange(warning, totalLoggedIn)) {
-            return new ReturnValue(Status.WARNING, "CHECK_USER - WARNING: "
-                    + totalLoggedIn + " users currently logged in")
-                    .withPerformanceData("users", (long) totalLoggedIn,
-                            UnitOfMeasure.counter, warning, critical, 0L, null);
-        }
-
-        return new ReturnValue(Status.OK, "CHECK_USER - OK: " + totalLoggedIn
-                + " users currently logged in").withPerformanceData("users",
-                (long) totalLoggedIn, UnitOfMeasure.counter, warning, critical,
-                0L, null);
     }
 
     /**
@@ -142,4 +131,8 @@ public class CheckUsers extends PluginBase {
         return userCount;
     }
 
+    @Override
+    protected String getPluginName() {
+        return "CHECK_USERS";
+    }
 }

@@ -16,12 +16,12 @@
 package it.jnrpe.plugin;
 
 import it.jnrpe.ICommandLine;
-import it.jnrpe.ReturnValue;
 import it.jnrpe.Status;
-import it.jnrpe.ReturnValue.UnitOfMeasure;
-import it.jnrpe.events.LogEvent;
+import it.jnrpe.plugins.Metric;
+import it.jnrpe.plugins.MetricGatheringException;
 import it.jnrpe.plugins.PluginBase;
-import it.jnrpe.utils.ThresholdUtil;
+import it.jnrpe.utils.BadThresholdException;
+import it.jnrpe.utils.thresholds.ThresholdsEvaluatorBuilder;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
@@ -31,6 +31,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * Performs standard checks against an oracle database server.
@@ -39,6 +42,11 @@ import java.text.MessageFormat;
  *
  */
 public class CCheckOracle extends PluginBase {
+
+    /**
+     * Plugin name constant.
+     */
+    private static final String PLUGIN_NAME = "CHECK_ORACLE";
 
     /**
      * Connects to the database.
@@ -85,20 +93,16 @@ public class CCheckOracle extends PluginBase {
      * @param cl
      *            The command line as received from JNRPE
      * @return The plugin result
+     * @throws BadThresholdException
+     *             -
+     * @throws SQLException
      */
-    private ReturnValue checkAlive(final Connection c, final ICommandLine cl) {
+    private List<Metric> checkAlive(final Connection c, final ICommandLine cl)
+            throws BadThresholdException, SQLException {
+
+        List<Metric> metricList = new ArrayList<Metric>();
         Statement stmt = null;
         ResultSet rs = null;
-
-        String sMsg = "{0} : {1} - {2} {3}";
-
-        Object[] vObjs = new Object[4];
-        vObjs[0] = "CHECK_ORACLE";
-        vObjs[1] = cl.getOptionValue("db");
-        vObjs[2] = "OK";
-        vObjs[3] = "";
-
-        MessageFormat mf = new MessageFormat(sMsg);
 
         long lStart = System.currentTimeMillis();
 
@@ -106,23 +110,14 @@ public class CCheckOracle extends PluginBase {
             stmt = c.createStatement();
             rs = stmt.executeQuery("SELECT SYSDATE FROM DUAL");
 
-            return new ReturnValue(Status.OK, mf.format(vObjs))
-                    .withPerformanceData("time", System.currentTimeMillis()
-                            - lStart, UnitOfMeasure.milliseconds, null, null,
-                            null, null);
-        } catch (SQLException sqle) {
-            vObjs[2] = "UNKNOWN";
-            vObjs[3] = sqle.getMessage();
+            long elapsed = (System.currentTimeMillis() - lStart) / 1000L;
 
-            return new ReturnValue(Status.UNKNOWN, mf.format(vObjs))
-                    .withPerformanceData("time", System.currentTimeMillis()
-                            - lStart, UnitOfMeasure.milliseconds, null, null,
-                            null, null);
-        } catch (Exception e) {
-            vObjs[2] = "CRITICAL";
-            vObjs[3] = e.getMessage();
+            metricList.add(new Metric("conn", "Connection time : " + elapsed
+                    + "s", new BigDecimal(elapsed),
+                    new BigDecimal(0), null));
 
-            return new ReturnValue(Status.CRITICAL, mf.format(vObjs));
+            return metricList;
+
         } finally {
             try {
                 stmt.close();
@@ -140,17 +135,21 @@ public class CCheckOracle extends PluginBase {
      * @param cl
      *            The command line as received from JNRPE
      * @return The plugin result
+     * @throws BadThresholdException
+     *             -
      */
-    private ReturnValue checkTablespace(final Connection c,
-            final ICommandLine cl) {
-        String sWarning = cl.getOptionValue("warning", "70");
-        String sCritical = cl.getOptionValue("critical", "80");
+    private List<Metric> checkTablespace(final Connection c,
+            final ICommandLine cl) throws BadThresholdException, SQLException {
+
+        // Metric : tblspace_usage
+
+        List<Metric> metricList = new ArrayList<Metric>();
 
         String sTablespace = cl.getOptionValue("tablespace").toUpperCase();
 
         final String sQry =
                 "select NVL(b.free,0.0),a.total,100 "
-                    + "- trunc(NVL(b.free,0.0)/a.total * 1000) / 10 prc"
+                        + "- trunc(NVL(b.free,0.0)/a.total * 1000) / 10 prc"
                         + " from ("
                         + " select tablespace_name,sum(bytes)/1024/1024 total"
                         + " from dba_data_files group by tablespace_name) A"
@@ -167,94 +166,34 @@ public class CCheckOracle extends PluginBase {
         try {
             stmt = c.createStatement();
 
-            long lStart = System.currentTimeMillis();
-
             rs = stmt.executeQuery(sQry);
-
-            long lElapsed = System.currentTimeMillis() - lStart;
 
             boolean bFound = rs.next();
 
             if (!bFound) {
-                return new ReturnValue(Status.UNKNOWN,
-                        "CHECK_ORACLE : UNKNOWN - Tablespace "
-                                + cl.getOptionValue("tablespace")
-                                + " do not exist?");
+                throw new SQLException("Tablespace "
+                        + cl.getOptionValue("tablespace") + " not found.");
             }
 
             BigDecimal tsFree = rs.getBigDecimal(1);
             BigDecimal tsTotal = rs.getBigDecimal(2);
             BigDecimal tsPct = rs.getBigDecimal(3);
+            //
+            metricList.add(new Metric("tblspace_freepct", cl
+                    .getOptionValue("tablespace") + " : " + tsPct + "% free",
+                    tsPct,
+                    new BigDecimal(0), new BigDecimal(100)));
 
-            String sMsg =  // |{1}={3,number,0.#}%;{6};{7};0;100";
-                    "{0} : {1} {2} - {3,number,0.#}% used [ {4,number,0.#} "
-                     + "/ {5,number,0.#} MB available ]";
+            metricList.add(new Metric("tblspace_free", cl
+                    .getOptionValue("tablespace") + " : " + tsFree + "MB free",
+                    tsPct,
+                    new BigDecimal(0), tsTotal));
 
-            Object[] vObjs = new Object[8];
-            vObjs[0] = cl.getOptionValue("db");
-            vObjs[1] = cl.getOptionValue("tablespace");
-            vObjs[2] = "OK";
-            vObjs[3] = tsPct;
-            vObjs[4] = tsFree;
-            vObjs[5] = tsTotal;
-            vObjs[6] = sWarning;
-            vObjs[7] = sCritical;
+            return metricList;
 
-            MessageFormat mf = new MessageFormat(sMsg);
-
-            // if (ts_pct.compareTo(new BigDecimal(iCritical.intValue())) == 1)
-            if (ThresholdUtil.isValueInRange(sCritical, tsPct)) {
-                vObjs[2] = "CRITICAL";
-                ReturnValue rv =
-                        new ReturnValue(Status.CRITICAL, mf.format(vObjs))
-                                .withPerformanceData(
-                                        cl.getOptionValue("tablespace"),
-                                        tsPct, UnitOfMeasure.percentage,
-                                        sWarning, sCritical, new BigDecimal(0),
-                                        new BigDecimal(100))
-                                .withPerformanceData("time", lElapsed,
-                                        UnitOfMeasure.milliseconds, null, null,
-                                        null, null);
-                return rv;
-            }
-
-            if (ThresholdUtil.isValueInRange(sWarning, tsPct)) {
-                vObjs[2] = "WARNING";
-                ReturnValue rv =
-                        new ReturnValue(Status.WARNING, mf.format(vObjs))
-                                .withPerformanceData(
-                                        cl.getOptionValue("tablespace"),
-                                        tsPct, UnitOfMeasure.percentage,
-                                        sWarning, sCritical, new BigDecimal(0),
-                                        new BigDecimal(100))
-                                .withPerformanceData("time", lElapsed,
-                                        UnitOfMeasure.milliseconds, null, null,
-                                        null, null);
-
-                return rv;
-            }
-
-            ReturnValue rv =
-                    new ReturnValue(Status.OK, mf.format(vObjs))
-                            .withPerformanceData(
-                                    cl.getOptionValue("tablespace"), tsPct,
-                                    UnitOfMeasure.percentage, sWarning,
-                                    sCritical, new BigDecimal(0),
-                                    new BigDecimal(100)).withPerformanceData(
-                                    "time", lElapsed,
-                                    UnitOfMeasure.milliseconds, null, null,
-                                    null, null);
-            return rv;
-
-        } catch (Exception e) {
-            log.warn("Error during CHECK_ORACLE execution "
-                    + e.getMessage(), e);
-            return new ReturnValue(Status.CRITICAL,
-                    "CHECK_ORACLE : CRITICAL - " + e.getMessage());
         } finally {
             try {
                 stmt.close();
-                // rs.close();
             } catch (Exception e) {
             }
         }
@@ -269,10 +208,14 @@ public class CCheckOracle extends PluginBase {
      * @param cl
      *            The command line as received from JNRPE
      * @return The result of the plugin
+     * @throws BadThresholdException
+     *             -
      */
-    private ReturnValue checkCache(final Connection c, final ICommandLine cl) {
-        String sWarning = cl.getOptionValue("warning", "70");
-        String sCritical = cl.getOptionValue("critical", "80");
+    private List<Metric> checkCache(final Connection c, final ICommandLine cl)
+            throws BadThresholdException, SQLException {
+
+        List<Metric> metricList = new ArrayList<Metric>();
+        // Metrics cache_buf, cache_lib
 
         String sQry1 =
                 "select (1-(pr.value/(dbg.value+cg.value)))*100"
@@ -283,7 +226,7 @@ public class CCheckOracle extends PluginBase {
 
         String sQry2 =
                 "select sum(lc.pins)/(sum(lc.pins)"
-                + "+sum(lc.reloads))*100 from v$librarycache lc";
+                        + "+sum(lc.reloads))*100 from v$librarycache lc";
 
         Statement stmt = null;
         ResultSet rs = null;
@@ -301,124 +244,89 @@ public class CCheckOracle extends PluginBase {
 
             BigDecimal lib_hr = rs.getBigDecimal(1);
 
-            String sMessage =
-                    "{0} {1} - Cache Hit Rates: "
-                    + "{2,number,0.#}% Lib -- {3,number,0.#}% Buff";
+            String libHitRate = "Cache Hit Rate {1,number,0.#}% Lib";
+            String buffHitRate = "Cache Hit Rate {1,number,0.#}% Buff";
 
+            metricList.add(new Metric("cache_buf", MessageFormat.format(
+                    buffHitRate, buf_hr), buf_hr, new BigDecimal(0),
+                    new BigDecimal(100)));
+            metricList.add(new Metric("cache_lib", MessageFormat.format(
+                    libHitRate, lib_hr), lib_hr, new BigDecimal(0),
+                    new BigDecimal(100)));
 
-            MessageFormat mf = new MessageFormat(sMessage);
-
-            Object[] vValues = new Object[7];
-            vValues[0] = cl.getOptionValue("db");
-            vValues[1] = "OK";
-            vValues[2] = lib_hr;
-            vValues[3] = buf_hr;
-            vValues[4] = lib_hr;
-            vValues[5] = sWarning;
-            vValues[6] = sCritical;
-
-            // if (buf_hr.compareTo(new BigDecimal(iCritical.intValue())) == -1)
-            if (ThresholdUtil.isValueInRange(sCritical, buf_hr)) {
-                vValues[1] = "CRITICAL";
-
-                ReturnValue rv =
-                        new ReturnValue(Status.CRITICAL, mf.format(vValues))
-                                .withPerformanceData("lib", lib_hr,
-                                        UnitOfMeasure.percentage, sWarning,
-                                        sCritical, new BigDecimal(0),
-                                        new BigDecimal(100))
-                                .withPerformanceData("buffer", buf_hr,
-                                        UnitOfMeasure.percentage, sWarning,
-                                        sCritical, new BigDecimal(0),
-                                        new BigDecimal(100));
-                return rv;
-            }
-
-            // if (buf_hr.compareTo(new BigDecimal(iWarning.intValue())) == -1)
-            if (ThresholdUtil.isValueInRange(sWarning, buf_hr)) {
-                vValues[1] = "WARNING";
-
-                ReturnValue rv =
-                        new ReturnValue(Status.WARNING, mf.format(vValues))
-                                .withPerformanceData("lib", lib_hr,
-                                        UnitOfMeasure.percentage, sWarning,
-                                        sCritical, new BigDecimal(0),
-                                        new BigDecimal(100))
-                                .withPerformanceData("buffer", buf_hr,
-                                        UnitOfMeasure.percentage, sWarning,
-                                        sCritical, new BigDecimal(0),
-                                        new BigDecimal(100));
-
-                return rv;
-            }
-
-            ReturnValue rv =
-                    new ReturnValue(Status.WARNING, mf.format(vValues))
-                            .withPerformanceData("lib", lib_hr,
-                                    UnitOfMeasure.percentage, sWarning,
-                                    sCritical, new BigDecimal(0),
-                                    new BigDecimal(100)).withPerformanceData(
-                                    "buffer", buf_hr, UnitOfMeasure.percentage,
-                                    sWarning, sCritical, new BigDecimal(0),
-                                    new BigDecimal(100));
-
-            return rv;
-
-        } catch (Exception e) {
-            log.warn("Error during CHECK_ORACLE execution "
-                    + e.getMessage(), e);
-            return new ReturnValue(Status.CRITICAL,
-                    "CHECK_ORACLE : CRITICAL - " + e.getMessage());
+            return metricList;
         } finally {
             try {
                 stmt.close();
-                // rs.close();
             } catch (Exception e) {
             }
         }
 
     }
 
-    /**
-     * Executes the plugins and returns the result.
-     *
-     * @param cl The passed in command line
-     * @return The return value formatted for Nagios
-     */
-    public final ReturnValue execute(final ICommandLine cl) {
+    @Override
+    public void configureThresholdEvaluatorBuilder(
+            final ThresholdsEvaluatorBuilder thrb, final ICommandLine cl)
+            throws BadThresholdException {
+        if (cl.hasOption("th")) {
+            super.configureThresholdEvaluatorBuilder(thrb, cl);
+        } else {
+            if (cl.hasOption("alive")) {
+                thrb.withLegacyThreshold("conn", null,
+                        cl.getOptionValue("warning"),
+                        cl.getOptionValue("critical"));
+            }
+
+            if (cl.hasOption("tablespace")) {
+                thrb.withLegacyThreshold("tblspace_freepct", null,
+                        cl.getOptionValue("warning", "70"),
+                        cl.getOptionValue("critical", "80"));
+            }
+
+            if (cl.hasOption("cache")) {
+                thrb.withLegacyThreshold("cache_buf", null,
+                        cl.getOptionValue("warning", "70"),
+                        cl.getOptionValue("critical", "80"));
+            }
+        }
+    }
+
+    @Override
+    public Collection<Metric> gatherMetrics(final ICommandLine cl)
+            throws MetricGatheringException {
         Connection conn = null;
 
         try {
             conn = getConnection(cl);
 
-            if (cl.hasOption("alive")) {
-                return checkAlive(conn, cl);
-            }
+            List<Metric> metricList = new ArrayList<Metric>();
+            metricList.addAll(checkAlive(conn, cl));
 
             if (cl.hasOption("tablespace")) {
-                return checkTablespace(conn, cl);
+                metricList.addAll(checkTablespace(conn, cl));
             }
+            metricList.addAll(checkCache(conn, cl));
 
-            if (cl.hasOption("cache")) {
-                return checkCache(conn, cl);
-            }
-
-            conn.close();
+            return metricList;
         } catch (ClassNotFoundException cnfe) {
             log.error("Oracle driver library not found into the classpath: "
                     + "download and put it in the same directory "
                     + "of this plugin");
 
-            return new ReturnValue(Status.UNKNOWN, cnfe.getMessage());
+            throw new MetricGatheringException(cnfe.getMessage(),
+                    Status.UNKNOWN, cnfe);
         } catch (SQLException sqle) {
             log.error("Error communicating with database.",
                     sqle);
 
-            return new ReturnValue(Status.CRITICAL, sqle.getMessage());
+            throw new MetricGatheringException(sqle.getMessage(),
+                    Status.CRITICAL, sqle);
+
         } catch (Exception e) {
             log.fatal("Error communicating with database.", e);
 
-            return new ReturnValue(Status.UNKNOWN, e.getMessage());
+            throw new MetricGatheringException(e.getMessage(), Status.UNKNOWN,
+                    e);
         } finally {
             if (conn != null) {
                 try {
@@ -428,8 +336,10 @@ public class CCheckOracle extends PluginBase {
                 }
             }
         }
-
-        return null;
     }
 
+    @Override
+    protected String getPluginName() {
+        return PLUGIN_NAME;
+    }
 }
