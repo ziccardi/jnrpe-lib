@@ -53,6 +53,13 @@ public class CheckTomcatTest implements Constants {
      */
     private InstalledLocalContainer container = null;
 
+
+	/**
+	 * running single unit test
+	 */
+	private boolean single = false;
+
+	
     /**
      * Writes the tomcat-users.xml giving all the privileges to the user
      * tomcat/tomcat.
@@ -84,6 +91,11 @@ public class CheckTomcatTest implements Constants {
     @BeforeClass
     public final void setup() {
         try {
+    		if (SetupTest.getPluginRepository() == null){
+    			SetupTest.setUp();
+    			this.single = true;
+    		}
+
             ClassLoader cl = CheckTomcatTest.class.getClassLoader();
 
             PluginDefinition checkTomcat =
@@ -331,10 +343,13 @@ public class CheckTomcatTest implements Constants {
      * Stop tomcat.
      */
     @AfterClass
-    public final void tearDown() {
+    public final void tearDown() throws Exception {
         if (container != null) {
             container.stop();
         }
+        if (single){
+        	SetupTest.shutDown();
+		}
     }
 
 }
