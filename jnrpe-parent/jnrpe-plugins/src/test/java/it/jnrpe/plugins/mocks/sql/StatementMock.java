@@ -227,4 +227,20 @@ public class StatementMock implements Statement {
         return false;
     }
 
+	/* (non-Javadoc)
+	 * @see java.sql.Statement#closeOnCompletion()
+	 */
+	public void closeOnCompletion() throws SQLException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see java.sql.Statement#isCloseOnCompletion()
+	 */
+	public boolean isCloseOnCompletion() throws SQLException {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

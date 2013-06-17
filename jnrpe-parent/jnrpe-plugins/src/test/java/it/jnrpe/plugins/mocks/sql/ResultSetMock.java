@@ -1034,4 +1034,21 @@ public class ResultSetMock implements ResultSet {
 
     }
 
+	/* (non-Javadoc)
+	 * @see java.sql.ResultSet#getObject(int, java.lang.Class)
+	 */
+	public <T> T getObject(int columnIndex, Class<T> type) throws SQLException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.sql.ResultSet#getObject(java.lang.String, java.lang.Class)
+	 */
+	public <T> T getObject(String columnLabel, Class<T> type)
+			throws SQLException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
