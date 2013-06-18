@@ -286,8 +286,6 @@ public class CheckHttp extends PluginBase {
 	 * List<Metric>
 	 */
 	private List<Metric> analyzeResponse(ICommandLine opt, String response, int ellapsed) throws MetricGatheringException {
-		log.debug("response");
-
 		List<Metric> metrics = new ArrayList<Metric>();
 		metrics.add(new Metric("time", "", new BigDecimal(ellapsed), null, null));
 
