@@ -196,10 +196,10 @@ public class CheckHttp extends PluginBase {
 				ignoreBody = true;				
 			}				
 			String urlString = hostname + ":" + port + path;
-			if (cl.getOptionValue("authorization") != null){
-				urlString = cl.getOptionValue("authorization") + "@";
-			}else if (cl.getOptionValue("proxy-authorization") != null){
-				urlString = cl.getOptionValue("proxy-authorization") + "@";
+			if (cl.hasOption("authorization")){
+				urlString = cl.getOptionValue("authorization") + "@" + urlString;
+			}else if (cl.hasOption("proxy-authorization")){
+				urlString = cl.getOptionValue("proxy-authorization") + "@" + urlString;
 			}
 			if (ssl) {
 				urlString = "https://" + urlString;
@@ -357,10 +357,10 @@ public class CheckHttp extends PluginBase {
 		}
 		String auth = null;
 		String encoded = null;
-		if (cl.getOptionValue("authorization") != null){
+		if (cl.hasOption("authorization")){
 			encoded = Base64.encodeBase64String(cl.getOptionValue("authorization").getBytes());	
 			auth = "Authorization";	    
-		}else if (cl.getOptionValue("proxy-authorization") !=null){
+		}else if (cl.hasOption("proxy-authorization")){
 			encoded = Base64.encodeBase64String(cl.getOptionValue("proxy-authorization").getBytes());	        
 			auth = "Proxy-Authorization";
 		}
