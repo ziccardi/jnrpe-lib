@@ -108,7 +108,7 @@ public class HttpUtils {
 		}
 		
 		if (timeout != null) {
-			conn.setConnectTimeout(timeout);
+			conn.setConnectTimeout(timeout * 1000);
 		}
 		
 	}
