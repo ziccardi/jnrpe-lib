@@ -2,7 +2,9 @@ package com.mysql.jdbc;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
 import java.util.Properties;
+import java.util.logging.Logger;
 
 import it.jnrpe.plugins.mocks.sql.DbConnectionMock;
 import it.jnrpe.plugins.mocks.sql.MockDriver;
@@ -36,5 +38,14 @@ public class Driver extends MockDriver {
     public boolean acceptsURL(String url) throws SQLException {
         return url.startsWith("jdbc:mysql:");
     }
+    
+	/* (non-Javadoc)
+	 * @see java.sql.Driver#getParentLogger()
+	 */
+	public Logger getParentLogger() throws SQLFeatureNotSupportedException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 
 }

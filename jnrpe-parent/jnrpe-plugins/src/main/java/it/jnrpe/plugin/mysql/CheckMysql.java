@@ -16,19 +16,22 @@
 package it.jnrpe.plugin.mysql;
 
 import it.jnrpe.ICommandLine;
-import it.jnrpe.ReturnValue;
 import it.jnrpe.Status;
-import it.jnrpe.ReturnValue.UnitOfMeasure;
-import it.jnrpe.events.LogEvent;
+import it.jnrpe.plugins.Metric;
+import it.jnrpe.plugins.MetricGatheringException;
 import it.jnrpe.plugins.PluginBase;
 import it.jnrpe.utils.BadThresholdException;
-import it.jnrpe.utils.ThresholdUtil;
+import it.jnrpe.utils.thresholds.ThresholdsEvaluatorBuilder;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -38,17 +41,23 @@ import java.util.Map;
  */
 public class CheckMysql extends PluginBase {
 
-    /**
-     * Executes the check.
-     *
-     * @param cl
-     *            the command line
-     * @return the check return code
-     * @throws BadThresholdException
-     *             -
-     */
-    public final ReturnValue execute(final ICommandLine cl)
-            throws BadThresholdException {
+	@Override
+	public void configureThresholdEvaluatorBuilder(
+			ThresholdsEvaluatorBuilder thrb, ICommandLine cl)
+					throws BadThresholdException {
+		if (cl.hasOption("th")) {
+			super.configureThresholdEvaluatorBuilder(thrb, cl);
+		} else {
+			thrb.withLegacyThreshold("time", null, cl.getOptionValue("warning"), cl.getOptionValue("critical")).
+					withLegacyThreshold("secondsBehindMaster", null, cl.getOptionValue("warning"), cl.getOptionValue("critical"));
+		}
+	}
+
+	/**
+	 * Execute and gather metrics
+	 */
+	public Collection<Metric> gatherMetrics(ICommandLine cl) throws MetricGatheringException {
+		List<Metric> metrics = new ArrayList<Metric>();
         Mysql mysql = new Mysql(cl);
         long start = System.currentTimeMillis();
         long elapsed = 0L;
@@ -57,56 +66,31 @@ public class CheckMysql extends PluginBase {
             conn = mysql.getConnection();
             elapsed = (System.currentTimeMillis() - start) / 1000L;
         } catch (ClassNotFoundException e) {
+        	e.printStackTrace();
             log.error("Mysql driver library not found into the classpath: "
                             + "download and put it in the same directory "
                             + "of this plugin");
-            return new ReturnValue(
-                    Status.CRITICAL,
-                    "CHECK_MYSQL_QUERY - CRITICAL: Error accessing "
-                            + "the MySQL server - JDBC driver not installed");
+            throw new MetricGatheringException("CHECK_MYSQL_QUERY - CRITICAL: Error accessing "
+                    + "the MySQL server - JDBC driver not installed", Status.CRITICAL, e);
         } catch (Exception e) {
+        	e.printStackTrace();
             log.error("Error accessing the MySQL server", e);
-            return new ReturnValue(Status.CRITICAL,
-                    "CHECK_MYSQL_QUERY - CRITICAL: Error accessing "
-                            + "the MySQL server - " + e.getMessage());
+            throw new MetricGatheringException("CHECK_MYSQL_QUERY - CRITICAL: Error accessing "
+                    + "the MySQL server - " + e.getMessage(),
+                    Status.CRITICAL,
+                    e);
         }
 
         if (cl.hasOption("check-slave")) {
-            return checkSlave(cl, mysql, conn).withPerformanceData("time",
-                    elapsed, UnitOfMeasure.seconds,
-                    cl.getOptionValue("warning"),
-                    cl.getOptionValue("critical"), 0L, null);
+            metrics.add(checkSlave(cl, mysql, conn));
+        }else{
+        	metrics.add(new Metric("time", "Connection took " + elapsed + " secs. ", new BigDecimal(elapsed), new BigDecimal(0), null));
         }
-
-        if (cl.hasOption("critical")) {
-            if (ThresholdUtil.isValueInRange(cl.getOptionValue("critical"),
-                    elapsed)) {
-                return new ReturnValue(Status.CRITICAL,
-                        "CHECK_MYSQL - CRITICAL").withPerformanceData("time",
-                        elapsed, UnitOfMeasure.seconds,
-                        cl.getOptionValue("warning"),
-                        cl.getOptionValue("critical"), 0L, null);
-            }
-        }
-
-        if (cl.hasOption("warning")) {
-            if (ThresholdUtil.isValueInRange(cl.getOptionValue("warning"),
-                    elapsed)) {
-                return new ReturnValue(Status.WARNING, "CHECK_MYSQL - WARNING")
-                        .withPerformanceData("time", elapsed,
-                                UnitOfMeasure.seconds,
-                                cl.getOptionValue("warning"),
-                                cl.getOptionValue("critical"), 0L, null);
-            }
-        }
-
         mysql.closeConnection(conn);
-        return new ReturnValue(Status.OK, "CHECK_MYSQL - OK")
-                .withPerformanceData("time", elapsed, UnitOfMeasure.seconds,
-                        cl.getOptionValue("warning"),
-                        cl.getOptionValue("critical"), 0L, null);
-    }
-
+        return metrics;
+      }
+	
+  
     /**
      * Check the status of mysql slave thread.
      *
@@ -120,16 +104,13 @@ public class CheckMysql extends PluginBase {
      * @throws BadThresholdException
      *             -
      */
-    private ReturnValue
-            checkSlave(final ICommandLine cl, final Mysql mysql,
-                    final Connection conn)
-                    throws BadThresholdException {
+    private Metric checkSlave(final ICommandLine cl, final Mysql mysql, final Connection conn) throws MetricGatheringException {
+    	Metric metric = null;
         try {
             Map<String, Integer> status = getSlaveStatus(conn);
             if (status.isEmpty()) {
                 mysql.closeConnection(conn);
-                return new ReturnValue(Status.CRITICAL,
-                        "CHECK_MYSQL - WARNING: No slaves defined. ");
+                throw new MetricGatheringException( "CHECK_MYSQL - WARNING: No slaves defined. ", Status.CRITICAL, null);
             }
 
             // check if slave is running
@@ -139,56 +120,21 @@ public class CheckMysql extends PluginBase {
 
             if (slaveIoRunning == 0 || slaveSqlRunning == 0) {
                 mysql.closeConnection(conn);
-                return new ReturnValue(Status.CRITICAL,
-                        "CHECK_MYSQL - CRITICAL: Slave status unavailable. ");
+                throw new MetricGatheringException( "CHECK_MYSQL - CRITICAL: Slave status unavailable. ", Status.CRITICAL, null);                
             }
-
             String slaveResult =
                     "Slave IO: " + slaveIoRunning + " Slave SQL: "
                             + slaveSqlRunning + " Seconds Behind Master: "
                             + secondsBehindMaster;
 
-            if (cl.hasOption("critical")) {
-                String critical = cl.getOptionValue("critical");
-                if (ThresholdUtil.isValueInRange(
-                        critical, secondsBehindMaster)) {
-                    return new ReturnValue(Status.CRITICAL,
-                            "CHECK_MYSQL - CRITICAL: Slow slave - "
-                                    + slaveResult).withPerformanceData(
-                            "secondsBehindMaster", (long) secondsBehindMaster,
-                            UnitOfMeasure.seconds,
-                            cl.getOptionValue("warning"),
-                            cl.getOptionValue("critical"), 0L, null);
-                }
-            }
-
-            if (cl.hasOption("warning")) {
-                String warning = cl.getOptionValue("warning");
-                if (ThresholdUtil.isValueInRange(
-                        warning, secondsBehindMaster)) {
-                    mysql.closeConnection(conn);
-                    return new ReturnValue(Status.WARNING,
-                            "CHECK_MYSQL - WARNING: Slow slave - "
-                                    + slaveResult).withPerformanceData(
-                            "secondsBehindMaster", (long) secondsBehindMaster,
-                            UnitOfMeasure.seconds,
-                            cl.getOptionValue("warning"),
-                            cl.getOptionValue("critical"), 0L, null);
-                }
-            }
-
-            return new ReturnValue(Status.OK, "CHECK_MYSQL - OK: "
-                    + slaveResult).withPerformanceData("secondsBehindMaster",
-                    (long) secondsBehindMaster, UnitOfMeasure.seconds,
-                    cl.getOptionValue("warning"),
-                    cl.getOptionValue("critical"), 0L, null);
-        } catch (SQLException e) {
-            log.warn("Error executing the CheckMysql plugin: " + e.getMessage(),
-                    e);
-            return new ReturnValue(Status.CRITICAL,
-                    "CHECK_MYSQL - CRITICAL: Unable to check slave status:  - "
-                            + e.getMessage());
+            metric = new Metric("secondsBehindMaster", slaveResult, new BigDecimal(secondsBehindMaster), null, null);
+          } catch (SQLException e) {
+            log.warn("Error executing the CheckMysql plugin: " + e.getMessage(), e);
+            throw new MetricGatheringException("CHECK_MYSQL - CRITICAL: Unable to check slave status:  - " + e.getMessage(), 
+            		Status.CRITICAL, e);
         }
+        
+        return metric;
 
     }
 
@@ -216,7 +162,6 @@ public class CheckMysql extends PluginBase {
                         rs.getInt("Seconds_Behind_Master"));
         }
         rs.close();
-
         return map;
     }
 

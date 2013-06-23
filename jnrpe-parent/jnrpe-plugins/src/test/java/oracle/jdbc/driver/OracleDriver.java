@@ -5,7 +5,9 @@ import it.jnrpe.plugins.mocks.sql.MockDriver;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
 import java.util.Properties;
+import java.util.logging.Logger;
 
 public class OracleDriver extends MockDriver {
 
@@ -22,5 +24,13 @@ public class OracleDriver extends MockDriver {
     public boolean acceptsURL(String url) throws SQLException {
         return url.startsWith("jdbc:oracle:");
     }
+
+	/* (non-Javadoc)
+	 * @see java.sql.Driver#getParentLogger()
+	 */
+	public Logger getParentLogger() throws SQLFeatureNotSupportedException {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

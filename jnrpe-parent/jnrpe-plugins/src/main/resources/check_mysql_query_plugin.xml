@@ -12,7 +12,7 @@ check_mysql : CHECK_MYSQL_QUERY --database $ARG1$ --hostname $ARG2$ --port $ARG3
             
 * Example 1 (Windows and Unix)
             
-check_nrpe -H myjnrpeserver -c check_mysql_query -a 'test-db!localhost!3306!mysql-user!mysql-pwd!select count(*) from user_table'
+check_nrpe -H myjnrpeserver -c check_mysql_query -a 'test-db localhost 3306 mysql-user mysql-pwd 'select count(*) from user_table'
             
         ]]>
 	</description>

@@ -37,4 +37,6 @@ JNRPE Plugin package
    
    * <<CheckTomcat>> : checks status of a tomcat instance
    
+   * <<CheckHttp>> : tests the HTTP service on a specified host
+   
    

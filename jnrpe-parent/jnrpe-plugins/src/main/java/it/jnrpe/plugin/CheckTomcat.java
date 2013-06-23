@@ -130,11 +130,8 @@ public class CheckTomcat extends PluginBase {
         String errmsg = null;
         try {
             response = Utils.getUrl(new URL(url), props, timeout * 1000);
-        } catch (MalformedURLException e) {
-            // e.printStackTrace();
-            log.info("Bad plugin URL configuration : " + e.getMessage());
-            errmsg = e.getMessage();
-        } catch (IOException e) {
+        
+        } catch (Exception e) {
             log.info("Plugin execution failed : " + e.getMessage(), e);
             errmsg = e.getMessage();
         }

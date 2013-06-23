@@ -17,18 +17,24 @@ package it.jnrpe.plugin.mysql;
 
 import it.jnrpe.ICommandLine;
 import it.jnrpe.ReturnValue;
-import it.jnrpe.Status;
 import it.jnrpe.ReturnValue.UnitOfMeasure;
-import it.jnrpe.events.LogEvent;
+import it.jnrpe.Status;
+import it.jnrpe.plugins.Metric;
+import it.jnrpe.plugins.MetricGatheringException;
 import it.jnrpe.plugins.PluginBase;
 import it.jnrpe.utils.BadThresholdException;
 import it.jnrpe.utils.ThresholdUtil;
+import it.jnrpe.utils.thresholds.ThresholdsEvaluatorBuilder;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * Plugin that checks a mysql query result against threshold levels.
@@ -37,111 +43,87 @@ import java.sql.Statement;
  */
 public class CheckMysqlQuery extends PluginBase {
 
-    /**
-     * Executes the plugin.
-     *
-     * @param cl
-     *            The parsified command line arguments
-     * @return The result of the plugin
-     * @throws BadThresholdException
-     *             -
-     */
-    public final ReturnValue execute(final ICommandLine cl)
-            throws BadThresholdException {
-        Mysql mysql = new Mysql(cl);
-        Connection conn = null;
-        try {
-            conn = mysql.getConnection();
-        } catch (ClassNotFoundException e) {
-            log.error("Mysql driver library not found into the classpath"
-                    + ": download and put it in the same directory "
-                    + "of this plugin");
-            return new ReturnValue(
-                    Status.CRITICAL,
-                    "CHECK_MYSQL_QUERY - CRITICAL: Error accessing the "
-                    + "MySQL server - JDBC driver not installed");
-        } catch (Exception e) {
-            log.error("Error accessing the MySQL server", e);
-            return new ReturnValue(Status.CRITICAL,
-                    "CHECK_MYSQL_QUERY - CRITICAL: Error accessing "
-                    + "the MySQL server - " + e.getMessage());
-        }
+	@Override
+	public void configureThresholdEvaluatorBuilder(
+			ThresholdsEvaluatorBuilder thrb, ICommandLine cl)
+					throws BadThresholdException {
 
-        String query = cl.getOptionValue("query");
-        String critical = cl.getOptionValue("critical");
+		if (cl.hasOption("th")) {
+			super.configureThresholdEvaluatorBuilder(thrb, cl);
+		} else {
+			thrb.withLegacyThreshold("rows", null,
+					cl.getOptionValue("warning"), cl.getOptionValue("critical"));
+		}
 
-        String warning = cl.getOptionValue("warning");
-        Statement st = null;
-        ResultSet set = null;
-        try {
-            st = conn.createStatement();
-            st.execute(query);
-            set = st.getResultSet();
-            BigDecimal value = null;
-            if (set.first()) {
-                value = set.getBigDecimal(1);
+	}
 
-                // if (value.longValue() == 0){
-                // mysql.closeConnection(conn);
-                // return new ReturnValue(Status.CRITICAL,
-                // "MYSQL - WARNING: Query returned no rows.");
-                // }
-                if (critical != null
-                        && ThresholdUtil.isValueInRange(critical, value)) {
-                    mysql.closeConnection(conn);
-                    return new ReturnValue(Status.CRITICAL,
-                            "MYSQL - CRITICAL: Returned value is "
-                                    + value.longValue()).withPerformanceData(
-                            "rows", value.longValue(), UnitOfMeasure.counter,
-                            warning, critical, 0L, null);
-                }
+	/**
+	 * Execute and gather metrics
+	 */
+	public Collection<Metric> gatherMetrics(ICommandLine cl) throws MetricGatheringException {
+		log.debug("check_mysql_query gather metrics");
+		List<Metric> metrics = new ArrayList<Metric>();
+		Mysql mysql = new Mysql(cl);
+		Connection conn = null;
+		try {
+			conn = mysql.getConnection();
+		} catch (ClassNotFoundException e) {
+			log.error("Mysql driver library not found into the classpath"
+					+ ": download and put it in the same directory "
+					+ "of this plugin");
+			throw new MetricGatheringException("CHECK_MYSQL_QUERY - CRITICAL: Error accessing the "
+					+ "MySQL server - JDBC driver not installed", Status.CRITICAL, e);
+		} catch (Exception e) {
+			log.error("Error accessing the MySQL server", e);
+			throw new MetricGatheringException("CHECK_MYSQL_QUERY - CRITICAL: Error accessing "
+					+ "the MySQL server - " + e.getMessage(), Status.CRITICAL,e);
+		}
 
-                if (warning != null
-                        && ThresholdUtil.isValueInRange(warning, value)) {
-                    mysql.closeConnection(conn);
-                    return new ReturnValue(Status.CRITICAL,
-                            "MYSQL - WARNING: Returned value is "
-                                    + value.longValue()).withPerformanceData(
-                            "rows", value.longValue(), UnitOfMeasure.counter,
-                            warning, critical, 0L, null);
-                }
+		String query = cl.getOptionValue("query");
+		Statement st = null;
+		ResultSet set = null;
+		try {
+			st = conn.createStatement();
+			st.execute(query);
+			set = st.getResultSet();
+			BigDecimal value = null;
+			if (set.first()) {
+				value = set.getBigDecimal(1);
+			}
 
-                mysql.closeConnection(conn);
-                return new ReturnValue(Status.OK,
-                        "CHECK_MYSQL_QUERY - OK - Returned value is "
-                                + value.longValue()).withPerformanceData(
-                        "rows", value.longValue(), UnitOfMeasure.counter,
-                        warning, critical, 0L, null);
-            } else {
-                return new ReturnValue(Status.UNKNOWN, "Query " + query
-                        + " returned no rows");
-            }
-        } catch (SQLException e) {
-            log.warn("Error executing plugin CheckMysqlQuery : "
-                            + e.getMessage(), e);
-            return new ReturnValue(Status.CRITICAL,
-                    "CHECK_MYSQL_QUERY - CRITICAL: " + e.getMessage());
-        } finally {
-            if (st != null) {
-                try {
-                    st.close();
-                } catch (SQLException e) {
-                    log.error("Error closing MySQL statement", e);
-                }
-            }
-            if (set != null) {
-                try {
-                    set.close();
-                } catch (SQLException e) {
-                    log.error("Error closing MySQL ResultSet", e);
-                }
-            }
-            mysql.closeConnection(conn);
-        }
-    }
+			metrics.add(new Metric("rows", "CHECK_MYSQL_QUERY - Returned value is " + 
+					value.longValue(), 
+					value, 
+					null, 
+					null));
 
-    @Override
-    protected String getPluginName() {
-        return "CHECK_MYSQL_QUERY";
-    }
+		} catch (SQLException e) {
+			log.warn("Error executing plugin CheckMysqlQuery : " + e.getMessage(), e);
+			throw new MetricGatheringException("CHECK_MYSQL_QUERY - CRITICAL: " + e.getMessage(), Status.CRITICAL, e);
+		} finally {
+			if (st != null) {
+				try {
+					st.close();
+				} catch (SQLException e) {
+					log.error("Error closing MySQL statement", e);
+				}
+			}
+			if (set != null) {
+				try {
+					set.close();
+				} catch (SQLException e) {
+					log.error("Error closing MySQL ResultSet", e);
+				}
+			}
+			mysql.closeConnection(conn);
+		}
+
+		return metrics;
+	}
+
+
+	@Override
+	protected String getPluginName() {
+		return "CHECK_MYSQL_QUERY";
+	}
 }

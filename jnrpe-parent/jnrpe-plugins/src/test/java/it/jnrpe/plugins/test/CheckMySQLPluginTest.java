@@ -21,7 +21,7 @@ public class CheckMySQLPluginTest implements Constants {
 
     @BeforeTest
     public void setup() throws Exception {
-        ClassLoader cl = CCheckOracle.class.getClassLoader();
+        ClassLoader cl = CheckMySQLPluginTest.class.getClassLoader();
 
         PluginDefinition checkFile =
                 PluginRepositoryUtil.parseXmlPluginDefinition(cl,
