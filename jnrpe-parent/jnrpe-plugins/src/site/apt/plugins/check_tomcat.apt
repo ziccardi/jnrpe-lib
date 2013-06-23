@@ -1,4 +1,4 @@
-The CHECK_MYSQL plugin
+The CHECK_TOMCAT plugin
     
 	Checks the tomcat /manager/status page for excessive memory usage or an excessive number of threads in use.
 	This plugin does a HTTP GET of the tomcat status page:
