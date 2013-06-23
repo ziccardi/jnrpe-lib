@@ -45,10 +45,10 @@ certificate expiration times.
       <option shortName="S" longName="ssl" description="Connect via SSL. Port defaults to 443."
         required="false" hasArgs="true" argName="ssl" optionalArgs="true" />
    
-      <option shortName="j" longName="method" description="HTTP method (GET, POST, HEAD, etc)"
+      <option shortName="j" longName="method" description="HTTP method (GET, POST, HEAD, etc)."
         required="false" hasArgs="true" argName="method" optionalArgs="false" />              
                        
-      <option shortName="e" longName="expect" description="Comma-delimited list of strings, at least one of them is expected in the first (status) line of the server response (default: HTTP/1.) If specified skips all other status line logic (ex: 3xx, 4xx, 5xx processing)"
+      <option shortName="e" longName="expect" description="Comma-delimited list of strings, at least one of them is expected in the first (status) line of the server response (default: HTTP/1.)."
         required="false" hasArgs="true" argName="expected" optionalArgs="false" />              
 
       <option shortName="s" longName="string" description="String to expect in the content"
@@ -61,7 +61,7 @@ certificate expiration times.
         required="false" hasArgs="true" argName="content-type" optionalArgs="false" />              
                                                 
       <option shortName="l" longName="linespan" description="Allow regex to span newlines (must precede -r or -R)"
-        required="false" hasArgs="true" argName="linespan" optionalArgs="false" />              
+        required="false" hasArgs="false" argName="linespan" optionalArgs="false" />              
                        
       <option shortName="r" longName="regex" description="Search page for regex string"
         required="false" hasArgs="true" argName="regex" optionalArgs="false" />              
@@ -75,7 +75,6 @@ certificate expiration times.
      <option shortName="f" longName="onredirect" description="How to handle redirected pages. Options: ok|warning|critical|"
         required="false" hasArgs="true" argName="onredirect" optionalArgs="false" />    
        
-                       
       <option shortName="C" longName="certificate" description="Minimum number of days a certificate has to be valid. Port defaults to 443 (when this option is used the URL is not checked.)"
         required="false" hasArgs="true" argName="onredirect" optionalArgs="false" />              
              
