@@ -16,10 +16,12 @@
 package it.jnrpe.server;
 
 import it.jnrpe.JNRPE;
+import it.jnrpe.commands.CommandRepository;
 import it.jnrpe.plugins.PluginConfigurationException;
 import it.jnrpe.plugins.PluginDefinition;
 import it.jnrpe.plugins.PluginProxy;
 import it.jnrpe.plugins.PluginRepository;
+import it.jnrpe.server.console.JNRPEConsole;
 import it.jnrpe.server.plugins.DynaPluginRepository;
 
 import java.io.File;
@@ -110,11 +112,28 @@ public final class JNRPEServer {
                         .withArgument(
                                 aBuilder.withName("path").withMinimum(1)
                                         .withMaximum(1).create())
-                        .withChildren(alternativeOptions).create();
+                        .withChildren(alternativeOptions)
+                        .withRequired(true)
+                        .create();
 
+        DefaultOption interactiveOption =
+                oBuilder.withLongName("interactive")
+                        .withShortName("i")
+                        .withDescription("Starts JNRPE in command line mode")
+                        .create();
+        
+        Group jnrpeOptions = 
+                gBuilder
+                    .withOption(confOption)
+                    .withOption(interactiveOption)
+                    .withMinimum(1)
+                    .create();
+        
         Group mainGroup =
-                gBuilder.withOption(versionOption).withOption(helpOption)
-                        .withOption(confOption).withMinimum(1).create();
+                gBuilder.withOption(versionOption)
+                        .withOption(helpOption)
+                        .withOption(jnrpeOptions)
+                        .create();
 
         return mainGroup;
     }
@@ -354,7 +373,9 @@ public final class JNRPEServer {
             printPluginList(pr);
         }
 
-        JNRPE jnrpe = new JNRPE(pr, conf.createCommandRepository());
+        CommandRepository cr = conf.createCommandRepository();
+        
+        JNRPE jnrpe = new JNRPE(pr, cr);
         jnrpe.addEventListener(new EventLoggerListener());
 
         for (String sAcceptedAddress : conf.getServerSection()
@@ -379,6 +400,11 @@ public final class JNRPEServer {
                         + ": "
                         + e.getMessage());
             }
+        }
+        
+        if (cl.hasOption("--interactive")) {
+            new JNRPEConsole(jnrpe, pr, cr).start();
+            System.exit(0);
         }
     }
 }
