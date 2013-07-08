@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Massimiliano Ziccardi Licensed under the Apache License,
+ * Copyright (c) 2013 Massimiliano Ziccardi Licensed under the Apache License,
  * Version 2.0 (the "License"); you may not use this file except in compliance
  * with the License. You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
@@ -10,6 +10,7 @@
  */
 package it.jnrpe.commands;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -46,5 +47,9 @@ public final class CommandRepository {
      */
     public CommandDefinition getCommand(final String commandName) {
         return commandDefinitionsMap.get(commandName);
+    }
+    
+    public Collection<CommandDefinition> getAllCommands() {
+        return commandDefinitionsMap.values();
     }
 }

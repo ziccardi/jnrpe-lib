@@ -180,7 +180,7 @@ public final class PluginRepositoryUtil {
                     Boolean.valueOf(option.attributeValue("hasArgs", "false")));
         po.setLongOpt(option.attributeValue("longName"));
         po.setOption(option.attributeValue("shortName"));
-        po.setRequired(Boolean.valueOf(option.attributeValue("description",
+        po.setRequired(Boolean.valueOf(option.attributeValue("required",
                 "false")));
         po.setType(option.attributeValue("type"));
         po.setValueSeparator(option.attributeValue("separator"));
