@@ -22,6 +22,10 @@
 			<item name="Download" href="download.html" />
 		</menu>
 
+		<menu name="Tutorials">
+			<item name="Writing JNRPE Java Nagios Plugins" href="http://www.ziccardi.info/cms/index.php/home/tutorials/12-nagios/jnrpe/7-creating-plugins-with-java-part1" />
+		</menu>
+
 		<links>
 			<item name="Apache" href="http://www.apache.org/" />
 			<item name="JNRPE 1.x" href="jnrpe1.html" />

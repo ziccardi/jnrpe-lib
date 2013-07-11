@@ -45,8 +45,8 @@ public class CheckTomcatTest implements Constants {
      * The tomcat download url.
      */
     private static final String TOMCAT_DOWNLOAD_URL =
-            "http://apache.fastbull.org/tomcat/tomcat-7/v7.0.40"
-                    + "/bin/apache-tomcat-7.0.40.zip";
+            "https://archive.apache.org/dist/tomcat/"
+            + "tomcat-7/v7.0.40/bin/apache-tomcat-7.0.40.zip";
 
     /**
      * The tomcat container.
@@ -54,12 +54,12 @@ public class CheckTomcatTest implements Constants {
     private InstalledLocalContainer container = null;
 
 
-	/**
-	 * running single unit test
-	 */
-	private boolean single = false;
+    /**
+     * running single unit test.
+     */
+    private boolean single = false;
 
-	
+
     /**
      * Writes the tomcat-users.xml giving all the privileges to the user
      * tomcat/tomcat.
@@ -91,10 +91,10 @@ public class CheckTomcatTest implements Constants {
     @BeforeClass
     public final void setup() {
         try {
-    		if (SetupTest.getPluginRepository() == null){
-    			SetupTest.setUp();
-    			this.single = true;
-    		}
+            if (SetupTest.getPluginRepository() == null){
+                SetupTest.setUp();
+                this.single = true;
+            }
 
             ClassLoader cl = CheckTomcatTest.class.getClassLoader();
 
@@ -176,7 +176,7 @@ public class CheckTomcatTest implements Constants {
 
         Assert.assertEquals(ret.getStatus(), Status.OK, ret.getMessage());
     }
-    
+
     /**
      * check if 1 or more of threads are available, assert status is warning
      * @throws Exception
@@ -186,7 +186,7 @@ public class CheckTomcatTest implements Constants {
         CommandRepository cr = SetupTest.getCommandRepository();
 
         cr.addCommandDefinition(new CommandDefinition("CHECK_THREAD_WARN", "CHECK_TOMCAT")
-        		.addArgument(new CommandOption("threads"))
+                .addArgument(new CommandOption("threads"))
                 .addArgument(new CommandOption("hostname", "$ARG1$"))
                 .addArgument(new CommandOption("port", "$ARG2$"))
                 .addArgument(new CommandOption("username", "$ARG3$"))
@@ -195,7 +195,7 @@ public class CheckTomcatTest implements Constants {
                 );
 
         JNRPEClient client = new JNRPEClient(BIND_ADDRESS, JNRPE_PORT, false);
-        ReturnValue ret = client.sendCommand("CHECK_THREAD_WARN", "127.0.0.1", "8080", "tomcat", "tomcat", "1:"); 
+        ReturnValue ret = client.sendCommand("CHECK_THREAD_WARN", "127.0.0.1", "8080", "tomcat", "tomcat", "1:");
 
         Assert.assertEquals(ret.getStatus(), Status.WARNING, ret.getMessage());
     }
@@ -207,25 +207,25 @@ public class CheckTomcatTest implements Constants {
      * void
      */
     public final void checkTomcatThreadsCritical() throws Exception {
-    	try{
-	        CommandRepository cr = SetupTest.getCommandRepository();
-	
-	        cr.addCommandDefinition(new CommandDefinition("CHECK_THREAD_CRIT", "CHECK_TOMCAT")
-	        		.addArgument(new CommandOption("threads"))
-	                .addArgument(new CommandOption("hostname", "$ARG1$"))
-	                .addArgument(new CommandOption("port", "$ARG2$"))
-	                .addArgument(new CommandOption("username", "$ARG3$"))
-	                .addArgument(new CommandOption("password", "$ARG4$"))
-	                .addArgument(new CommandOption("critical", "$ARG5$"))
-	                );
-	
-	        JNRPEClient client = new JNRPEClient(BIND_ADDRESS, JNRPE_PORT, false);
-	        ReturnValue ret = client.sendCommand("CHECK_THREAD_CRIT", "127.0.0.1", "8080", "tomcat", "tomcat", "1:"); 
-	
-	        Assert.assertEquals(ret.getStatus(), Status.CRITICAL, ret.getMessage());
-    	}catch(Exception e){
-    		e.printStackTrace();
-    	}
+        try{
+            CommandRepository cr = SetupTest.getCommandRepository();
+
+            cr.addCommandDefinition(new CommandDefinition("CHECK_THREAD_CRIT", "CHECK_TOMCAT")
+                    .addArgument(new CommandOption("threads"))
+                    .addArgument(new CommandOption("hostname", "$ARG1$"))
+                    .addArgument(new CommandOption("port", "$ARG2$"))
+                    .addArgument(new CommandOption("username", "$ARG3$"))
+                    .addArgument(new CommandOption("password", "$ARG4$"))
+                    .addArgument(new CommandOption("critical", "$ARG5$"))
+                    );
+
+            JNRPEClient client = new JNRPEClient(BIND_ADDRESS, JNRPE_PORT, false);
+            ReturnValue ret = client.sendCommand("CHECK_THREAD_CRIT", "127.0.0.1", "8080", "tomcat", "tomcat", "1:");
+
+            Assert.assertEquals(ret.getStatus(), Status.CRITICAL, ret.getMessage());
+        }catch(Exception e){
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -237,7 +237,7 @@ public class CheckTomcatTest implements Constants {
         CommandRepository cr = SetupTest.getCommandRepository();
 
         cr.addCommandDefinition(new CommandDefinition("CHECK_THREAD_PERC_WARN", "CHECK_TOMCAT")
-        		.addArgument(new CommandOption("threads"))
+                .addArgument(new CommandOption("threads"))
                 .addArgument(new CommandOption("hostname", "$ARG1$"))
                 .addArgument(new CommandOption("port", "$ARG2$"))
                 .addArgument(new CommandOption("username", "$ARG3$"))
@@ -246,7 +246,7 @@ public class CheckTomcatTest implements Constants {
                 );
 
         JNRPEClient client = new JNRPEClient(BIND_ADDRESS, JNRPE_PORT, false);
-        ReturnValue ret = client.sendCommand("CHECK_THREAD_PERC_WARN", "127.0.0.1", "8080", "tomcat", "tomcat", ":99.9%"); 
+        ReturnValue ret = client.sendCommand("CHECK_THREAD_PERC_WARN", "127.0.0.1", "8080", "tomcat", "tomcat", ":99.9%");
 
         Assert.assertEquals(ret.getStatus(), Status.WARNING, ret.getMessage());
     }
@@ -260,7 +260,7 @@ public class CheckTomcatTest implements Constants {
         CommandRepository cr = SetupTest.getCommandRepository();
 
         cr.addCommandDefinition(new CommandDefinition("CHECK_THREAD_PERC_CRIT", "CHECK_TOMCAT")
-        		.addArgument(new CommandOption("threads"))
+                .addArgument(new CommandOption("threads"))
                 .addArgument(new CommandOption("hostname", "$ARG1$"))
                 .addArgument(new CommandOption("port", "$ARG2$"))
                 .addArgument(new CommandOption("username", "$ARG3$"))
@@ -269,17 +269,17 @@ public class CheckTomcatTest implements Constants {
                 );
 
         JNRPEClient client = new JNRPEClient(BIND_ADDRESS, JNRPE_PORT, false);
-        ReturnValue ret = client.sendCommand("CHECK_THREAD_PERC_CRIT", "127.0.0.1", "8080", "tomcat", "tomcat", ":99.9%"); 
+        ReturnValue ret = client.sendCommand("CHECK_THREAD_PERC_CRIT", "127.0.0.1", "8080", "tomcat", "tomcat", ":99.9%");
 
         Assert.assertEquals(ret.getStatus(), Status.CRITICAL, ret.getMessage());
     }
-    
+
 
     public final void checkTomcatMemoryWarningPercentage() throws Exception {
         CommandRepository cr = SetupTest.getCommandRepository();
 
         cr.addCommandDefinition(new CommandDefinition("CHECK_MEM_PERC_WARNING", "CHECK_TOMCAT")
-        		.addArgument(new CommandOption("memory"))
+                .addArgument(new CommandOption("memory"))
                 .addArgument(new CommandOption("hostname", "$ARG1$"))
                 .addArgument(new CommandOption("port", "$ARG2$"))
                 .addArgument(new CommandOption("username", "$ARG3$"))
@@ -288,11 +288,11 @@ public class CheckTomcatTest implements Constants {
                 );
 
         JNRPEClient client = new JNRPEClient(BIND_ADDRESS, JNRPE_PORT, false);
-        ReturnValue ret = client.sendCommand("CHECK_MEM_PERC_WARNING", "127.0.0.1", "8080", "tomcat", "tomcat", ":99.9%"); 
+        ReturnValue ret = client.sendCommand("CHECK_MEM_PERC_WARNING", "127.0.0.1", "8080", "tomcat", "tomcat", ":99.9%");
 
         Assert.assertEquals(ret.getStatus(), Status.WARNING, ret.getMessage());
     }
-    
+
     /**
      * check if less than 99.9% of maximum memory is avaliable, assert status is critical
      * @throws Exception
@@ -302,7 +302,7 @@ public class CheckTomcatTest implements Constants {
         CommandRepository cr = SetupTest.getCommandRepository();
 
         cr.addCommandDefinition(new CommandDefinition("CHECK_MEM_PERC_WARNING", "CHECK_TOMCAT")
-        		.addArgument(new CommandOption("memory"))
+                .addArgument(new CommandOption("memory"))
                 .addArgument(new CommandOption("hostname", "$ARG1$"))
                 .addArgument(new CommandOption("port", "$ARG2$"))
                 .addArgument(new CommandOption("username", "$ARG3$"))
@@ -311,7 +311,7 @@ public class CheckTomcatTest implements Constants {
                 );
 
         JNRPEClient client = new JNRPEClient(BIND_ADDRESS, JNRPE_PORT, false);
-        ReturnValue ret = client.sendCommand("CHECK_MEM_PERC_WARNING", "127.0.0.1", "8080", "tomcat", "tomcat", ":99.9%"); 
+        ReturnValue ret = client.sendCommand("CHECK_MEM_PERC_WARNING", "127.0.0.1", "8080", "tomcat", "tomcat", ":99.9%");
 
         Assert.assertEquals(ret.getStatus(), Status.CRITICAL, ret.getMessage());
     }
@@ -324,7 +324,7 @@ public class CheckTomcatTest implements Constants {
         CommandRepository cr = SetupTest.getCommandRepository();
 
         cr.addCommandDefinition(new CommandDefinition("CHECK_MEM_PERC_OK", "CHECK_TOMCAT")
-        		.addArgument(new CommandOption("memory"))
+                .addArgument(new CommandOption("memory"))
                 .addArgument(new CommandOption("hostname", "$ARG1$"))
                 .addArgument(new CommandOption("port", "$ARG2$"))
                 .addArgument(new CommandOption("username", "$ARG3$"))
@@ -333,12 +333,12 @@ public class CheckTomcatTest implements Constants {
                 );
 
         JNRPEClient client = new JNRPEClient(BIND_ADDRESS, JNRPE_PORT, false);
-        ReturnValue ret = client.sendCommand("CHECK_MEM_PERC_OK", "127.0.0.1", "8080", "tomcat", "tomcat", ":50%"); 
+        ReturnValue ret = client.sendCommand("CHECK_MEM_PERC_OK", "127.0.0.1", "8080", "tomcat", "tomcat", ":50%");
 
         Assert.assertEquals(ret.getStatus(), Status.OK, ret.getMessage());
     }
-    
-    
+
+
     /**
      * Stop tomcat.
      */
@@ -348,8 +348,8 @@ public class CheckTomcatTest implements Constants {
             container.stop();
         }
         if (single){
-        	SetupTest.shutDown();
-		}
+            SetupTest.shutDown();
+        }
     }
 
 }
