@@ -159,6 +159,9 @@ public class CheckHttp extends PluginBase {
             throws MetricGatheringException {
         List<Metric> metrics = new ArrayList<Metric>();
         String hostname = cl.getOptionValue("hostname");
+        if (hostname == null){
+        	throw new MetricGatheringException("No hostname specified.", Status.WARNING, null);
+        }
         String port =
                 cl.hasOption("port") ? cl.getOptionValue("port") : ""
                         + DEFAULT_PORT;
