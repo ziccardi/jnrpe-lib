@@ -2,9 +2,6 @@ package it.jnrpe.server.console;
 
 import it.jnrpe.JNRPE;
 import it.jnrpe.ReturnValue;
-import it.jnrpe.plugins.IPluginInterface;
-import it.jnrpe.plugins.PluginConsoleCommandLine;
-import it.jnrpe.plugins.PluginDefinition;
 import it.jnrpe.plugins.PluginOption;
 import it.jnrpe.plugins.PluginProxy;
 import it.jnrpe.plugins.PluginRepository;
@@ -13,7 +10,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-import org.apache.commons.cli2.CommandLine;
+import jline.console.ConsoleReader;
+
 import org.apache.commons.cli2.Group;
 import org.apache.commons.cli2.Option;
 import org.apache.commons.cli2.builder.ArgumentBuilder;
@@ -21,8 +19,6 @@ import org.apache.commons.cli2.builder.DefaultOptionBuilder;
 import org.apache.commons.cli2.builder.GroupBuilder;
 import org.apache.commons.cli2.commandline.Parser;
 import org.apache.commons.cli2.util.HelpFormatter;
-
-import jline.console.ConsoleReader;
 
 public class PluginCommand extends ConsoleCommand {
 
@@ -39,22 +35,21 @@ public class PluginCommand extends ConsoleCommand {
 
     public boolean execute(String[] args) throws Exception {
         HelpFormatter hf = new HelpFormatter(null, null, null, getConsole().getTerminal().getWidth());
-//        hf.setGroup(g);
-        
         PluginProxy plugin = (PluginProxy) pluginRepository.getPlugin(pluginName);
         Group group = getGroup();
         
         Parser p = new Parser();
         p.setGroup(group);
         p.setHelpFormatter(hf);
-        // p.setHelpTrigger("--help");
-        //CommandLine cl = p.parse(args);
-        
+
+        int required = plugin.getRequiredArgsCount();
+        if (args.length <  required){
+        	println("Not enough arguments specified.");
+        	plugin.printHelp(new PrintWriter(getConsole().getOutput()));
+        	return false;
+        }
         ReturnValue retVal = plugin.execute(args);
-        
-        getConsole().println(retVal.getMessage());
-        
-        // TODO Auto-generated method stub
+        println(retVal.getMessage());        
         return false;
     }
 
