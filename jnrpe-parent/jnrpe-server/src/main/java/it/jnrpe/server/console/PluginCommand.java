@@ -37,17 +37,14 @@ public class PluginCommand extends ConsoleCommand {
         HelpFormatter hf = new HelpFormatter(null, null, null, getConsole().getTerminal().getWidth());
         PluginProxy plugin = (PluginProxy) pluginRepository.getPlugin(pluginName);
         Group group = getGroup();
-        if (args.length > 0 && args[0].contains("--help")){
-        	printHelp();
-        	return false;
-        }
+
         Parser p = new Parser();
         p.setGroup(group);
         p.setHelpFormatter(hf);
 
         int required = plugin.getRequiredArgsCount();
         if (args.length <  required){
-        	println("Not enough arguments specified. Try plugin:" + getName() + " --help for options.");
+        	println("Not enough arguments specified. Try help plugin:" + getName() + " for options.");
         	return false;
         }
         ReturnValue retVal = plugin.execute(args);
