@@ -19,7 +19,7 @@ import org.apache.commons.cli2.builder.DefaultOptionBuilder;
 import org.apache.commons.cli2.builder.GroupBuilder;
 import org.apache.commons.cli2.commandline.Parser;
 import org.apache.commons.cli2.util.HelpFormatter;
-
+import it.jnrpe.server.console.ConsoleCommand;
 public class PluginCommand extends ConsoleCommand {
 
     public final static String NAME="plugin:";
@@ -37,15 +37,17 @@ public class PluginCommand extends ConsoleCommand {
         HelpFormatter hf = new HelpFormatter(null, null, null, getConsole().getTerminal().getWidth());
         PluginProxy plugin = (PluginProxy) pluginRepository.getPlugin(pluginName);
         Group group = getGroup();
-        
+        if (args.length > 0 && args[0].contains("--help")){
+        	printHelp();
+        	return false;
+        }
         Parser p = new Parser();
         p.setGroup(group);
         p.setHelpFormatter(hf);
 
         int required = plugin.getRequiredArgsCount();
         if (args.length <  required){
-        	println("Not enough arguments specified.");
-        	plugin.printHelp(new PrintWriter(getConsole().getOutput()));
+        	println("Not enough arguments specified. Try plugin: " + getName() + " --help for options.");
         	return false;
         }
         ReturnValue retVal = plugin.execute(args);
