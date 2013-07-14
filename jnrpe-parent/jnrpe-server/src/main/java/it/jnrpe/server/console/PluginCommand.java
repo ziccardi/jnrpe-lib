@@ -47,7 +47,7 @@ public class PluginCommand extends ConsoleCommand {
 
         int required = plugin.getRequiredArgsCount();
         if (args.length <  required){
-        	println("Not enough arguments specified. Try plugin: " + getName() + " --help for options.");
+        	println("Not enough arguments specified. Try plugin:" + getName() + " --help for options.");
         	return false;
         }
         ReturnValue retVal = plugin.execute(args);
