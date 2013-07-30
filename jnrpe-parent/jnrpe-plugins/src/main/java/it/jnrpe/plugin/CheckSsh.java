@@ -189,7 +189,7 @@ public class CheckSsh extends PluginBase {
         	session.setConfig("StrictHostKeyChecking", "no");
         	session.setPassword(password);
         }else{
-        	jsch.addIdentity(key);
+        	jsch.addIdentity(key);	
         }
         session.connect(timeout * 1000);
         return session;
