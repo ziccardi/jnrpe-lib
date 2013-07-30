@@ -234,7 +234,7 @@ public final class PluginRepositoryUtil {
         po.setDescription(option.description());
         po.setHasArgs(option.hasArgs());
         po.setLongOpt(option.longName());
-        po.setOption(option.option());
+        po.setOption(option.shortName());
         po.setRequired(option.required());
         return po;
 
