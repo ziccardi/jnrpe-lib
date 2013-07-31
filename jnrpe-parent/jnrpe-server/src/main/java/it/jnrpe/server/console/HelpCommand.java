@@ -30,7 +30,7 @@ public class HelpCommand extends ConsoleCommand {
             return false;
         }
         
-        IConsoleCommand command = commandMap.get(args[0]);
+        IConsoleCommand command = commandMap.get(args[0].toLowerCase());
         if (command == null) {
             getConsole().println("Unknown command : '" + args[0] + "'");
             return false;

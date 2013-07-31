@@ -19,8 +19,12 @@ import it.jnrpe.plugins.PluginConfigurationException;
 import it.jnrpe.plugins.PluginDefinition;
 import it.jnrpe.plugins.PluginOption;
 import it.jnrpe.plugins.PluginRepository;
+import it.jnrpe.plugins.annotations.Option;
+import it.jnrpe.plugins.annotations.Plugin;
+import it.jnrpe.plugins.annotations.PluginOptions;
 
 import java.io.InputStream;
+import java.lang.annotation.Annotation;
 import java.util.Iterator;
 
 import org.dom4j.Document;
@@ -124,7 +128,7 @@ public final class PluginRepositoryUtil {
             final Element plugin) throws PluginConfigurationException {
         if (plugin.attributeValue("definedIn") != null) {
             StreamManager sm = new StreamManager();
-
+            
             String sFileName = plugin.attributeValue("definedIn");
 
             try {
@@ -134,6 +138,15 @@ public final class PluginRepositoryUtil {
             } finally {
                 sm.closeAll();
             }
+        }else if (plugin.attributeValue("definedInClass") != null){
+        	Class c = null;
+            try {
+                c = cl.loadClass(plugin.attributeValue("definedInClass"));
+            } catch (ClassNotFoundException e) {
+                throw new PluginConfigurationException(e);
+            }
+            return parsePluginClass(c);
+            
         } else {
             Class c;
             try {
@@ -162,6 +175,25 @@ public final class PluginRepositoryUtil {
     }
 
     /**
+     * Parse a plugin from class annotations
+     * 
+     * @param clazz
+     * @return
+     * PluginDefinition
+     */
+    private static PluginDefinition parsePluginClass (final Class clazz){
+    	Plugin plugin = (Plugin) clazz.getAnnotation(Plugin.class);
+    	PluginOptions options = (PluginOptions)clazz.getAnnotation(PluginOptions.class);
+    	String name = plugin.name();
+    	String description = plugin.description();
+    	PluginDefinition def = new PluginDefinition(name, description, clazz);
+    	for (Option option: options.value()) {
+    		def.addOption(parsePluginOption(option));
+    	}
+    	return def;
+    }
+    
+    /**
      * Parses a plugin option XML definition.
      *
      * @param option
@@ -180,11 +212,31 @@ public final class PluginRepositoryUtil {
                     Boolean.valueOf(option.attributeValue("hasArgs", "false")));
         po.setLongOpt(option.attributeValue("longName"));
         po.setOption(option.attributeValue("shortName"));
-        po.setRequired(Boolean.valueOf(option.attributeValue("description",
+        po.setRequired(Boolean.valueOf(option.attributeValue("required",
                 "false")));
         po.setType(option.attributeValue("type"));
         po.setValueSeparator(option.attributeValue("separator"));
 
         return po;
+    }
+
+    /**
+     * Parses a plugin option from the annotation definition
+     * 
+     * @param option
+     * @return 
+     * PluginOption
+     */
+    private static PluginOption parsePluginOption(Option option) {
+        PluginOption po = new PluginOption();
+    	po.setArgName(option.argName());
+        po.setArgsOptional(option.optionalArgs());
+        po.setDescription(option.description());
+        po.setHasArgs(option.hasArgs());
+        po.setLongOpt(option.longName());
+        po.setOption(option.shortName());
+        po.setRequired(option.required());
+        return po;
+
     }
 }
