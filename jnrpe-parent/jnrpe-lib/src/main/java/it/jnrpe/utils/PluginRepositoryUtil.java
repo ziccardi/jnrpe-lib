@@ -24,7 +24,6 @@ import it.jnrpe.plugins.annotations.Plugin;
 import it.jnrpe.plugins.annotations.PluginOptions;
 
 import java.io.InputStream;
-import java.lang.annotation.Annotation;
 import java.util.Iterator;
 
 import org.dom4j.Document;
@@ -126,6 +125,8 @@ public final class PluginRepositoryUtil {
      */
     private static PluginDefinition parsePluginDefinition(final ClassLoader cl,
             final Element plugin) throws PluginConfigurationException {
+        
+        // Check if the plugin definition is inside its own file
         if (plugin.attributeValue("definedIn") != null) {
             StreamManager sm = new StreamManager();
             
@@ -138,7 +139,11 @@ public final class PluginRepositoryUtil {
             } finally {
                 sm.closeAll();
             }
-        }else if (plugin.attributeValue("definedInClass") != null){
+        }
+        
+        // Check is the plugin definition is inside the plugin class 
+        // (Annotations)
+        if (plugin.attributeValue("definedInClass") != null){
         	Class c = null;
             try {
                 c = cl.loadClass(plugin.attributeValue("definedInClass"));
@@ -147,31 +152,33 @@ public final class PluginRepositoryUtil {
             }
             return parsePluginClass(c);
             
-        } else {
-            Class c;
-            try {
-                c = cl.loadClass(plugin.attributeValue("class"));
-            } catch (ClassNotFoundException e) {
-                throw new PluginConfigurationException(e);
-            }
-            String sDescription = plugin.elementText("description");
-
-            PluginDefinition pluginDef =
-                    new PluginDefinition(plugin.attributeValue("name"),
-                            sDescription, c);
-
-            Element commandLine = plugin.element("command-line");
-            Element options = commandLine.element("options");
-
-            for (Iterator i = options.elementIterator(); i.hasNext();) {
-                Element option = (Element) i.next();
-
-                PluginOption po = parsePluginOption(option);
-
-                pluginDef.addOption(po);
-            }
-            return pluginDef;
         }
+        
+        // None of the above: the plugin definition is inside the main
+        // xml file (plugin.xml)
+        Class c;
+        try {
+            c = cl.loadClass(plugin.attributeValue("class"));
+        } catch (ClassNotFoundException e) {
+            throw new PluginConfigurationException(e);
+        }
+        String sDescription = plugin.elementText("description");
+
+        PluginDefinition pluginDef =
+                new PluginDefinition(plugin.attributeValue("name"),
+                        sDescription, c);
+
+        Element commandLine = plugin.element("command-line");
+        Element options = commandLine.element("options");
+
+        for (Iterator i = options.elementIterator(); i.hasNext();) {
+            Element option = (Element) i.next();
+
+            PluginOption po = parsePluginOption(option);
+
+            pluginDef.addOption(po);
+        }
+        return pluginDef;
     }
 
     /**

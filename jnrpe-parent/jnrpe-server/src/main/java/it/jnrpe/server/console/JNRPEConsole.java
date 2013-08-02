@@ -15,12 +15,14 @@
  */
 package it.jnrpe.server.console;
 
-import java.io.IOException;
-
-import jline.console.ConsoleReader;
 import it.jnrpe.JNRPE;
 import it.jnrpe.commands.CommandRepository;
 import it.jnrpe.plugins.PluginRepository;
+
+import java.io.IOException;
+
+import jline.console.ConsoleReader;
+import jline.console.history.MemoryHistory;
 
 public class JNRPEConsole {
     
@@ -38,7 +40,11 @@ public class JNRPEConsole {
         try {
             boolean exit = false;
             ConsoleReader console = new ConsoleReader();
-            console.setPrompt("JNRPE > ");
+            console.setPrompt("JNRPE> ");
+            console.setHistory(new MemoryHistory());
+            
+            console.addCompleter(new CommandCompleter(pluginRepository, commandRepository));
+            
             while (!exit) {
                 String commandLine = console.readLine();
                 if (commandLine == null || commandLine.trim().length() == 0) {

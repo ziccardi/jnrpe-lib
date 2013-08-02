@@ -30,12 +30,11 @@ public class HelpCommand extends ConsoleCommand {
         super(consoleReader, jnrpe);
         commandMap = commands;
     }
-
     public boolean execute(String[] args) throws Exception {
         if (args == null | args.length == 0) {
             getConsole().println("Available commands are : ");
             for (IConsoleCommand command : commandMap.values()) {
-                getConsole().println("  * " + command.getName());
+                getConsole().println("  * \u001B[1m" + command.getName() + "\u001B[0m");
             }
             
             return false;

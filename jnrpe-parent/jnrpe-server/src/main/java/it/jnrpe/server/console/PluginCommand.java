@@ -32,6 +32,7 @@ import org.apache.commons.cli2.Option;
 import org.apache.commons.cli2.builder.ArgumentBuilder;
 import org.apache.commons.cli2.builder.DefaultOptionBuilder;
 import org.apache.commons.cli2.builder.GroupBuilder;
+import org.apache.commons.cli2.commandline.Parser;
 import org.apache.commons.cli2.util.HelpFormatter;
 public class PluginCommand extends ConsoleCommand {
 
@@ -47,6 +48,19 @@ public class PluginCommand extends ConsoleCommand {
     }
 
     public boolean execute(String[] args) throws Exception {
+        
+        Parser p = new Parser();
+        p.setGroup(getCommandLineGroup());
+        try {
+            p.parse(args);
+        } catch (Exception e) {
+            getConsole().println();
+            getConsole().println("\u001B[1mERROR:\u001B[0m " + e.getMessage());
+            getConsole().println();
+            
+            printHelp();
+            return false;
+        }
         PluginProxy plugin = (PluginProxy) pluginRepository.getPlugin(pluginName);
 
         ReturnValue retVal = plugin.execute(args);
@@ -59,17 +73,6 @@ public class PluginCommand extends ConsoleCommand {
         return NAME + pluginName;
     }
 
-    private Group getGroup() {
-        PluginProxy pp = (PluginProxy) pluginRepository.getPlugin(pluginName);
-        GroupBuilder gBuilder = new GroupBuilder();
-        
-        for (PluginOption po : pp.getOptions()) {
-            gBuilder = gBuilder.withOption(toOption(po));
-        }
-        
-       return gBuilder.create();
-    }
-    
     private Option toOption(PluginOption po) {
         DefaultOptionBuilder oBuilder = new DefaultOptionBuilder();
 
@@ -108,7 +111,7 @@ public class PluginCommand extends ConsoleCommand {
         return oBuilder.create();
     }
     
-    public String getCommandLine() {
+    private Group getCommandLineGroup() {
         PluginProxy pp = (PluginProxy) pluginRepository.getPlugin(pluginName);
         GroupBuilder gBuilder = new GroupBuilder();
         
@@ -116,9 +119,13 @@ public class PluginCommand extends ConsoleCommand {
             gBuilder = gBuilder.withOption(toOption(po));
         }
         
+        return gBuilder.create();
+    }
+    
+    public String getCommandLine() {
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
         
-        Group g = gBuilder.create();
+        Group g = getCommandLineGroup();
         HelpFormatter hf = new HelpFormatter(null, null, null, getConsole().getTerminal().getWidth());
         hf.setGroup(g);
         hf.setPrintWriter(new PrintWriter(bout));
@@ -138,16 +145,10 @@ public class PluginCommand extends ConsoleCommand {
     }
 
     public void printHelp() throws IOException {
-        PluginProxy pp = (PluginProxy) pluginRepository.getPlugin(pluginName);
-        GroupBuilder gBuilder = new GroupBuilder();
-
-        for (PluginOption po : pp.getOptions()) {
-            gBuilder = gBuilder.withOption(toOption(po));
-        }
-        Group g = gBuilder.create();
+        Group g = getCommandLineGroup();
         
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
-        HelpFormatter hf = new HelpFormatter(null, null, null, getConsole().getTerminal().getWidth());
+        HelpFormatter hf = new HelpFormatter("  ", null, null, getConsole().getTerminal().getWidth());
         hf.setGroup(g);
         
         PrintWriter pw = new PrintWriter(bout);
@@ -156,8 +157,9 @@ public class PluginCommand extends ConsoleCommand {
 
         pw.flush();
         
-        getConsole().print("Command Line: " + getName() + " " + getCommandLine());
-        getConsole().println();
+        getConsole().println("\u001B[1mCommand Line:\u001B[0m ");
+        getConsole().println("  " + getName() + " " + getCommandLine());
+        getConsole().println("\u001B[1mUsage:\u001B[0m");
         getConsole().println(new String(bout.toByteArray()));
         
     }

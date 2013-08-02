@@ -19,6 +19,9 @@ import it.jnrpe.ICommandLine;
 import it.jnrpe.ReturnValue;
 import it.jnrpe.Status;
 import it.jnrpe.plugins.IPluginInterface;
+import it.jnrpe.plugins.annotations.Option;
+import it.jnrpe.plugins.annotations.Plugin;
+import it.jnrpe.plugins.annotations.PluginOptions;
 
 /**
  * A simple test plugin that returns the status as specified by the 'status'
@@ -27,6 +30,42 @@ import it.jnrpe.plugins.IPluginInterface;
  * @author Massimiliano Ziccardi
  *
  */
+@Plugin(
+        name = "TEST",
+        description = "This is just a test plugin. Invoke it passing the String you want to get back and,\n" +
+                        "optionally, the status you want.\n" +
+                        "Return:\n" +
+                        "If you don't specify the status parameters, the return code is 'OK'.\n" +
+                        "The returned message is always the text you pass as parameter (-t/--text)\n\n" +
+                        "Example Command Definition (inside the server configuration, in the command section)\n\n" +
+                        "check_test : TEST --text $ARG1$ --status $ARG2$\n\n" +
+                        "or, using the XML:\n\n" +
+                        "<command name=\"test\" plugin_name=\"TEST\">\n" +
+                        "   <arg name=\"text\" value=\"$ARG1$\"/>\n" +
+                        "   <arg name=\"status\" value=\"$ARG2$\"/>\n" +
+                        "</command>\n\n" + 
+                        "Example invocation:\n\n" +
+                        "./check_nrpe -n -H myjnrpeserver -c check_test -a 'Hello!critical'")
+@PluginOptions({
+    @Option(shortName="t",
+                    longName="text",
+                    description="the message to print",
+                    required=true,
+                    hasArgs=true,
+                    argName="text",
+                    optionalArgs=false,
+                    option="text"
+                    ),
+   @Option(shortName="s",
+                    longName="status",
+                    description="the status to return (ok, warning, critical, unknown) - defaults to \"OK\"",
+                    required=false,
+                    hasArgs=true,
+                    argName="statcode",
+                    optionalArgs=false,
+                    option="status"
+                    )
+              })
 public class CTestPlugin implements IPluginInterface {
 
     /**

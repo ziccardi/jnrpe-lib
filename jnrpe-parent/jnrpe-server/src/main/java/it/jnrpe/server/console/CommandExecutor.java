@@ -34,7 +34,6 @@ public class CommandExecutor {
     private Map<String, IConsoleCommand> commandMap = new TreeMap<String, IConsoleCommand>();
     
     private static CommandExecutor instance = null;
-
     
     public static CommandExecutor getInstance(ConsoleReader consoleReader, JNRPE jnrpe, PluginRepository pluginRepository, CommandRepository commandRepository) {
         if (instance == null) {
