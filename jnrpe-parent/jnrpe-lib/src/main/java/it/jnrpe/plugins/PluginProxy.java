@@ -15,6 +15,7 @@ import it.jnrpe.ReturnValue;
 import it.jnrpe.Status;
 import it.jnrpe.utils.BadThresholdException;
 
+import java.io.PrintWriter;
 import java.util.Collection;
 
 import org.apache.commons.cli2.CommandLine;
@@ -98,8 +99,7 @@ public final class PluginProxy extends PluginBase {
             throws BadThresholdException {
         // CommandLineParser clp = new PosixParser();
         try {
-            HelpFormatter hf = new HelpFormatter();
-
+            HelpFormatter hf = new HelpFormatter();	
             // configure a parser
             Parser p = new Parser();
             p.setGroup(mainOptionsGroup);
@@ -117,39 +117,43 @@ public final class PluginProxy extends PluginBase {
             return proxiedPlugin.execute(new PluginCommandLine(cl));
         } catch (OptionException e) {
             // m_Logger.error("ERROR PARSING PLUGIN ARGUMENTS", e);
-
             return new ReturnValue(Status.UNKNOWN, e.getMessage());
         }
     }
 
     /**
-     * Prints the help related to the plugin (standard output).
+     * Prints the help related to the plugin to a specified output
      */
-    public void printHelp() {
-
-        HelpFormatter hf = new HelpFormatter();
+    public void printHelp(PrintWriter out) {
+    	HelpFormatter hf = new HelpFormatter();
         StringBuffer sbDivider = new StringBuffer("=");
-
         while (sbDivider.length() < hf.getPageWidth()) {
             sbDivider.append("=");
         }
-        System.out.println(sbDivider.toString());
-        System.out
-                .println("PLUGIN NAME : " + proxyedPluginDefinition.getName());
+        out.println(sbDivider.toString());
+        out.println("PLUGIN NAME : " + proxyedPluginDefinition.getName());
         if (description != null && description.trim().length() != 0) {
-            System.out.println(sbDivider.toString());
-            System.out.println("Description : ");
-            System.out.println();
-            System.out.println(description);
+            out.println(sbDivider.toString());
+            out.println("Description : ");
+            out.println();
+            out.println(description);            
         }
 
         hf.setGroup(mainOptionsGroup);
         // hf.setHeader(m_pluginDef.getName());
         hf.setDivider(sbDivider.toString());
+        hf.setPrintWriter(out);
         hf.print();
         // hf.printHelp(m_pluginDef.getName(), m_Options);
     }
 
+    /**
+     * Prints the help related to the plugin to standard output.
+     */
+    public void printHelp() {
+    	printHelp(new PrintWriter(System.out));
+    }
+    
     /**
      * Not used.
      *
@@ -165,4 +169,6 @@ public final class PluginProxy extends PluginBase {
     protected String getPluginName() {
         return null;
     }
+    
+    
 }

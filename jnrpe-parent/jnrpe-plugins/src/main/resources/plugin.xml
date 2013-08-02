@@ -6,10 +6,12 @@
     <plugin name="CHECK_FILE" definedIn="check_file_plugin.xml" />
     <plugin name="CHECK_JMX" definedIn="check_jmx_plugin.xml" />
     <plugin name="CHECK_DISK" definedIn="check_disk_plugin.xml" />
-    <plugin name="CHECK_USERS" definedIn="check_users_plugin.xml" />
+    <plugin name="CHECK_USERS" definedInClass="it.jnrpe.plugin.CheckUsers" />
     <plugin name="CHECK_MYSQL" definedIn="check_mysql_plugin.xml" />
     <plugin name="CHECK_MYSQL_QUERY" definedIn="check_mysql_query_plugin.xml" />
     <plugin name="CHECK_PGSQL" definedIn="check_pgsql_plugin.xml" />
     <plugin name="CHECK_TOMCAT" definedIn="check_tomcat_plugin.xml" />
-    <plugin name="CHECK_HTTP" definedIn="check_http_plugin.xml" />    
+    <plugin name="CHECK_HTTP" definedIn="check_http_plugin.xml" />
+    <plugin name="CHECK_SSH" definedInClass="it.jnrpe.plugin.CheckSsh" />
+        
 </plugins>

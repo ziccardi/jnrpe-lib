@@ -20,6 +20,9 @@ import it.jnrpe.Status;
 import it.jnrpe.plugins.Metric;
 import it.jnrpe.plugins.MetricGatheringException;
 import it.jnrpe.plugins.PluginBase;
+import it.jnrpe.plugins.annotations.Option;
+import it.jnrpe.plugins.annotations.Plugin;
+import it.jnrpe.plugins.annotations.PluginOptions;
 import it.jnrpe.utils.BadThresholdException;
 import it.jnrpe.utils.thresholds.ThresholdsEvaluatorBuilder;
 
@@ -40,8 +43,52 @@ import java.util.List;
  * @author Frederico Campos
  *
  */
-public class CheckUsers extends PluginBase {
+@Plugin(
+		name = "CHECK_USERS",
+		description = "This plugin checks the number of users currently logged in on the\n" +
+				"local system and generates an error if the number exceeds the thresholds specified.\n" +
+				"EXAMPLES\n" +
+				"The example will be based upon the following command definition (ini file)\n\n" +
 
+			    "check_user : CHECK_USER --warning $ARG1$ --critical $ARG2$\n\n"+
+			
+			    "* Example 1 (Windows and Unix)\n"+
+			    "The following example will give a WARNING if the number of logged in users exceeds 10 and a CRITICAL message if the number of users exceeds 20\n\n"+
+			
+				"check_nrpe -H myjnrpeserver -c check_users -a '10:!20:'")
+
+@PluginOptions({
+
+	@Option(shortName="w",
+			longName="warning",
+			description="Set WARNING status if more than INTEGER users are logged in",
+			required=false,
+			hasArgs=true,
+			argName="warning",
+			optionalArgs=false,
+			option="warning"
+			),
+			
+	@Option(shortName="c",
+			longName="critical",
+			description="Set CRITICAL status if more than INTEGER users are logged in",
+			required=false,
+			hasArgs=true,
+			argName="critical",
+			optionalArgs=false,
+			option="critical"),
+			
+	@Option(shortName="T",
+			longName="th",
+			description="Configure a threshold. Format : metric={metric},ok={range},warn={range},crit={range},unit={unit},prefix={SI prefix}",
+			required=false,
+			hasArgs=true,
+			argName="critical",
+			optionalArgs=false,
+			option="th")
+})
+public class CheckUsers extends PluginBase {
+	
     @Override
     public void configureThresholdEvaluatorBuilder(
             ThresholdsEvaluatorBuilder thrb, ICommandLine cl)

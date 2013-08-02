@@ -39,4 +39,4 @@ JNRPE Plugin package
    
    * <<CheckHttp>> : tests the HTTP service on a specified host
    
-   
+   * <<CheckSsh>> : tests ssh connections on a remote host.

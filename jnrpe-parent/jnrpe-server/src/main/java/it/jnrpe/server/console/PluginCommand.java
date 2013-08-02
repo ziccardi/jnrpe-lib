@@ -27,15 +27,12 @@ import java.io.PrintWriter;
 
 import jline.console.ConsoleReader;
 
-import org.apache.commons.cli2.CommandLine;
 import org.apache.commons.cli2.Group;
 import org.apache.commons.cli2.Option;
 import org.apache.commons.cli2.builder.ArgumentBuilder;
 import org.apache.commons.cli2.builder.DefaultOptionBuilder;
 import org.apache.commons.cli2.builder.GroupBuilder;
-import org.apache.commons.cli2.commandline.Parser;
 import org.apache.commons.cli2.util.HelpFormatter;
-
 public class PluginCommand extends ConsoleCommand {
 
     public final static String NAME="plugin:";
@@ -55,7 +52,6 @@ public class PluginCommand extends ConsoleCommand {
         ReturnValue retVal = plugin.execute(args);
         
         getConsole().println(retVal.getMessage());
-        
         return false;
     }
 

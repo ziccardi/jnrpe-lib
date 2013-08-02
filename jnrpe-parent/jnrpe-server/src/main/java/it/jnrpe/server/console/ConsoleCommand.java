@@ -15,6 +15,8 @@
  */
 package it.jnrpe.server.console;
 
+import java.io.IOException;
+
 import jline.console.ConsoleReader;
 import it.jnrpe.JNRPE;
 
@@ -33,5 +35,9 @@ public abstract class ConsoleCommand implements IConsoleCommand {
     
     protected ConsoleReader getConsole() {
         return console;
+    }
+    
+    protected void println(String msg) throws IOException {
+    	getConsole().println(msg);
     }
 }
