@@ -13,6 +13,7 @@ package it.jnrpe.commands;
 import it.jnrpe.utils.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -164,5 +165,9 @@ public final class CommandDefinition {
     public CommandDefinition addArgument(final CommandOption arg) {
         optionsList.add(arg);
         return this;
+    }
+    
+    public Collection<CommandOption> getOptions() {
+        return optionsList;
     }
 }
