@@ -73,7 +73,7 @@ public class CheckHttpTest implements Constants {
 
 		JNRPEClient client = new JNRPEClient(BIND_ADDRESS, JNRPE_PORT, false);
 		ReturnValue ret = client.sendCommand("CHECK_HTTP_OK", "localhost", "9000");
-		Assert.assertEquals(ret.getStatus(), Status.OK);
+		Assert.assertEquals(ret.getMessage(), Status.OK, ret.getStatus());
 	}
 
 	/**
@@ -97,17 +97,17 @@ public class CheckHttpTest implements Constants {
 				"9000",
 				"Hello World,This is a paragraph",
 				"Java");
-		Assert.assertEquals(ret.getStatus(), Status.OK);
+		Assert.assertEquals(ret.getMessage(), ret.getStatus(), Status.OK);
 
 		ret = client.sendCommand("CHECK_EXPECTED", 
 				"localhost",
 				"9000",
 				"GET from JNRPE detected",
 				"JNRPE");
-		Assert.assertEquals(ret.getStatus(), Status.OK);
+		Assert.assertEquals(Status.OK, ret.getStatus());
 
 		ret = client.sendCommand("CHECK_EXPECTED", "localhost", "9000", "This will throw a warning!", "Java");
-		Assert.assertEquals( Status.WARNING, ret.getStatus());	
+		Assert.assertEquals(ret.getMessage(), Status.WARNING, ret.getStatus());	
 
 	}
 
@@ -129,7 +129,7 @@ public class CheckHttpTest implements Constants {
 		JNRPEClient client = new JNRPEClient(BIND_ADDRESS, JNRPE_PORT, false);
 
 		ReturnValue ret = client.sendCommand("CHECK_REGEX", "localhost", "9000", "(hello world)");
-		Assert.assertEquals(Status.CRITICAL, ret.getStatus());
+		Assert.assertEquals(ret.getMessage(), Status.CRITICAL, ret.getStatus());
 	}
 
 	@Test
@@ -146,7 +146,7 @@ public class CheckHttpTest implements Constants {
 
 		JNRPEClient client = new JNRPEClient(BIND_ADDRESS, JNRPE_PORT, false);	
 		ReturnValue ret = client.sendCommand("CHECK_POST", "localhost", "9000", post, expectedString);		
-		Assert.assertEquals(Status.OK, ret.getStatus());
+		Assert.assertEquals(ret.getMessage(), Status.OK, ret.getStatus());
 
 	}    
 
@@ -163,7 +163,7 @@ public class CheckHttpTest implements Constants {
 		.addArgument(new CommandOption("hostname", "$ARG1$")));
 		JNRPEClient client = new JNRPEClient(BIND_ADDRESS, JNRPE_PORT, false);
 		ReturnValue ret = client.sendCommand("CHECK_OUTSIDE_OK", "google.com");
-		Assert.assertEquals(ret.getStatus(), Status.OK);
+		Assert.assertEquals(ret.getMessage(), Status.OK, ret.getStatus());
 	}
 
 
@@ -178,7 +178,7 @@ public class CheckHttpTest implements Constants {
 				);
 		JNRPEClient client = new JNRPEClient(BIND_ADDRESS, JNRPE_PORT, false);
 		ReturnValue ret = client.sendCommand("CHECK_NOBODY", "localhost", "9000", "200 OK");		
-		Assert.assertEquals(ret.getStatus(), Status.OK);
+		Assert.assertEquals(ret.getMessage(), Status.OK, ret.getStatus());
 	}
 
 	@Test
@@ -189,7 +189,7 @@ public class CheckHttpTest implements Constants {
 		.addArgument(new CommandOption("certificate", "$ARG2$")));
 		JNRPEClient client = new JNRPEClient(BIND_ADDRESS, JNRPE_PORT, false);
 		ReturnValue ret = client.sendCommand("CHECK_CERTIFICATE", "google.com", "300:");		
-		Assert.assertEquals(ret.getStatus(), Status.CRITICAL);
+		Assert.assertEquals(ret.getMessage(), Status.CRITICAL, ret.getStatus());
 	}
 
 	// @todo
