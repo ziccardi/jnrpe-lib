@@ -162,28 +162,22 @@ public class CheckHttp extends PluginBase {
         if (hostname == null){
         	throw new MetricGatheringException("No hostname specified.", Status.WARNING, null);
         }
-        String port =
-                cl.hasOption("port") ? cl.getOptionValue("port") : ""
-                        + DEFAULT_PORT;
-        String path =
-                cl.hasOption("url") ? cl.getOptionValue("url") : DEFAULT_PATH;
-        String method =
-                cl.hasOption("method") ? cl.getOptionValue("method")
-                        .toUpperCase() : DEFAULT_METHOD;
+        
+        String port = cl.getOptionValue("port", DEFAULT_PORT);
+        String path = cl.getOptionValue("url", DEFAULT_PATH);
+        String method = cl.getOptionValue("method", DEFAULT_METHOD);
+
         int timeout = DEFAULT_TIMEOUT;
         if (cl.hasOption("post")) {
             method = "POST";
         }
         boolean ssl = false;
         if (cl.hasOption("ssl") || cl.getOptionValue("certificate") != null) {
-            if (cl.getOptionValue("ssl") != null) {
-                port = cl.getOptionValue("ssl");
-            } else {
-                port = DEFAULT_SSL_PORT;
-            }
+            port = cl.getOptionValue("ssl", DEFAULT_SSL_PORT);
             ssl = true;
         }
-        if (cl.getOptionValue("timeout") != null) {
+
+        if (cl.hasOption("timeout")) {
             try {
                 timeout = Integer.parseInt(cl.getOptionValue("timeout"));
             } catch (NumberFormatException e) {
@@ -204,9 +198,9 @@ public class CheckHttp extends PluginBase {
         String response =
                 getHttpResponse(cl, hostname, port, method, path, timeout, ssl,
                         metrics);
-        int ellapsed =
+        int elapsed =
                 (int) Utils.milliToSec(System.currentTimeMillis() - then);
-        metrics.addAll(analyzeResponse(cl, response, ellapsed));
+        metrics.addAll(analyzeResponse(cl, response, elapsed));
         return metrics;
     }
 
