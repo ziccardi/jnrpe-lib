@@ -40,4 +40,14 @@ public abstract class ConsoleCommand implements IConsoleCommand {
     protected void println(String msg) throws IOException {
     	getConsole().println(msg);
     }
+    
+    protected String highlight(final String msg) {
+        if (msg == null){
+            throw new IllegalArgumentException("Message can't be null");
+        }
+        
+        return new StringBuffer("\u001B[1m")
+            .append(msg)
+            .append("\u001B[0m").toString();
+    }
 }

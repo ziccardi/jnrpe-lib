@@ -34,7 +34,8 @@ public class HelpCommand extends ConsoleCommand {
         if (args == null | args.length == 0) {
             getConsole().println("Available commands are : ");
             for (IConsoleCommand command : commandMap.values()) {
-                getConsole().println("  * \u001B[1m" + command.getName() + "\u001B[0m");
+                //getConsole().println("  * \u001B[1m" + command.getName() + "\u001B[0m");
+                getConsole().println("  * " + highlight(command.getName()));
             }
             
             return false;

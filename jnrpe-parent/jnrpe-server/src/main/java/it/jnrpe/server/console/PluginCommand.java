@@ -55,7 +55,8 @@ public class PluginCommand extends ConsoleCommand {
             p.parse(args);
         } catch (Exception e) {
             getConsole().println();
-            getConsole().println("\u001B[1mERROR:\u001B[0m " + e.getMessage());
+            //getConsole().println("\u001B[1mERROR:\u001B[0m " + e.getMessage());
+            getConsole().println(highlight("ERROR: ") + e.getMessage());
             getConsole().println();
             
             printHelp();
@@ -157,9 +158,10 @@ public class PluginCommand extends ConsoleCommand {
 
         pw.flush();
         
-        getConsole().println("\u001B[1mCommand Line:\u001B[0m ");
+        //getConsole().println("\u001B[1mCommand Line:\u001B[0m ");
+        getConsole().println(highlight("Command Line: "));
         getConsole().println("  " + getName() + " " + getCommandLine());
-        getConsole().println("\u001B[1mUsage:\u001B[0m");
+        getConsole().println(highlight("Usage:"));
         getConsole().println(new String(bout.toByteArray()));
         
     }

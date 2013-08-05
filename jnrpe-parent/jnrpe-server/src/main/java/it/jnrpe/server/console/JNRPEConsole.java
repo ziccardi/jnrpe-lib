@@ -36,6 +36,16 @@ public class JNRPEConsole {
         commandRepository = cr;
     }
     
+    protected String highlight(final String msg) {
+        if (msg == null){
+            throw new IllegalArgumentException("Message can't be null");
+        }
+        
+        return new StringBuffer("\u001B[1m")
+            .append(msg)
+            .append("\u001B[0m").toString();
+    }
+    
     public void start() {
         try {
             boolean exit = false;
@@ -53,7 +63,7 @@ public class JNRPEConsole {
                 try {
                     exit = CommandExecutor.getInstance(console, jnrpeInstance, pluginRepository, commandRepository).executeCommand(commandLine);
                 } catch (Exception e) {
-                    console.println(""+ e.getMessage());
+                    console.println(highlight("ERROR: ") + e.getMessage());
                 }
             }
             
