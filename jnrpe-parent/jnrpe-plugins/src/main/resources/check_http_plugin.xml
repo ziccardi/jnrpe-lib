@@ -16,10 +16,10 @@ certificate expiration times.
         required="false" hasArgs="true" argName="port" optionalArgs="false" />
 
    	  <option shortName="u" longName="url" description="URL to get or post, default is '/'."
-        required="true" hasArgs="true" argName="url" optionalArgs="false" />
+        required="false" hasArgs="true" argName="url" optionalArgs="false" />
         
    	  <option shortName="P" longName="post" description="URL encoded POST data."
-        required="true" hasArgs="true" argName="post" optionalArgs="false" />        
+        required="false" hasArgs="true" argName="post" optionalArgs="false" />        
 
       <option shortName="w" longName="warning" description="Response time to result in warning status (seconds)"
         required="false" hasArgs="true" argName="warning" optionalArgs="false" />
