@@ -1,11 +1,10 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	
 	<groupId>net.sf.jnrpe</groupId>
 	<artifactId>jcheck_nrpe</artifactId>
 	<packaging>jar</packaging>
-	<version>2.0.3-RC4-SNAPSHOT</version>
+	<version>2.0.3-RC4</version>
 	<name>jcheck_nrpe</name>
 	<description>jcheck_nrpe is a java implementation of the check_nrpe Nagios plugin. It can be easily embedded inside your code to talk to JNRPE or NRPE.
 Both plain socket and SSL are supported.</description>
@@ -40,7 +39,7 @@ Both plain socket and SSL are supported.</description>
 		<dependency>
 			<groupId>net.sf.jnrpe</groupId>
 			<artifactId>jnrpe-lib</artifactId>
-			<version>1.0.1-RC4-SNAPSHOT</version>
+			<version>1.0.1-RC4</version>
 		</dependency>
 	</dependencies>
 
@@ -170,4 +169,8 @@ Both plain socket and SSL are supported.</description>
 		</site>
 	</distributionManagement>
 
+
+  <scm>
+    <tag>2.0.3-RC4</tag>
+  </scm>
 </project>
