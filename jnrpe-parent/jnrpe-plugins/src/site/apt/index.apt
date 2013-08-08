@@ -16,12 +16,12 @@ JNRPE Plugin package
    
    * <<CheckDisk>> plugin : can check the amount of free space of any passed in path.
    
-   * <<NativePlugin>> : can execute external executable plugins (i.e. native Nagios plugins)
+   * <<NativePlugin>> : can execute external executable plugins (i.e. native {{{http://www.nagios.com/#ref=maxzjnrpe}Nagios}} plugins)
    
    * <<CheckOracle>> plugin : can perform various checks against oracle databases (aliveness,
    tablespace usage, etc.
    
-   * <<CheckJMX>> : can perform JMX queries so that JMX result can be monitored with Nagios.
+   * <<CheckJMX>> : can perform JMX queries so that JMX result can be monitored with {{{http://www.nagios.com/#ref=maxzjnrpe}Nagios}}.
    
    * <<TestPlugin>> : a simple test plugin that can be used to check the JNRPE is correctly 
    installed.

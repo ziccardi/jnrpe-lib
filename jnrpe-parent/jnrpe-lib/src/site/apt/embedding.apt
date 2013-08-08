@@ -10,7 +10,7 @@ Getting Started
 
   Through this tutorial we will refer to a very simple application that computes
   two random number between 1 and 100. 
-  Next we will add the ability to check through Nagios the number values and
+  Next we will add the ability to check through {{{http://www.nagios.com/#ref=maxzjnrpe}Nagios}} the number values and
   return a warning or critical if the random number falls inside a given
   range using a command similar to 
   

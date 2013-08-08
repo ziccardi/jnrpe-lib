@@ -156,9 +156,29 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-site-plugin</artifactId>
+				<version>3.2</version>
+				<dependencies>
+					<dependency><!-- add support for ssh/scp -->
+						<groupId>org.apache.maven.wagon</groupId>
+						<artifactId>wagon-ssh</artifactId>
+						<version>1.0</version>
+					</dependency>
+				</dependencies>
+				<configuration>
+					<siteDirectory>${project.basedir}/src/site</siteDirectory>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
-
+	<distributionManagement>
+		<site>
+			<id>jnrpe-web</id>
+			<url>scp://shell.sourceforge.net/home/project-web/jnrpe/htdocs/jnrpe-lib</url>
+		</site>
+	</distributionManagement>
 	<contributors>
 		<contributor>
 			<name>Athou</name>

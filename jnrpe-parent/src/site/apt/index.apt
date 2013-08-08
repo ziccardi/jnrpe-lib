@@ -10,14 +10,14 @@
 
 Welcome to the JNRPE package
 
-  The JNRPE aims to give you all the tools you need to be able to write and execute Nagios plugins using the
+  The JNRPE aims to give you all the tools you need to be able to write and execute {{{http://www.nagios.com/#ref=maxzjnrpe}Nagios}} plugins using the
   JAVA language. 
   It comprises many modules:
   
-  * {{{./jnrpe-server/index.html}JNRPE Server}} : a server that is able, similarly to NRPE, to execute Nagios plugin. In addition to NRPE, JNRPE is able
+  * {{{./jnrpe-server/index.html}JNRPE Server}} : a server that is able, similarly to NRPE, to execute {{{http://www.nagios.com/#ref=maxzjnrpe}Nagios}} plugin. In addition to NRPE, JNRPE is able
     to execute JAVA plugin without instantiating a new JVM for every execution.
     It is able to execute both JAVA and native plugins. You can, for example, run with JNRPE all the plugins already bundled with
-    Nagios.
+    {{{http://www.nagios.com/#ref=maxzjnrpe}Nagios}}.
   
   * {{{./jnrpe-lib/index.html}JNRPE Library}} : it is the core of JNRPE and implements all the logic of instantiating and executing plugins in response
     of check_nrpe queries. It can be embedded inside your own application to allow you to easily answer to check_nrpe queries.

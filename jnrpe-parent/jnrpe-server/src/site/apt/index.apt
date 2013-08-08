@@ -8,12 +8,12 @@
 
 JNRPE Server
  
-   JNRPE originally started as a java implementation of the NRPE Nagios Addon. 
+   JNRPE originally started as a java implementation of the NRPE {{{http://www.nagios.com/#ref=maxzjnrpe}Nagios}} Addon. 
    As of version 2.0, it has been splitted into several projects to add more
    features and modularity.
    As of version 2.0, JNRPE is fully embeddable, giving you the ability to 
    enable your application to be called from check_nrpe and easily
-   returns values that can be monitored by Nagios.
+   returns values that can be monitored by {{{http://www.nagios.com/#ref=maxzjnrpe}Nagios}}.
    
 * Why JNRPE ?
    
@@ -22,10 +22,10 @@ JNRPE Server
    compiling it again and again on any machine you have to install it and so on.
    
    With JNRPE you can easily write new plugins : you already have out of the box the 
-   protocol implementation, the Nagios threshold syntax parsing, the argument replacing and
+   protocol implementation, the {{{http://www.nagios.com/#ref=maxzjnrpe}Nagios}} threshold syntax parsing, the argument replacing and
    the command line parsing and validation.
    
-   Your plugin must simply return a string (the one that will be visualized in the Nagios console)
+   Your plugin must simply return a string (the one that will be visualized in the {{{http://www.nagios.com/#ref=maxzjnrpe}Nagios}} console)
    and a status code (ERROR, WARNING, OK or UNKNOWN).
    
    JNRPE will take care of loading your plugin inside its own JVM instance and execute it, 
@@ -47,7 +47,7 @@ JNRPE Server
    Let's give a look to a simple example.
    
    Suppose you want to monitor the disk space on a windows machine that has a C and a E disk.
-   You want NAGIOS to raise the following alerts:
+   You want {{{http://www.nagios.com/#ref=maxzjnrpe}Nagios}} to raise the following alerts:
    
      * WARNING if less than 20% of space is available on disk C
      
@@ -89,7 +89,7 @@ JNRPE Server
   check_disk_E : CHECK_DISK --path E: --warning :10 --critical :5
 +------+
 
-   If you want to configure the value of some parameter directly inside Nagios, you can use
+   If you want to configure the value of some parameter directly inside {{{http://www.nagios.com/#ref=maxzjnrpe}Nagios}}, you can use
    argument substitution:
    
 +------+

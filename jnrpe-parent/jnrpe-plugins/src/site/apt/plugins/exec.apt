@@ -1,7 +1,7 @@
 The EXEC Plugin
 
   The EXEC plugin can be used when your check is implemented with an external executable (for example when you want to execute
-  an already existing Nagios native plugin).  
+  an already existing {{{http://www.nagios.com/#ref=maxzjnrpe}Nagios}} native plugin).  
 
   Its use is very simple and is composed of just two parameters:
 
