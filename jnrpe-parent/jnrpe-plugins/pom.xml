@@ -169,9 +169,9 @@
 	<parent>
 		<groupId>net.sf.jnrpe</groupId>
 		<artifactId>jnrpe-parent</artifactId>
-		<version>2.0.3-RC5-SNAPSHOT</version>
+		<version>2.0.3-RC5</version>
 	</parent>
-	<version>0.7.2-RC5-SNAPSHOT</version>
+	<version>0.7.2-RC5</version>
 
 	<contributors>
 		<contributor>
