@@ -43,6 +43,13 @@ Both plain socket and SSL are supported.</description>
 		</dependency>
 	</dependencies>
 
+	<scm>
+		<connection>scm:git:https://github.com/ziccardi/jnrpe-lib.git</connection>
+		<url>https://github.com/ziccardi/jnrpe-lib/tree/master/jnrpe-parent/jcheck_nrpe</url>
+		<developerConnection>scm:git:git@github.com:ziccardi/jnrpe-lib.git</developerConnection>
+		<tag>HEAD</tag>
+	</scm>
+
 	<build>
 		<plugins>
 			<plugin>

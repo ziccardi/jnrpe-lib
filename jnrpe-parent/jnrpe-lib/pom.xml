@@ -30,7 +30,12 @@
 		</developer>
 	</developers>
 
-
+	<scm>
+		<connection>scm:git:https://github.com/ziccardi/jnrpe-lib.git</connection>
+		<url>https://github.com/ziccardi/jnrpe-lib/tree/master/jnrpe-parent/jnrpe-lib</url>
+		<developerConnection>scm:git:git@github.com:ziccardi/jnrpe-lib.git</developerConnection>
+		<tag>HEAD</tag>
+	</scm>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<site.basedir>jnrpe-lib</site.basedir>
