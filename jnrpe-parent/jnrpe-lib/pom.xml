@@ -8,7 +8,7 @@
 	</parent>
 
 	<artifactId>jnrpe-lib</artifactId>
-	<version>1.0.1-RC4</version>
+	<version>1.0.1-RC5-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>jnrpe-lib</name>
@@ -187,8 +187,4 @@
 		</contributor>
 	</contributors>
 	<groupId>net.sf.jnrpe</groupId>
-
-  <scm>
-    <tag>2.0.3-RC4</tag>
-  </scm>
 </project>
