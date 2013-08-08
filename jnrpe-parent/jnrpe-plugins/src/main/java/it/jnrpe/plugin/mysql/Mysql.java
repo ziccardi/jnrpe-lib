@@ -198,7 +198,7 @@ public class Mysql {
      *            the port to set
      */
     public final void setPort(final String serverPort) {
-        this.port = port;
+        this.port = serverPort;
     }
 
     /**

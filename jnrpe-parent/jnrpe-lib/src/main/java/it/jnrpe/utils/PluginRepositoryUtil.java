@@ -141,24 +141,29 @@ public final class PluginRepositoryUtil {
             }
         }
         
-        // Check is the plugin definition is inside the plugin class 
-        // (Annotations)
-        if (plugin.attributeValue("definedInClass") != null){
-        	Class c = null;
-            try {
-                c = cl.loadClass(plugin.attributeValue("definedInClass"));
-            } catch (ClassNotFoundException e) {
-                throw new PluginConfigurationException(e);
-            }
-            return parsePluginClass(c);
-            
-        }
+//        // Check is the plugin definition is inside the plugin class 
+//        // (Annotations)
+//        if (plugin.attributeValue("definedInClass") != null){
+//        	Class c = null;
+//            try {
+//                c = cl.loadClass(plugin.attributeValue("definedInClass"));
+//            } catch (ClassNotFoundException e) {
+//                throw new PluginConfigurationException(e);
+//            }
+//            return parsePluginClass(c);
+//            
+//        }
         
         // None of the above: the plugin definition is inside the main
         // xml file (plugin.xml)
         Class c;
         try {
             c = cl.loadClass(plugin.attributeValue("class"));
+            
+            if (isAnnotated(c)) {
+                return loadFromPluginAnnotation(c);
+            }
+            
         } catch (ClassNotFoundException e) {
             throw new PluginConfigurationException(e);
         }
@@ -182,13 +187,24 @@ public final class PluginRepositoryUtil {
     }
 
     /**
+     * Returns <code>true</code> if the class contains plugin
+     * annotations
+     * @param clazz The plugin class
+     * @return <code>true</code> if the class contains plugin
+     */
+    private static boolean isAnnotated(final Class clazz) {
+        Plugin plugin = (Plugin) clazz.getAnnotation(Plugin.class);
+        return plugin != null;
+    }
+    
+    /**
      * Parse a plugin from class annotations
      * 
      * @param clazz
      * @return
      * PluginDefinition
      */
-    private static PluginDefinition parsePluginClass (final Class clazz){
+    public static PluginDefinition loadFromPluginAnnotation (final Class clazz){
     	Plugin plugin = (Plugin) clazz.getAnnotation(Plugin.class);
     	PluginOptions options = (PluginOptions)clazz.getAnnotation(PluginOptions.class);
     	String name = plugin.name();

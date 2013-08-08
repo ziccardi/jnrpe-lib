@@ -69,6 +69,13 @@ public class SetupTest implements Constants {
     }
 
     public static PluginRepository getPluginRepository() {
+        if (m_pluginRepository == null) {
+            try {
+                setUp();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
         return m_pluginRepository;
     }
 

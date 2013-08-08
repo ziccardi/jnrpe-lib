@@ -17,9 +17,9 @@ Both plain socket and SSL are supported.</description>
 	</licenses>
 
 	<parent>
-		<groupId>net.sf.jnrpe</groupId>
-		<artifactId>jnrpe-parent</artifactId>
-		<version>2.0.3-RC4-SNAPSHOT</version>
+		<groupId>org.sonatype.oss</groupId>
+		<artifactId>oss-parent</artifactId>
+		<version>7</version>
 	</parent>
 
 
@@ -31,13 +31,14 @@ Both plain socket and SSL are supported.</description>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>net.sf.jnrpe</groupId>
-			<artifactId>jnrpe-lib</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>org.apache.mahout.commons</groupId>
 			<artifactId>commons-cli</artifactId>
 			<version>2.0-mahout</version>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.jnrpe</groupId>
+			<artifactId>jnrpe-lib</artifactId>
+			<version>1.0.1-RC4-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 
@@ -115,6 +116,34 @@ Both plain socket and SSL are supported.</description>
 					</execution>
 				</executions>
 			</plugin>
+			
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>2.2.1</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.9</version>
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
+	<groupId>net.sf.jnrpe</groupId>
 </project>

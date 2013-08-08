@@ -20,6 +20,9 @@ import it.jnrpe.ReturnValue;
 import it.jnrpe.Status;
 import it.jnrpe.events.LogEvent;
 import it.jnrpe.plugins.PluginBase;
+import it.jnrpe.plugins.annotations.Option;
+import it.jnrpe.plugins.annotations.Plugin;
+import it.jnrpe.plugins.annotations.PluginOptions;
 import it.jnrpe.utils.BadThresholdException;
 import it.jnrpe.utils.StreamManager;
 import it.jnrpe.utils.ThresholdUtil;
@@ -55,6 +58,36 @@ import java.math.BigDecimal;
  *
  * @author Massimiliano Ziccardi
  */
+@Plugin(
+        name = "CHECK_FILE",
+        description = "This plugin is used to perform various check against files:\n\n" +
+        "  * checks that a file exists (-f)\n" +
+        "  * checks that a file does not exists (-F)\n" +
+        "  * check file age (requires -f)\n" +
+        "  * check file size (requires -f)\n" +
+        "  * check how many lines of a file contains the given string. You can specify the warning and the critical range. (requires -f)\n" +
+        "     EXAMPLE: -f /path/to/your/file --contains MyString,0:10,11:\n" +
+        "  * check that a string is not inside the file (requires -f)\n"
+                      )
+@PluginOptions({
+    @Option(shortName="F", longName="FILE", description="The path of the file the must not exist",
+            required=false, hasArgs=true, argName="path", optionalArgs=false, option="FILE"),
+    @Option(shortName="f", longName="file", description="The path to the file to check",
+            required=false, hasArgs=true, argName="path", optionalArgs=false, option="file"),
+    @Option(shortName="w", longName="warning", description="The max age (in seconds) before a warning is raised",
+            required=false, hasArgs=true, argName="age threshold", optionalArgs=false, option="warning"),
+    @Option(shortName="c", longName="critical", description="The max age (in seconds) before a critical is raisedk",
+            required=false, hasArgs=true, argName="age threshold", optionalArgs=false, option="critical"),
+    @Option(shortName="W", longName="sizewarning", description="The min file size (in bytes) before a warning is raised",
+            required=false, hasArgs=true, argName="size threshold", optionalArgs=false, option="sizewarning"),
+    @Option(shortName="C", longName="sizecritical", description="The min file size (in bytes) before a critical is raised",
+            required=false, hasArgs=true, argName="size threshold", optionalArgs=false, option="sizecritical"),
+    @Option(shortName="O", longName="contains", 
+        description="The string that must be found inside the file in the format STRING,WARNING_RANGE,CRITICAL_RANGE.",
+            required=false, hasArgs=true, argName="string to check", optionalArgs=false, option="contains"),
+    @Option(shortName="N", longName="notcontains", description="The path to the file to check",
+            required=false, hasArgs=true, argName="string to check", optionalArgs=false, option="notcontains"),
+              })
 public class CCheckFile extends PluginBase {
 
     /**

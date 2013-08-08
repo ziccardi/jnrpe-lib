@@ -21,6 +21,7 @@ import it.jnrpe.client.JNRPEClient;
 import it.jnrpe.commands.CommandDefinition;
 import it.jnrpe.commands.CommandOption;
 import it.jnrpe.commands.CommandRepository;
+import it.jnrpe.plugin.CheckUsers;
 import it.jnrpe.plugins.PluginDefinition;
 import it.jnrpe.utils.PluginRepositoryUtil;
 
@@ -38,11 +39,8 @@ public class CheckUsersPluginTest implements Constants {
 
     @BeforeTest
     public void setup() throws Exception {
-        ClassLoader cl = CheckFilePluginTest.class.getClassLoader();
-
         PluginDefinition checkUsers =
-                PluginRepositoryUtil.parseXmlPluginDefinition(cl,
-                        cl.getResourceAsStream("check_users_plugin.xml"));
+                PluginRepositoryUtil.loadFromPluginAnnotation(CheckUsers.class);
 
         SetupTest.getPluginRepository().addPluginDefinition(checkUsers);
     }

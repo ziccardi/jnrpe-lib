@@ -11,15 +11,15 @@ JNRPE Server
    JNRPE originally started as a java implementation of the NRPE Nagios Addon. 
    As of version 2.0, it has been splitted into several projects to add more
    features and modularity.
-   As a result, as of version 2.0, JNRPE is fully embeddable to be able to add
-   to your application the ability to be called from check_nrpe and easily
+   As of version 2.0, JNRPE is fully embeddable, giving you the ability to 
+   enable your application to be called from check_nrpe and easily
    returns values that can be monitored by Nagios.
    
 * Why JNRPE ?
    
    But why another implementation of NRPE? Wasn't NRPE enough? The answer is : maybe.
    It would be enough if you don't need to write JAVA plugin, if you don't care 
-   compiling it again on any machine you have to install and so on.
+   compiling it again and again on any machine you have to install it and so on.
    
    With JNRPE you can easily write new plugins : you already have out of the box the 
    protocol implementation, the Nagios threshold syntax parsing, the argument replacing and

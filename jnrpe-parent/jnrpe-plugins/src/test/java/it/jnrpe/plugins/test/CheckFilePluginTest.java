@@ -21,6 +21,7 @@ import it.jnrpe.client.JNRPEClient;
 import it.jnrpe.commands.CommandDefinition;
 import it.jnrpe.commands.CommandOption;
 import it.jnrpe.commands.CommandRepository;
+import it.jnrpe.plugin.CCheckFile;
 import it.jnrpe.plugins.PluginDefinition;
 import it.jnrpe.utils.PluginRepositoryUtil;
 
@@ -37,11 +38,14 @@ public class CheckFilePluginTest implements Constants {
 
     @BeforeTest
     public void setup() throws Exception {
-        ClassLoader cl = CheckFilePluginTest.class.getClassLoader();
+        //ClassLoader cl = CheckFilePluginTest.class.getClassLoader();
 
-        PluginDefinition checkFile =
-                PluginRepositoryUtil.parseXmlPluginDefinition(cl,
-                        cl.getResourceAsStream("check_file_plugin.xml"));
+        PluginDefinition checkFile = 
+                PluginRepositoryUtil.loadFromPluginAnnotation(CCheckFile.class);
+        
+//        PluginDefinition checkFile =
+//                PluginRepositoryUtil.parseXmlPluginDefinition(cl,
+//                        cl.getResourceAsStream("check_file_plugin.xml"));
 
         SetupTest.getPluginRepository().addPluginDefinition(checkFile);
     }
