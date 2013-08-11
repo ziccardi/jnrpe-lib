@@ -31,16 +31,36 @@ import java.util.Properties;
  */
 public class HttpUtils {
 
+	/**
+	 * Do a http get request and return response
+	 * @param url
+	 * @param requestProps
+	 * @param timeout
+	 * @param includeHeaders
+	 * @param ignoreBody
+	 * @return
+	 * @throws Exception
+	 */
 	public static String doGET(final URL url, 
 			final Properties requestProps,
 			final Integer timeout,
 			boolean includeHeaders,
-			boolean ignoreBody
-			
+			boolean ignoreBody			
 			) throws Exception {
 		return doRequest(url, requestProps, timeout, includeHeaders, ignoreBody, "GET");
 	}
-
+	
+	/**
+	 * Do a http head request and return response
+	 *  
+	 * @param url
+	 * @param requestProps
+	 * @param timeout
+	 * @param includeHeaders
+	 * @param ignoreBody
+	 * @return
+	 * @throws Exception
+	 */
 	public static String doHEAD(final URL url, 
 			final Properties requestProps,
 			final Integer timeout,
@@ -50,19 +70,37 @@ public class HttpUtils {
 		return doRequest(url, requestProps, timeout, includeHeaders, ignoreBody, "HEAD");
 	}
 
+	/**
+	 * Do a http post request and return response
+	 * 
+	 * @param url
+	 * @param requestProps
+	 * @param timeout
+	 * @param encodedData
+	 * @param includeHeaders
+	 * @param ignoreBody
+	 * @return
+	 * @throws IOException
+	 */
 	public static String doPOST(final URL url, 
 			final Properties requestProps,
 			final Integer timeout,
 			final String encodedData,
 			boolean includeHeaders,
-			boolean ignoreBody) throws IOException {
-		
+			boolean ignoreBody) throws IOException {		
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 		setRequestProperties(requestProps, conn, timeout);
 		sendPostData(conn, encodedData);
 		return parseHttpResponse(conn, includeHeaders, ignoreBody);
 	} 
 
+	/**
+	 * Submits http post data to an HttpURLConnection
+	 *
+	 * @param conn
+	 * @param encodedData
+	 * @throws IOException
+	 */
 	public static void sendPostData(HttpURLConnection conn, String encodedData) throws IOException {
 		conn.setDoOutput(true);
 		conn.setRequestMethod("POST");
@@ -95,6 +133,13 @@ public class HttpUtils {
 		return response;
 	}
 	
+	/**
+	 * Sets request headers for an http connection
+	 * 
+	 * @param props
+	 * @param conn
+	 * @param timeout
+	 */
 	public static void setRequestProperties(final Properties props,
 			HttpURLConnection conn,
 			Integer timeout){
@@ -113,6 +158,15 @@ public class HttpUtils {
 		
 	}
 	
+	/**
+	 * Parses an http request response
+	 * 
+	 * @param conn
+	 * @param includeHeaders
+	 * @param ignoreBody
+	 * @return
+	 * @throws IOException
+	 */
 	public static String parseHttpResponse(HttpURLConnection conn, 
 			boolean includeHeaders, 
 			boolean ignoreBody) throws IOException {
@@ -137,7 +191,6 @@ public class HttpUtils {
 			}
 			in.close();
 		}
-//		System.out.println(buff.toString());
 		return buff.toString();
 	}
 
