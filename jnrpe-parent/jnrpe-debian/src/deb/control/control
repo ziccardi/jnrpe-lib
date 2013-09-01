@@ -1,0 +1,7 @@
+Package: jnrpe
+Version: 2.0.3-RC4-SNAPSHOT
+Section: web
+Priority: optional
+Architecture: all
+Maintainer: Frederico Campos
+Description:The JNRPE embeddable library
