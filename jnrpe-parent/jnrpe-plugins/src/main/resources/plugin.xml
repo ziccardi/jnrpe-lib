@@ -14,4 +14,5 @@
     <plugin name="CHECK_HTTP" definedIn="check_http_plugin.xml" />
     <plugin name="CHECK_BY_SSH" class="it.jnrpe.plugin.CheckBySsh" />
     <plugin name="CHECK_SSH" class="it.jnrpe.plugin.CheckSsh" />
+    <plugin name="CHECK_PING" class="it.jnrpe.plugin.CheckPing" />
 </plugins>
