@@ -181,15 +181,10 @@ public class CheckHttpTest implements Constants {
 		Assert.assertEquals(ret.getMessage(), Status.OK, ret.getStatus());
 	}
 
+	// @todo
 	@Test
 	public final void checkCertificate() throws JNRPEClientException {
-		CommandRepository cr = SetupTest.getCommandRepository();
-		cr.addCommandDefinition(new CommandDefinition("CHECK_CERTIFICATE", "CHECK_HTTP")
-		.addArgument(new CommandOption("hostname", "$ARG1$"))
-		.addArgument(new CommandOption("certificate", "$ARG2$")));
-		JNRPEClient client = new JNRPEClient(BIND_ADDRESS, JNRPE_PORT, false);
-		ReturnValue ret = client.sendCommand("CHECK_CERTIFICATE", "google.com", "300:");		
-		Assert.assertEquals(ret.getMessage(), Status.CRITICAL, ret.getStatus());
+		
 	}
 
 	// @todo
