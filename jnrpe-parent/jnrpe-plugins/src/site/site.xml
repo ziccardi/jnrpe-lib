@@ -8,13 +8,15 @@
             <item name="Download" href="download.html" />
         </menu>
         <menu name="User Guide">
+            <item name="The CHECK_BY_SSH plugin" href="plugins/check_by_ssh.html" />
             <item name="The CHECK_DISK plugin" href="plugins/check_disk.html" />
             <item name="The CHECK_FILE plugin" href="plugins/check_file.html" />
-            <item name="The CHECK_HTP plugin" href="plugins/check_http.html" />
+            <item name="The CHECK_HTTP plugin" href="plugins/check_http.html" />
             <item name="The CHECK_JMX plugin" href="plugins/check_jmx.html" />
             <item name="The CHECK_MYSQL plugin" href="plugins/check_mysql.html" />
             <item name="The CHECK_MYSQL_QUERY plugin" href="plugins/check_mysql_query.html" />
             <item name="The CHECK_ORACLE plugin" href="plugins/check_oracle.html" />
+            <item name="The CHECK_PING plugin" href="plugins/check_ping.html" />
             <item name="The CHECK_PGSQL plugin" href="plugins/check_pgsql.html" />
             <item name="The CHECK_SSH plugin" href="plugins/check_ssh.html" />
             <item name="The CHECK_TOMCAT plugin" href="plugins/check_tomcat.html" />

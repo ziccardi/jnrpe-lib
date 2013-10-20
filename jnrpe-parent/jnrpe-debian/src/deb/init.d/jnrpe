@@ -1,0 +1,72 @@
+#!/bin/sh
+### BEGIN INIT INFO
+# Provides: jnrpe
+# Required-Start: $start_dependencies
+# Required-Stop: $stop_dependencies
+# Default-Start:  $w_start_levels
+# Default-Stop: $w_stop_levels
+# Short-Description: yajsw wrapper for jnrpe
+# Description: Java Nagios Remote Plugin Executor
+### END INIT INFO
+# config: /usr/local/jnrpe/wrapper/etc/jnrpe.conf
+# pidfile: /run/wrapper.jnrpe.pid
+# apppidfile: /run/wrapper.$JAVA.jnrpe.pid
+#-----------------------------------------------------------------------------
+# YAJSW sh script template.  Suitable for starting and stopping
+#  wrapped daemon on POSIX platforms.
+#-----------------------------------------------------------------------------
+
+JAVA=/usr/bin/java
+
+status() {
+    eval ""$JAVA" "-Dwrapper.pidfile=/run/wrapper.jnrpe.pid" "-Dwrapper.service=true" "-Dwrapper.visible=false" "-Djna_tmpdir=/usr/local/jnrpe/wrapper" "-jar" "/usr/local/jnrpe/wrapper/wrapper.jar" "-qx" "/usr/local/jnrpe/wrapper/etc/jnrpe.conf"  > /dev/null 2>&1"
+    if [ $? -eq 0 ]
+    then
+       echo "Service jnrpe is runnning"
+    else
+       echo "Service jnrpe is not runnning"
+    fi
+}
+
+stopit() {
+    echo "Stopping jnrpe ..."
+	eval ""$JAVA" "-Dwrapper.pidfile=/run/wrapper.jnrpe.pid" "-Dwrapper.service=true" "-Dwrapper.visible=false" "-Djna_tmpdir=/usr/local/jnrpe/wrapper" "-jar" "/usr/local/jnrpe/wrapper/wrapper.jar" "-px" "/usr/local/jnrpe/wrapper/etc/jnrpe.conf"  > /dev/null 2>&1"
+}
+startit() {
+    echo "Starting jnrpe ..."
+    eval ""$JAVA" "-Dwrapper.pidfile=/run/wrapper.jnrpe.pid" "-Dwrapper.service=true" "-Dwrapper.visible=false" "-Djna_tmpdir=/usr/local/jnrpe/wrapper" "-jar" "/usr/local/jnrpe/wrapper/wrapper.jar" "-tx" "/usr/local/jnrpe/wrapper/etc/jnrpe.conf"  > /dev/null 2>&1"
+    
+}
+
+
+case "$1" in
+    'start')
+        startit
+        ;;
+
+    'stop')
+        stopit
+        ;;
+
+    'restart')
+        stopit
+        startit
+        ;;
+        
+        
+    'force-reload')
+        stopit
+        startit
+        ;;
+
+    'status')
+        status
+        ;;
+
+    *)
+        echo "Usage: $0 { start | stop | restart | status }"
+        exit 1
+        ;;
+esac
+
+exit $?
