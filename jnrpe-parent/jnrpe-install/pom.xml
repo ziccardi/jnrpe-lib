@@ -13,7 +13,7 @@
 	</parent>
 
 	<properties>
-		<staging.dir>${project.build.directory}/staging</staging.dir>
+		<izpack.staging.dir>${project.build.directory}/staging</izpack.staging.dir>
 	</properties>
 
 	<dependencies>
@@ -49,22 +49,23 @@
 		<resources>
 			<resource>
 				<directory>${basedir}/src/main/izpack</directory>
-				<targetPath>${staging.dir}</targetPath>
+				<targetPath>${izpack.staging.dir}</targetPath>
 				<filtering>true</filtering>
 			</resource>
 			<resource>
 				<directory>${basedir}/img</directory>
-				<targetPath>${staging.dir}/img</targetPath>
+				<targetPath>${izpack.staging.dir}/img</targetPath>
 				<filtering>true</filtering>
 			</resource>
 			<resource>
 				<directory>${basedir}/std-docs</directory>
-				<targetPath>${staging.dir}/std-docs</targetPath>
+				<targetPath>${izpack.staging.dir}/std-docs</targetPath>
 				<filtering>true</filtering>
 			</resource>
 		</resources>
 
 		<plugins>
+		
 			<!-- prepare dependencies so that izpack jar tag to pickup at compile 
 				time -->
 			<plugin>
@@ -81,7 +82,7 @@
 						<configuration>
 							<stripVersion>false</stripVersion>
 							<excludeGroupIds>org.codehaus.izpack</excludeGroupIds> <!-- dont want standalone compiler -->
-							<outputDirectory>${staging.dir}/dependency</outputDirectory>
+							<outputDirectory>${izpack.staging.dir}/dependency</outputDirectory>
 						</configuration>
 					</execution>
 				</executions>
@@ -112,9 +113,9 @@
 				<artifactId>izpack-maven-plugin</artifactId>
 				<version>5.0.0-beta11</version>
 				<configuration>
-					<basedir>${staging.dir}</basedir>
-					<installFile>${staging.dir}/install.xml</installFile>
-					<customPanelDirectory>${staging.dir}</customPanelDirectory>
+					<basedir>${izpack.staging.dir}</basedir>
+					<installFile>${izpack.staging.dir}/install.xml</installFile>
+					<customPanelDirectory>${izpack.staging.dir}</customPanelDirectory>
 				</configuration>
 				<executions>
 					<execution>

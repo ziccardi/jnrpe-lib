@@ -35,6 +35,11 @@ import org.testng.annotations.Test;
 public class CheckTomcatTest implements Constants {
 
     /**
+     * The port where tomcat listens.
+     */
+    private static final String TOMCAT_PORT = "7070";
+
+    /**
      * The full path to the already existing tomcat installation.
      * If this variable is null, than tomcat gets automatically
      * downloaded during test execution phase.
@@ -134,6 +139,8 @@ public class CheckTomcatTest implements Constants {
                                     ContainerType.INSTALLED,
                                     ConfigurationType.STANDALONE);
 
+            configuration.setProperty("cargo.servlet.port", "7070");
+
             container =
                     (InstalledLocalContainer) new DefaultContainerFactory()
                             .createContainer(
@@ -172,7 +179,7 @@ public class CheckTomcatTest implements Constants {
         JNRPEClient client = new JNRPEClient(BIND_ADDRESS, JNRPE_PORT, false);
         ReturnValue ret =
                 client.sendCommand("CHECK_TOMCAT",
-                        "127.0.0.1", "8080", "tomcat", "tomcat");
+                        "127.0.0.1", TOMCAT_PORT, "tomcat", "tomcat");
 
         Assert.assertEquals(ret.getStatus(), Status.OK, ret.getMessage());
     }
@@ -195,7 +202,7 @@ public class CheckTomcatTest implements Constants {
                 );
 
         JNRPEClient client = new JNRPEClient(BIND_ADDRESS, JNRPE_PORT, false);
-        ReturnValue ret = client.sendCommand("CHECK_THREAD_WARN", "127.0.0.1", "8080", "tomcat", "tomcat", "1:");
+        ReturnValue ret = client.sendCommand("CHECK_THREAD_WARN", "127.0.0.1", TOMCAT_PORT, "tomcat", "tomcat", "1:");
 
         Assert.assertEquals(ret.getStatus(), Status.WARNING, ret.getMessage());
     }
@@ -220,7 +227,7 @@ public class CheckTomcatTest implements Constants {
                     );
 
             JNRPEClient client = new JNRPEClient(BIND_ADDRESS, JNRPE_PORT, false);
-            ReturnValue ret = client.sendCommand("CHECK_THREAD_CRIT", "127.0.0.1", "8080", "tomcat", "tomcat", "1:");
+            ReturnValue ret = client.sendCommand("CHECK_THREAD_CRIT", "127.0.0.1", TOMCAT_PORT, "tomcat", "tomcat", "1:");
 
             Assert.assertEquals(ret.getStatus(), Status.CRITICAL, ret.getMessage());
         }catch(Exception e){
@@ -246,7 +253,7 @@ public class CheckTomcatTest implements Constants {
                 );
 
         JNRPEClient client = new JNRPEClient(BIND_ADDRESS, JNRPE_PORT, false);
-        ReturnValue ret = client.sendCommand("CHECK_THREAD_PERC_WARN", "127.0.0.1", "8080", "tomcat", "tomcat", ":99.9%");
+        ReturnValue ret = client.sendCommand("CHECK_THREAD_PERC_WARN", "127.0.0.1", TOMCAT_PORT, "tomcat", "tomcat", ":99.9%");
 
         Assert.assertEquals(ret.getStatus(), Status.WARNING, ret.getMessage());
     }
@@ -269,7 +276,7 @@ public class CheckTomcatTest implements Constants {
                 );
 
         JNRPEClient client = new JNRPEClient(BIND_ADDRESS, JNRPE_PORT, false);
-        ReturnValue ret = client.sendCommand("CHECK_THREAD_PERC_CRIT", "127.0.0.1", "8080", "tomcat", "tomcat", ":99.9%");
+        ReturnValue ret = client.sendCommand("CHECK_THREAD_PERC_CRIT", "127.0.0.1", TOMCAT_PORT, "tomcat", "tomcat", ":99.9%");
 
         Assert.assertEquals(ret.getStatus(), Status.CRITICAL, ret.getMessage());
     }
@@ -288,7 +295,7 @@ public class CheckTomcatTest implements Constants {
                 );
 
         JNRPEClient client = new JNRPEClient(BIND_ADDRESS, JNRPE_PORT, false);
-        ReturnValue ret = client.sendCommand("CHECK_MEM_PERC_WARNING", "127.0.0.1", "8080", "tomcat", "tomcat", ":99.9%");
+        ReturnValue ret = client.sendCommand("CHECK_MEM_PERC_WARNING", "127.0.0.1", TOMCAT_PORT, "tomcat", "tomcat", ":99.9%");
 
         Assert.assertEquals(ret.getStatus(), Status.WARNING, ret.getMessage());
     }
@@ -311,7 +318,7 @@ public class CheckTomcatTest implements Constants {
                 );
 
         JNRPEClient client = new JNRPEClient(BIND_ADDRESS, JNRPE_PORT, false);
-        ReturnValue ret = client.sendCommand("CHECK_MEM_PERC_WARNING", "127.0.0.1", "8080", "tomcat", "tomcat", ":99.9%");
+        ReturnValue ret = client.sendCommand("CHECK_MEM_PERC_WARNING", "127.0.0.1", TOMCAT_PORT, "tomcat", "tomcat", ":99.9%");
 
         Assert.assertEquals(ret.getStatus(), Status.CRITICAL, ret.getMessage());
     }
@@ -333,7 +340,7 @@ public class CheckTomcatTest implements Constants {
                 );
 
         JNRPEClient client = new JNRPEClient(BIND_ADDRESS, JNRPE_PORT, false);
-        ReturnValue ret = client.sendCommand("CHECK_MEM_PERC_OK", "127.0.0.1", "8080", "tomcat", "tomcat", ":50%");
+        ReturnValue ret = client.sendCommand("CHECK_MEM_PERC_OK", "127.0.0.1", TOMCAT_PORT, "tomcat", "tomcat", ":50%");
 
         Assert.assertEquals(ret.getStatus(), Status.OK, ret.getMessage());
     }

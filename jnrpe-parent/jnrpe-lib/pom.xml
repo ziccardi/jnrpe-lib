@@ -95,7 +95,6 @@
 				</plugins>
 			</build>
 		</profile>
-
 	</profiles>
 	<build>
 		<plugins>
@@ -176,8 +175,10 @@
 					<siteDirectory>${project.basedir}/src/site</siteDirectory>
 				</configuration>
 			</plugin>
+			
 		</plugins>
 	</build>
+	
 	<distributionManagement>
 		<site>
 			<id>jnrpe-web</id>

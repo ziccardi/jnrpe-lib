@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>net.sf.jnrpe</groupId>
@@ -188,22 +189,6 @@ It is fully compatible with check_nrpe and can be used to execute both old nativ
 				<version>2.10</version>
 			</plugin>
 
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>cobertura-maven-plugin</artifactId>
-				<version>2.5.2</version>
-				<configuration>
-					<formats>
-						<format>html</format>
-					</formats>
-					<instrumentation>
-						<excludes>
-							<exclude>**/*Test.class</exclude>
-							<exclude>**/*Exception.*</exclude>
-						</excludes>
-					</instrumentation>
-				</configuration>
-			</plugin>
 		</plugins>
 
 	</reporting>
@@ -220,6 +205,7 @@ It is fully compatible with check_nrpe and can be used to execute both old nativ
 		<module>jnrpe-plugins</module>
 		<module>jnrpe-install</module>
 		<module>jcheck_nrpe</module>
+		<module>jnrpe-debian</module>
 	</modules>
 	<!-- <parent> <groupId>org.sonatype.oss</groupId> <version>7</version> <artifactId>oss-parent</artifactId> 
 		</parent> -->
