@@ -19,6 +19,8 @@ import org.codehaus.cargo.container.InstalledLocalContainer;
 import org.codehaus.cargo.container.configuration.ConfigurationType;
 import org.codehaus.cargo.container.configuration.LocalConfiguration;
 import org.codehaus.cargo.container.installer.ZipURLInstaller;
+import org.codehaus.cargo.container.property.ServletPropertySet;
+import org.codehaus.cargo.container.tomcat.TomcatPropertySet;
 import org.codehaus.cargo.generic.DefaultContainerFactory;
 import org.codehaus.cargo.generic.configuration.DefaultConfigurationFactory;
 import org.testng.Assert;
@@ -140,6 +142,7 @@ public class CheckTomcatTest implements Constants {
                                     ConfigurationType.STANDALONE);
 
             configuration.setProperty("cargo.servlet.port", "7070");
+            configuration.setProperty(TomcatPropertySet.AJP_PORT, "7009");
 
             container =
                     (InstalledLocalContainer) new DefaultContainerFactory()
