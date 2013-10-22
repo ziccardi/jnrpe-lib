@@ -247,6 +247,7 @@ class JNRPEServerThread extends Thread {
                     attachedSocket.close();
                 }
             } catch (IOException e) {
+                // Ignore...
                 // m_Logger.error("ERROR CLOSING SOCKET", e);
             }
 
