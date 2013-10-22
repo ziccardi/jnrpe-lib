@@ -27,6 +27,8 @@ import java.net.Socket;
 import java.text.MessageFormat;
 import java.util.Set;
 
+import javax.net.ssl.SSLSocket;
+
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -238,8 +240,10 @@ class JNRPEServerThread extends Thread {
         } finally {
             try {
                 if (attachedSocket != null && !attachedSocket.isClosed()) {
-                    attachedSocket.shutdownInput();
-                    attachedSocket.shutdownOutput();
+                    if (!(attachedSocket instanceof SSLSocket)) {
+                        attachedSocket.shutdownInput();
+                        attachedSocket.shutdownOutput();
+                    }
                     attachedSocket.close();
                 }
             } catch (IOException e) {
