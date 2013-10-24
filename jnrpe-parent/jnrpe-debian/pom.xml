@@ -16,7 +16,9 @@
 	<properties>
         <project.parentbuild.sourceEncoding>UTF-8</project.parentbuild.sourceEncoding>
         <jrnpe-plugins.version>0.7.2-RC6-SNAPSHOT</jrnpe-plugins.version> 
-        <debian.install.path>/usr/local/jnrpe</debian.install.path> 
+        <debian.install.path>/usr/local/jnrpe</debian.install.path>
+        <debian.conf.path>/etc/jnrpe</debian.conf.path>
+        <debian.log.path>/var/log/jnrpe</debian.log.path>  
         <main_dir>${basedir}/..</main_dir>
 
     </properties>
@@ -45,7 +47,6 @@
 	</dependencies>
 	
 	<build>
-
 			<plugins>
 				<plugin>
 					<artifactId>jdeb</artifactId>
@@ -62,16 +63,7 @@
 								<submodules>false</submodules>
 								<verbose>true</verbose>
 								<dataSet>
-									<!-- /etc/init.d/ -->
-									<data>
-										<src>${basedir}/src/deb/init.d</src>
-										<type>directory</type>
-										<mapper>
-											<type>perm</type>
-											<prefix>/etc/init.d</prefix>
-											<group>loader</group>
-										</mapper>
-									</data>
+				
 
 									<!-- ${debian.install.path}/lib -->
 									<data>
@@ -92,13 +84,14 @@
 											<prefix>${debian.install.path}/bin</prefix>
 										</mapper>
 									</data>
-									<!-- ${debian.install.path}/etc -->
+									
+									<!-- /etc/jnrpe -->
 									<data>
 										<src>${main_dir}/jnrpe-install/src/config/jnrpe.ini</src>
 										<type>file</type>
 										<mapper>
 											<type>perm</type>
-											<prefix>${debian.install.path}/etc</prefix>
+											<prefix>${debian.conf.path}</prefix>
 										</mapper>
 									</data>
 									<data>
@@ -106,87 +99,98 @@
 										<type>file</type>
 										<mapper>
 											<type>perm</type>
-											<prefix>${debian.install.path}/etc</prefix>
+											<prefix>${debian.conf.path}</prefix>
 										</mapper>
 									</data>
+                                    <data>
+                                        <src>${basedir}/src/wrapper/wrapper.conf</src>
+                                        <type>file</type>
+                                        <mapper>
+                                            <type>perm</type>
+                                            <prefix>${debian.conf.path}</prefix>
+                                        </mapper>
+                                        
+                                    </data>
+                                    <!-- ${debian.install.path}/plugins -->
+                                    <data>
+                                        <src>${main_dir}/jnrpe-plugins/target/dependency</src>
+                                        <type>directory</type>
+                                        <mapper>
+                                            <type>perm</type>
+                                            <prefix>${debian.install.path}/plugins/base</prefix>
+                                        </mapper>
+                                    </data>
+                                    <data>
+                                        <src>${main_dir}/jnrpe-plugins/target/jnrpe-plugins-${jrnpe-plugins.version}.jar</src>
+                                        <type>file</type>
+                                        <mapper>
+                                            <type>perm</type>
+                                            <prefix>${debian.install.path}/plugins/base</prefix>
+                                        </mapper>
+                                    </data>
 
+                                    <!-- ${debian.install.path}/wrapper -->
+                                    <data>
+                                        <src>${main_dir}/jnrpe-install/src/wrapper/wrapper.jar</src>
+                                        <type>file</type>
+                                        <mapper>
+                                            <type>perm</type>
+                                            <prefix>${debian.install.path}/wrapper</prefix>
+                                        </mapper>
+                                    </data>
+                                    <data>
+                                        <src>${main_dir}/jnrpe-install/src/wrapper/wrapperApp.jar</src>
+                                        <type>file</type>
+                                        <mapper>
+                                            <type>perm</type>
+                                            <prefix>${debian.install.path}/wrapper</prefix>
+                                        </mapper>
+                                    </data>
 
-									<!-- ${debian.install.path}/plugins -->
-									<data>
-										<src>${main_dir}/jnrpe-plugins/target/dependency</src>
-										<type>directory</type>
-										<mapper>
-											<type>perm</type>
-											<prefix>${debian.install.path}/plugins/base</prefix>
-										</mapper>
-									</data>
-									<data>
-										<src>${main_dir}/jnrpe-plugins/target/jnrpe-plugins-${jrnpe-plugins.version}.jar</src>
-										<type>file</type>
-										<mapper>
-											<type>perm</type>
-											<prefix>${debian.install.path}/plugins/base</prefix>
-										</mapper>
-									</data>
-
-									<!-- ${debian.install.path}/wrapper -->
-									<data>
-										<src>${main_dir}/jnrpe-install/src/wrapper/wrapper.jar</src>
-										<type>file</type>
-										<mapper>
-											<type>perm</type>
-											<prefix>${debian.install.path}/wrapper</prefix>
-										</mapper>
-									</data>
-									<data>
-										<src>${main_dir}/jnrpe-install/src/wrapper/wrapperApp.jar</src>
-										<type>file</type>
-										<mapper>
-											<type>perm</type>
-											<prefix>${debian.install.path}/wrapper</prefix>
-										</mapper>
-									</data>
-									<data>
-										<src>${basedir}/src/wrapper/wrapper.conf</src>
-										<type>file</type>
-										<linkTarget>${debian.install.path}/wrapper/etc/</linkTarget>
-										<mapper>
-											<type>perm</type>
-											<prefix>${debian.install.path}/wrapper/etc</prefix>
-										</mapper>
-									</data>
-									<data>
-										<src>${main_dir}/jnrpe-install/src/wrapper/deps</src>
-										<type>directory</type>
-										<mapper>
-											<type>perm</type>
-											<prefix>${debian.install.path}/wrapper/lib</prefix>
-										</mapper>
-									</data>
-									<data>
-										<src>${main_dir}/jnrpe-install/src/wrapper/unix_deps/</src>
-										<type>directory</type>
-										<mapper>
-											<type>perm</type>
-											<prefix>${debian.install.path}/wrapper/lib</prefix>
-										</mapper>
-									</data>
-									<data>
-										<src>${main_dir}/jnrpe-install/src/wrapper/templates</src>
-										<type>directory</type>
-										<mapper>
-											<type>perm</type>
-											<prefix>${debian.install.path}/wrapper/templates</prefix>
-										</mapper>
-									</data>
-									<data>
-										<src>${main_dir}/jnrpe-install/src/wrapper/jnrpeservice.log</src>
-										<type>file</type>
-										<mapper>
-											<type>perm</type>
-											<prefix>${debian.install.path}/log</prefix>
-										</mapper>
-									</data>
+                                    <data>
+                                        <src>${main_dir}/jnrpe-install/src/wrapper/deps</src>
+                                        <type>directory</type>
+                                        <mapper>
+                                            <type>perm</type>
+                                            <prefix>${debian.install.path}/wrapper/lib</prefix>
+                                        </mapper>
+                                    </data>
+                                    <data>
+                                        <src>${main_dir}/jnrpe-install/src/wrapper/unix_deps/</src>
+                                        <type>directory</type>
+                                        <mapper>
+                                            <type>perm</type>
+                                            <prefix>${debian.install.path}/wrapper/lib</prefix>
+                                        </mapper>
+                                    </data>
+                                    <data>
+                                        <src>${main_dir}/jnrpe-install/src/wrapper/templates</src>
+                                        <type>directory</type>
+                                        <mapper>
+                                            <type>perm</type>
+                                            <prefix>${debian.install.path}/wrapper/templates</prefix>
+                                        </mapper>
+                                    </data>
+                                    <!-- /var/log/jnrpe -->
+                                    <data>
+                                        <src>${main_dir}/jnrpe-install/src/wrapper/jnrpeservice.log</src>
+                                        <type>file</type>
+                                        <mapper>
+                                            <type>perm</type>
+                                            <prefix>${debian.log.path}</prefix>
+                                        </mapper>
+                                    </data>
+                                    
+                                    <!-- /etc/init.d/ -->
+                                    <data>
+                                        <src>${basedir}/src/deb/init.d</src>
+                                        <type>directory</type>
+                                        <mapper>
+                                            <type>perm</type>
+                                            <prefix>/etc/init.d</prefix>
+                                            <group>loader</group>
+                                        </mapper>
+                                    </data>
 								</dataSet>
 							</configuration>
 						</execution>

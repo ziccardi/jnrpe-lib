@@ -8,7 +8,7 @@
 # Short-Description: yajsw wrapper for jnrpe
 # Description: Java Nagios Remote Plugin Executor
 ### END INIT INFO
-# config: /usr/local/jnrpe/wrapper/etc/jnrpe.conf
+# config: /etc/jrnpe/wrapper.conf
 # pidfile: /run/wrapper.jnrpe.pid
 # apppidfile: /run/wrapper.$JAVA.jnrpe.pid
 #-----------------------------------------------------------------------------
@@ -17,9 +17,11 @@
 #-----------------------------------------------------------------------------
 
 JAVA=/usr/bin/java
+WRAPPER_CONF=/etc/jnrpe/wrapper.conf
+WRAPPER_PATH=/usr/local/jnrpe/wrapper
 
 status() {
-    eval ""$JAVA" "-Dwrapper.pidfile=/run/wrapper.jnrpe.pid" "-Dwrapper.service=true" "-Dwrapper.visible=false" "-Djna_tmpdir=/usr/local/jnrpe/wrapper" "-jar" "/usr/local/jnrpe/wrapper/wrapper.jar" "-qx" "/usr/local/jnrpe/wrapper/etc/jnrpe.conf"  > /dev/null 2>&1"
+    eval ""$JAVA" "-Dwrapper.pidfile=/run/wrapper.jnrpe.pid" "-Dwrapper.service=true" "-Dwrapper.visible=false" "-Djna_tmpdir=$WRAPPER_PATH" "-jar" "$WRAPPER_PATH/wrapper.jar" "-qx" "$WRAPPER_CONF"  > /dev/null 2>&1"
     if [ $? -eq 0 ]
     then
        echo "Service jnrpe is runnning"
@@ -30,11 +32,11 @@ status() {
 
 stopit() {
     echo "Stopping jnrpe ..."
-	eval ""$JAVA" "-Dwrapper.pidfile=/run/wrapper.jnrpe.pid" "-Dwrapper.service=true" "-Dwrapper.visible=false" "-Djna_tmpdir=/usr/local/jnrpe/wrapper" "-jar" "/usr/local/jnrpe/wrapper/wrapper.jar" "-px" "/usr/local/jnrpe/wrapper/etc/jnrpe.conf"  > /dev/null 2>&1"
+	eval ""$JAVA" "-Dwrapper.pidfile=/run/wrapper.jnrpe.pid" "-Dwrapper.service=true" "-Dwrapper.visible=false" "-Djna_tmpdir=$WRAPPER_PATH" "-jar" "$WRAPPER_PATH/wrapper.jar" "-px" "$WRAPPER_CONF"  > /dev/null 2>&1"
 }
 startit() {
     echo "Starting jnrpe ..."
-    eval ""$JAVA" "-Dwrapper.pidfile=/run/wrapper.jnrpe.pid" "-Dwrapper.service=true" "-Dwrapper.visible=false" "-Djna_tmpdir=/usr/local/jnrpe/wrapper" "-jar" "/usr/local/jnrpe/wrapper/wrapper.jar" "-tx" "/usr/local/jnrpe/wrapper/etc/jnrpe.conf"  > /dev/null 2>&1"
+    eval ""$JAVA" "-Dwrapper.pidfile=/run/wrapper.jnrpe.pid" "-Dwrapper.service=true" "-Dwrapper.visible=false" "-Djna_tmpdir=$WRAPPER_PATH" "-jar" "$WRAPPER_PATH/wrapper.jar" "-tx" "$WRAPPER_CONF"  > /dev/null 2>&1"
     
 }
 
