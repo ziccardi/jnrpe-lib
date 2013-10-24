@@ -12,7 +12,6 @@ package it.jnrpe.plugins;
 
 import it.jnrpe.ICommandLine;
 import it.jnrpe.ReturnValue;
-import it.jnrpe.Status;
 import it.jnrpe.events.EventParam;
 import it.jnrpe.events.EventsUtil;
 import it.jnrpe.events.IJNRPEEventListener;

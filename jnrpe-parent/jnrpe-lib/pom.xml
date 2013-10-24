@@ -5,6 +5,7 @@
 		<groupId>org.sonatype.oss</groupId>
 		<artifactId>oss-parent</artifactId>
 		<version>7</version>
+		<relativePath></relativePath>
 	</parent>
 
 	<artifactId>jnrpe-lib</artifactId>
@@ -95,7 +96,6 @@
 				</plugins>
 			</build>
 		</profile>
-
 	</profiles>
 	<build>
 		<plugins>
@@ -120,6 +120,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.4</version>
 				<configuration>
 					<archive>
 						<index>true</index>
@@ -176,8 +177,10 @@
 					<siteDirectory>${project.basedir}/src/site</siteDirectory>
 				</configuration>
 			</plugin>
+			
 		</plugins>
 	</build>
+	
 	<distributionManagement>
 		<site>
 			<id>jnrpe-web</id>
