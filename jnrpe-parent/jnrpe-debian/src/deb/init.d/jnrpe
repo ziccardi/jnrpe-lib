@@ -8,7 +8,7 @@
 # Short-Description: yajsw wrapper for jnrpe
 # Description: Java Nagios Remote Plugin Executor
 ### END INIT INFO
-# config: /etc/jrnpe/wrapper.conf
+# config: /etc/jnrpe/wrapper.conf
 # pidfile: /run/wrapper.jnrpe.pid
 # apppidfile: /run/wrapper.$JAVA.jnrpe.pid
 #-----------------------------------------------------------------------------
