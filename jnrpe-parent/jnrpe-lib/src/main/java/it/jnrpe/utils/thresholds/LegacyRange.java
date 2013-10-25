@@ -110,9 +110,9 @@ public class LegacyRange {
                     if (curState != MINVAL) {
                         throw new BadThresholdException(
                                 "Unparsable threshold '" + thresholdString
-                                        + "'. Error at char "
-                                        + currentParsedBuffer.length()
-                                        + ": the '@' should not be there.");
+                                + "'. Error at char "
+                                + currentParsedBuffer.length()
+                                + ": the '@' should not be there.");
                     }
                     negateThreshold = true;
                     continue;
@@ -130,9 +130,9 @@ public class LegacyRange {
                     case MAXVAL:
                         throw new BadThresholdException(
                                 "Unparsable threshold '" + thresholdString
-                                        + "'. Error at char "
-                                        + currentParsedBuffer.length()
-                                        + ": the ':' should not be there.");
+                                + "'. Error at char "
+                                + currentParsedBuffer.length()
+                                + ": the ':' should not be there.");
                         // m_iCurState = END;
                         // continue;
                     default:
@@ -168,7 +168,7 @@ public class LegacyRange {
                                 || b == '+' || b == '-' || b == '.'));
 
                 if (b != -1) {
-                    pb.unread((int) b);
+                    pb.unread(b);
                 }
 
                 String numberString = numberBuffer.toString();
@@ -188,7 +188,7 @@ public class LegacyRange {
                     } catch (NumberFormatException nfe) {
                         throw new BadThresholdException(
                                 "Expected a number but found '" + numberString
-                                        + "' instead [" + thresholdString + "]");
+                                + "' instead [" + thresholdString + "]");
                     }
                     currentParsedBuffer = new StringBuffer();
                     continue;
@@ -198,7 +198,7 @@ public class LegacyRange {
                     } catch (NumberFormatException nfe) {
                         throw new BadThresholdException(
                                 "Expected a number but found '" + numberString
-                                        + "' instead");
+                                + "' instead");
                     }
                     currentParsedBuffer = new StringBuffer();
                     continue;
@@ -221,7 +221,8 @@ public class LegacyRange {
         if (curState == MAXVAL && maxVal == null
                 && thresholdString.startsWith(":")) {
             throw new BadThresholdException(
-                    "At least one of maximum or minimum value must me specified.");
+                    "At least one of maximum or minimum "
+                            + "value must me specified.");
         }
 
     }
@@ -286,23 +287,6 @@ public class LegacyRange {
      */
     public final boolean isValueInside(final long value) {
         return isValueInside(new BigDecimal(value));
-    }
-
-    /**
-     * Multiply the value with the right multiplier based on the prefix.
-     *
-     * @param value
-     *            The value
-     * @param prefix
-     *            The prefix
-     * @return The result
-     */
-    private BigDecimal convert(final BigDecimal value, final Prefixes prefix) {
-        if (prefix == null) {
-            return value;
-        }
-
-        return prefix.convert(value);
     }
 
     /**

@@ -11,14 +11,12 @@ import java.lang.annotation.RetentionPolicy;
 
 /**
  * Plugin option definition.
- * 
- * @author Frederico Campos
  *
+ * @author Frederico Campos
  */
-@Retention(RetentionPolicy.RUNTIME)     
+@Retention(RetentionPolicy.RUNTIME)
 
 public @interface Option {
-
 	String shortName();
 	String longName();
 	String description();

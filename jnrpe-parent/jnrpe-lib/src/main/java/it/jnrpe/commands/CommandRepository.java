@@ -11,8 +11,10 @@
 package it.jnrpe.commands;
 
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * This object manages all the configured commands.
@@ -24,8 +26,8 @@ public final class CommandRepository {
      * Contains all the commands. The KEY is the command name, while the value.
      * is the {@link CommandDefinition}.
      */
-    private Map<String, CommandDefinition> commandDefinitionsMap =
-            new HashMap<String, CommandDefinition>();
+    private final Map<String, CommandDefinition> commandDefinitionsMap =
+            new ConcurrentHashMap<String, CommandDefinition>();
 
     /**
      * Adds a new command definition to the repository.
@@ -35,6 +37,23 @@ public final class CommandRepository {
      */
     public void addCommandDefinition(final CommandDefinition commandDef) {
         commandDefinitionsMap.put(commandDef.getName(), commandDef);
+    }
+
+    public void removeCommandDefinition(final CommandDefinition commandDef) {
+        commandDefinitionsMap.remove(commandDef.getName());
+    }
+
+    public Set<CommandDefinition> getAllCommandDefinition(final String pluginName) {
+
+        Set<CommandDefinition> res = new HashSet<CommandDefinition>();
+
+        for (CommandDefinition cd : commandDefinitionsMap.values()) {
+            if (cd.getPluginName().equals(pluginName)) {
+                res.add(cd);
+            }
+        }
+
+        return res;
     }
 
     /**
@@ -48,7 +67,10 @@ public final class CommandRepository {
     public CommandDefinition getCommand(final String commandName) {
         return commandDefinitionsMap.get(commandName);
     }
-    
+
+    /**
+     * @return all the installed commands.
+     */
     public Collection<CommandDefinition> getAllCommands() {
         return commandDefinitionsMap.values();
     }

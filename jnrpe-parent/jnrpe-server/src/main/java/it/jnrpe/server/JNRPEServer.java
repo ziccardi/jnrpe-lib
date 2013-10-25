@@ -17,10 +17,10 @@ package it.jnrpe.server;
 
 import it.jnrpe.JNRPE;
 import it.jnrpe.commands.CommandRepository;
+import it.jnrpe.plugins.IPluginRepository;
 import it.jnrpe.plugins.PluginConfigurationException;
 import it.jnrpe.plugins.PluginDefinition;
 import it.jnrpe.plugins.PluginProxy;
-import it.jnrpe.plugins.PluginRepository;
 import it.jnrpe.server.console.JNRPEConsole;
 import it.jnrpe.server.plugins.DynaPluginRepository;
 
@@ -176,7 +176,7 @@ public final class JNRPEServer {
      * @param pluginName
      *            The plugin name
      */
-    private static void printHelp(final PluginRepository pr,
+    private static void printHelp(final IPluginRepository pr,
             final String pluginName) {
         try {
             PluginProxy pp = (PluginProxy) pr.getPlugin(pluginName);
@@ -279,7 +279,7 @@ public final class JNRPEServer {
      * @throws PluginConfigurationException
      *             -
      */
-    private static PluginRepository
+    private static IPluginRepository
             loadPluginDefinitions(final String sPluginDirPath)
                     throws PluginConfigurationException {
         File fDir = new File(sPluginDirPath);
@@ -294,7 +294,7 @@ public final class JNRPEServer {
      *
      * @param pr The plugin repository
      */
-    private static void printPluginList(final PluginRepository pr) {
+    private static void printPluginList(final IPluginRepository pr) {
         System.out.println("List of installed plugins : ");
 
         for (PluginDefinition pd : pr.getAllPlugins()) {
@@ -353,7 +353,7 @@ public final class JNRPEServer {
             System.exit(-1);
         }
 
-        PluginRepository pr = null;
+        IPluginRepository pr = null;
         try {
             pr = loadPluginDefinitions(conf.getServerSection().getPluginPath());
         } catch (PluginConfigurationException e) {

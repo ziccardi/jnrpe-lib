@@ -21,7 +21,7 @@ import it.jnrpe.commands.CommandDefinition;
 import it.jnrpe.commands.CommandInvoker;
 import it.jnrpe.commands.CommandOption;
 import it.jnrpe.commands.CommandRepository;
-import it.jnrpe.plugins.PluginRepository;
+import it.jnrpe.plugins.IPluginRepository;
 
 import java.io.IOException;
 
@@ -35,9 +35,9 @@ public class CommandConsoleCommand extends ConsoleCommand {
     
     private final String commandName;
     private final CommandRepository commandRepository;
-    private final PluginRepository pluginRepository;
+    private final IPluginRepository pluginRepository;
     
-    public CommandConsoleCommand(ConsoleReader consoleReader, JNRPE jnrpe, String commandName, PluginRepository pr, CommandRepository cr) {
+    public CommandConsoleCommand(ConsoleReader consoleReader, JNRPE jnrpe, String commandName, IPluginRepository pr, CommandRepository cr) {
         super(consoleReader, jnrpe);
         this.commandName = commandName;
         this.pluginRepository = pr;

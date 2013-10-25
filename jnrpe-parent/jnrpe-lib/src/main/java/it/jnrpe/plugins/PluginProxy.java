@@ -99,7 +99,7 @@ public final class PluginProxy extends PluginBase {
             throws BadThresholdException {
         // CommandLineParser clp = new PosixParser();
         try {
-            HelpFormatter hf = new HelpFormatter();	
+            HelpFormatter hf = new HelpFormatter();
             // configure a parser
             Parser p = new Parser();
             p.setGroup(mainOptionsGroup);
@@ -122,10 +122,11 @@ public final class PluginProxy extends PluginBase {
     }
 
     /**
-     * Prints the help related to the plugin to a specified output
+     * Prints the help related to the plugin to a specified output.
+     * @param out the writer where the help should be written
      */
-    public void printHelp(PrintWriter out) {
-    	HelpFormatter hf = new HelpFormatter();
+    public void printHelp(final PrintWriter out) {
+        HelpFormatter hf = new HelpFormatter();
         StringBuffer sbDivider = new StringBuffer("=");
         while (sbDivider.length() < hf.getPageWidth()) {
             sbDivider.append("=");
@@ -136,7 +137,7 @@ public final class PluginProxy extends PluginBase {
             out.println(sbDivider.toString());
             out.println("Description : ");
             out.println();
-            out.println(description);            
+            out.println(description);
         }
 
         hf.setGroup(mainOptionsGroup);
@@ -151,9 +152,9 @@ public final class PluginProxy extends PluginBase {
      * Prints the help related to the plugin to standard output.
      */
     public void printHelp() {
-    	printHelp(new PrintWriter(System.out));
+        printHelp(new PrintWriter(System.out));
     }
-    
+
     /**
      * Not used.
      *
@@ -169,6 +170,4 @@ public final class PluginProxy extends PluginBase {
     protected String getPluginName() {
         return null;
     }
-    
-    
 }

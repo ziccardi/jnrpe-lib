@@ -61,7 +61,7 @@ public final class PluginRepositoryUtil {
     public static void loadFromXmlPluginPackageDefinitions(
             final PluginRepository repo, final ClassLoader cl,
             final InputStream in)
-            throws PluginConfigurationException {
+                    throws PluginConfigurationException {
         SAXReader reader = new SAXReader();
         Document document;
         try {
@@ -125,11 +125,11 @@ public final class PluginRepositoryUtil {
      */
     private static PluginDefinition parsePluginDefinition(final ClassLoader cl,
             final Element plugin) throws PluginConfigurationException {
-        
+
         // Check if the plugin definition is inside its own file
         if (plugin.attributeValue("definedIn") != null) {
             StreamManager sm = new StreamManager();
-            
+
             String sFileName = plugin.attributeValue("definedIn");
 
             try {
@@ -140,30 +140,17 @@ public final class PluginRepositoryUtil {
                 sm.closeAll();
             }
         }
-        
-//        // Check is the plugin definition is inside the plugin class 
-//        // (Annotations)
-//        if (plugin.attributeValue("definedInClass") != null){
-//        	Class c = null;
-//            try {
-//                c = cl.loadClass(plugin.attributeValue("definedInClass"));
-//            } catch (ClassNotFoundException e) {
-//                throw new PluginConfigurationException(e);
-//            }
-//            return parsePluginClass(c);
-//            
-//        }
-        
+
         // None of the above: the plugin definition is inside the main
         // xml file (plugin.xml)
         Class c;
         try {
             c = cl.loadClass(plugin.attributeValue("class"));
-            
+
             if (isAnnotated(c)) {
                 return loadFromPluginAnnotation(c);
             }
-            
+
         } catch (ClassNotFoundException e) {
             throw new PluginConfigurationException(e);
         }
@@ -187,35 +174,36 @@ public final class PluginRepositoryUtil {
     }
 
     /**
-     * Returns <code>true</code> if the class contains plugin
-     * annotations
-     * @param clazz The plugin class
+     * Returns <code>true</code> if the class contains plugin annotations.
+     *
+     * @param clazz
+     *            The plugin class
      * @return <code>true</code> if the class contains plugin
      */
     private static boolean isAnnotated(final Class clazz) {
         Plugin plugin = (Plugin) clazz.getAnnotation(Plugin.class);
         return plugin != null;
     }
-    
+
     /**
-     * Parse a plugin from class annotations
-     * 
-     * @param clazz
-     * @return
-     * PluginDefinition
+     * Parse a plugin from class annotations.
+     *
+     * @param clazz the plugin class
+     * @return PluginDefinition
      */
-    public static PluginDefinition loadFromPluginAnnotation (final Class clazz){
-    	Plugin plugin = (Plugin) clazz.getAnnotation(Plugin.class);
-    	PluginOptions options = (PluginOptions)clazz.getAnnotation(PluginOptions.class);
-    	String name = plugin.name();
-    	String description = plugin.description();
-    	PluginDefinition def = new PluginDefinition(name, description, clazz);
-    	for (Option option: options.value()) {
-    		def.addOption(parsePluginOption(option));
-    	}
-    	return def;
+    public static PluginDefinition loadFromPluginAnnotation(final Class clazz) {
+        Plugin plugin = (Plugin) clazz.getAnnotation(Plugin.class);
+        PluginOptions options =
+                (PluginOptions) clazz.getAnnotation(PluginOptions.class);
+        String name = plugin.name();
+        String description = plugin.description();
+        PluginDefinition def = new PluginDefinition(name, description, clazz);
+        for (Option option : options.value()) {
+            def.addOption(parsePluginOption(option));
+        }
+        return def;
     }
-    
+
     /**
      * Parses a plugin option XML definition.
      *
@@ -232,7 +220,7 @@ public final class PluginRepositoryUtil {
                 "optionalArgs", "false")));
         po.setDescription(option.attributeValue("description"));
         po.setHasArgs(
-                    Boolean.valueOf(option.attributeValue("hasArgs", "false")));
+                Boolean.valueOf(option.attributeValue("hasArgs", "false")));
         po.setLongOpt(option.attributeValue("longName"));
         po.setOption(option.attributeValue("shortName"));
         po.setRequired(Boolean.valueOf(option.attributeValue("required",
@@ -244,15 +232,14 @@ public final class PluginRepositoryUtil {
     }
 
     /**
-     * Parses a plugin option from the annotation definition
-     * 
-     * @param option
-     * @return 
-     * PluginOption
+     * Parses a plugin option from the annotation definition.
+     *
+     * @param option the plugin option
+     * @return PluginOption
      */
-    private static PluginOption parsePluginOption(Option option) {
+    private static PluginOption parsePluginOption(final Option option) {
         PluginOption po = new PluginOption();
-    	po.setArgName(option.argName());
+        po.setArgName(option.argName());
         po.setArgsOptional(option.optionalArgs());
         po.setDescription(option.description());
         po.setHasArgs(option.hasArgs());

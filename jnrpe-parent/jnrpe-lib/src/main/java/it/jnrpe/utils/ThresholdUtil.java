@@ -11,8 +11,6 @@
 package it.jnrpe.utils;
 
 import it.jnrpe.utils.thresholds.LegacyRange;
-import it.jnrpe.utils.thresholds.ReturnValueBuilder;
-import it.jnrpe.utils.thresholds.ThresholdsEvaluatorBuilder;
 
 import java.math.BigDecimal;
 
@@ -34,9 +32,11 @@ import java.math.BigDecimal;
  * start and ":" is not required if start=0.
  *
  * @author Massimiliano Ziccardi
- * @deprecated Use the {@link ReturnValueBuilder} together with the
- * {@link ThresholdsEvaluatorBuilder} instead.
+ * @deprecated Use the {@link it.jnrpe.utils.thresholds.ReturnValueBuilder}
+ * together with the
+ * {@link it.jnrpe.utils.thresholds.ThresholdsEvaluatorBuilder} instead.
  */
+@Deprecated
 public final class ThresholdUtil {
     /**
      * Private default constructor to avoid instantiation.

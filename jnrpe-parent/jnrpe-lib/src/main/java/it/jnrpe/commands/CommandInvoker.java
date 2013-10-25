@@ -16,8 +16,8 @@ import it.jnrpe.JNRPELIB;
 import it.jnrpe.events.EventsUtil;
 import it.jnrpe.events.IJNRPEEventListener;
 import it.jnrpe.events.LogEvent;
+import it.jnrpe.plugins.IPluginRepository;
 import it.jnrpe.plugins.PluginProxy;
-import it.jnrpe.plugins.PluginRepository;
 
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -38,7 +38,7 @@ public final class CommandInvoker {
     /**
      * The plugin repository to be used to find the plugins.
      */
-    private final PluginRepository pluginRepository;
+    private final IPluginRepository pluginRepository;
 
     /**
      * The command repository to be used to find the commands.
@@ -62,7 +62,7 @@ public final class CommandInvoker {
      * @param listeners
      *            All the listeners
      */
-    public CommandInvoker(final PluginRepository pluginRepo,
+    public CommandInvoker(final IPluginRepository pluginRepo,
             final CommandRepository commandRepo,
             final Set<IJNRPEEventListener> listeners) {
         acceptParams = true;

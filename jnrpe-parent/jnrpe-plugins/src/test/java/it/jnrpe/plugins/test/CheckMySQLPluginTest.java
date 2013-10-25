@@ -7,7 +7,6 @@ import it.jnrpe.client.JNRPEClientException;
 import it.jnrpe.commands.CommandDefinition;
 import it.jnrpe.commands.CommandOption;
 import it.jnrpe.commands.CommandRepository;
-import it.jnrpe.plugin.CCheckOracle;
 import it.jnrpe.plugins.PluginDefinition;
 import it.jnrpe.utils.PluginRepositoryUtil;
 
@@ -33,24 +32,24 @@ public class CheckMySQLPluginTest implements Constants {
 
         cr.addCommandDefinition(new CommandDefinition("CHECK_MYSQL_SLAVE",
                 "CHECK_MYSQL")
-                .addArgument(new CommandOption("hostname", "$ARG1$"))
-                .addArgument(new CommandOption("port", "$ARG2$"))
-                .addArgument(new CommandOption("database", "$ARG3$"))
-                .addArgument(new CommandOption("user", "$ARG4$"))
-                .addArgument(new CommandOption("password", "$ARG5$"))
-                .addArgument(new CommandOption("warning", "$ARG6$"))
-                .addArgument(new CommandOption("critical", "$ARG7$"))
-                .addArgument(new CommandOption("check-slave")));
+        .addArgument(new CommandOption("hostname", "$ARG1$"))
+        .addArgument(new CommandOption("port", "$ARG2$"))
+        .addArgument(new CommandOption("database", "$ARG3$"))
+        .addArgument(new CommandOption("user", "$ARG4$"))
+        .addArgument(new CommandOption("password", "$ARG5$"))
+        .addArgument(new CommandOption("warning", "$ARG6$"))
+        .addArgument(new CommandOption("critical", "$ARG7$"))
+        .addArgument(new CommandOption("check-slave")));
 
         cr.addCommandDefinition(new CommandDefinition("CHECK_MYSQL",
                 "CHECK_MYSQL")
-                .addArgument(new CommandOption("hostname", "$ARG1$"))
-                .addArgument(new CommandOption("port", "$ARG2$"))
-                .addArgument(new CommandOption("database", "$ARG3$"))
-                .addArgument(new CommandOption("user", "$ARG4$"))
-                .addArgument(new CommandOption("password", "$ARG5$"))
-                .addArgument(new CommandOption("warning", "$ARG6$"))
-                .addArgument(new CommandOption("critical", "$ARG7$")));
+        .addArgument(new CommandOption("hostname", "$ARG1$"))
+        .addArgument(new CommandOption("port", "$ARG2$"))
+        .addArgument(new CommandOption("database", "$ARG3$"))
+        .addArgument(new CommandOption("user", "$ARG4$"))
+        .addArgument(new CommandOption("password", "$ARG5$"))
+        .addArgument(new CommandOption("warning", "$ARG6$"))
+        .addArgument(new CommandOption("critical", "$ARG7$")));
     }
 
     @Test

@@ -39,7 +39,8 @@ import java.util.Set;
  * work required to evaluate thresholds. If you use the new threshold syntax,
  * all the configuration is done automatically. Otherwise you just have to
  * override the
- * {@link #configureThresholdEvaluatorBuilder(ThresholdsEvaluatorBuilder, ICommandLine)}
+ * {@link #configureThresholdEvaluatorBuilder(ThresholdsEvaluatorBuilder,
+ *              ICommandLine)}
  * to set the all the thresholds.
  * </ul>
  *

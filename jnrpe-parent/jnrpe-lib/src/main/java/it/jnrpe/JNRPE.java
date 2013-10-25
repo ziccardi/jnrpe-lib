@@ -13,7 +13,7 @@ package it.jnrpe;
 import it.jnrpe.commands.CommandInvoker;
 import it.jnrpe.commands.CommandRepository;
 import it.jnrpe.events.IJNRPEEventListener;
-import it.jnrpe.plugins.PluginRepository;
+import it.jnrpe.plugins.IPluginRepository;
 
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -38,7 +38,7 @@ public final class JNRPE {
     /**
      * The plugin repository to be used to find the requested plugin.
      */
-    private final PluginRepository pluginRepository;
+    private final IPluginRepository pluginRepository;
     /**
      * The command repository to be used to find the requested command.
      */
@@ -69,7 +69,7 @@ public final class JNRPE {
      * @param commandRepo
      *            The repository containing all the configured commands.
      */
-    public JNRPE(final PluginRepository pluginRepo,
+    public JNRPE(final IPluginRepository pluginRepo,
             final CommandRepository commandRepo) {
         if (pluginRepo == null) {
             throw new IllegalArgumentException(
@@ -141,7 +141,7 @@ public final class JNRPE {
             // configured
             bt.join(THREAD_JOIN_TIMEOUT);
         } catch (InterruptedException e) {
-            // Ignored
+            throw new IllegalStateException(e);
         }
         listenersMap.put(address + port, bt);
     }

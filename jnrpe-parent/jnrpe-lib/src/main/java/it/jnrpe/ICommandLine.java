@@ -34,7 +34,7 @@ public interface ICommandLine {
      * @param optionName The option name
      * @return An ordered list of values
      */
-    List getOptionValues(String optionName);
+    List<String> getOptionValues(String optionName);
 
     /**
      * Returns the value of the specified option. If the option is not present,
@@ -63,7 +63,7 @@ public interface ICommandLine {
      * @param shortOptionName The option short name
      * @return An ordered list of values
      */
-    List getOptionValues(char shortOptionName);
+    List<String> getOptionValues(char shortOptionName);
 
     /**
      * Returns the value of the specified option If the option is not present,

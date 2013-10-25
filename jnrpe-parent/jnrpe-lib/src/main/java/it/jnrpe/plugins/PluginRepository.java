@@ -11,8 +11,8 @@
 package it.jnrpe.plugins;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * This class represent the repository of all the installed plugins.
@@ -20,14 +20,14 @@ import java.util.Map;
  * @author Massimiliano Ziccardi
  *
  */
-public class PluginRepository {
+public class PluginRepository implements IPluginRepository {
     /**
      * Contains all the plugins declared inside this {@link PluginRepository}
      * instance. The key of the map is the plugin name, while the value is the.
      * plugin definition itself.
      */
-    private Map<String, PluginDefinition> pluginsDefinitionsMap =
-            new HashMap<String, PluginDefinition>();
+    private final Map<String, PluginDefinition> pluginsDefinitionsMap =
+            new ConcurrentHashMap<String, PluginDefinition>();
 
     /**
      * Adds a plugin definition to this repository.
@@ -40,12 +40,16 @@ public class PluginRepository {
     }
 
     /**
-     * Returns an instance of the plugin declared inside the plugin definition.
-     * identificated by the passed name.
-     *
-     * @param name
-     *            The name of the plugin to be instantiated.
-     * @return The plugin instance
+     * Removes a plugin definition from the repository.
+     * @param pluginDef
+     *            The plugin to be removed
+     */
+    public final void removePluginDefinition(final PluginDefinition pluginDef) {
+        pluginsDefinitionsMap.remove(pluginDef.getName());
+    }
+
+    /* (non-Javadoc)
+     * @see it.jnrpe.plugins.IPluginRepository#getPlugin(java.lang.String)
      */
     public final IPluginInterface getPlugin(final String name) {
         PluginDefinition pluginDef = pluginsDefinitionsMap.get(name);
@@ -58,8 +62,8 @@ public class PluginRepository {
 
             if (pluginInterface == null) {
                 pluginInterface =
-                        (IPluginInterface) pluginDef.getPluginClass()
-                                .newInstance();
+                        pluginDef.getPluginClass()
+                        .newInstance();
             }
             return new PluginProxy(pluginInterface, pluginDef);
         } catch (Exception e) {
@@ -70,10 +74,8 @@ public class PluginRepository {
         return null;
     }
 
-    /**
-     * Returns all the plugin definitions managed by this repository.
-     *
-     * @return The collection of plugin definitions.
+    /* (non-Javadoc)
+     * @see it.jnrpe.plugins.IPluginRepository#getAllPlugins()
      */
     public final Collection<PluginDefinition> getAllPlugins() {
         return pluginsDefinitionsMap.values();

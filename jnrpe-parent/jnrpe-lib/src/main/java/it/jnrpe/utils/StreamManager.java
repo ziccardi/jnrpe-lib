@@ -10,6 +10,7 @@
  */
 package it.jnrpe.utils;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -19,7 +20,6 @@ import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -28,13 +28,13 @@ import java.util.List;
  * @author Massimiliano Ziccardi
  *
  */
-@SuppressWarnings({ "rawtypes", "unchecked" })
 public final class StreamManager {
     /**
      * Contains all the streams to be managed by the {@link StreamManager}
      * object.
      */
-    private List managedStreamsList = new ArrayList();
+    private final List<Closeable> managedStreamsList =
+            new ArrayList<Closeable>();
 
     /**
      * Default constructor.
@@ -106,7 +106,7 @@ public final class StreamManager {
      */
     public InputStream getInputStream(final File f)
             throws FileNotFoundException {
-        return (InputStream) handle(new FileInputStream(f));
+        return handle(new FileInputStream(f));
     }
 
     /**
@@ -129,29 +129,9 @@ public final class StreamManager {
      * method should be called in the finally block.
      */
     public void closeAll() {
-        for (Iterator iterator = managedStreamsList.iterator(); iterator
-                .hasNext();) {
-            Object obj = (Object) iterator.next();
-
+        for (Closeable obj : managedStreamsList) {
             try {
-                if (obj instanceof InputStream) {
-                    ((InputStream) obj).close();
-                    continue;
-                }
-                if (obj instanceof OutputStream) {
-                    ((OutputStream) obj).flush();
-                    ((OutputStream) obj).close();
-                    continue;
-                }
-                if (obj instanceof Reader) {
-                    ((Reader) obj).close();
-                    continue;
-                }
-                if (obj instanceof Writer) {
-                    ((Writer) obj).flush();
-                    ((Writer) obj).close();
-                    continue;
-                }
+                obj.close();
             } catch (Exception e) {
                 // if (m_Logger.isDebugEnabled())
                 // m_Logger.debug("EXCEPTION CLOSING STREAM/READER : " +

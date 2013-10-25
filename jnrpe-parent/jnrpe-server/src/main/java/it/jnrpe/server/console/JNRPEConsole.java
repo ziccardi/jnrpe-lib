@@ -17,7 +17,7 @@ package it.jnrpe.server.console;
 
 import it.jnrpe.JNRPE;
 import it.jnrpe.commands.CommandRepository;
-import it.jnrpe.plugins.PluginRepository;
+import it.jnrpe.plugins.IPluginRepository;
 
 import java.io.IOException;
 
@@ -27,10 +27,10 @@ import jline.console.history.MemoryHistory;
 public class JNRPEConsole {
     
     private final JNRPE jnrpeInstance;
-    private final PluginRepository pluginRepository;
+    private final IPluginRepository pluginRepository;
     private final CommandRepository commandRepository;
     
-    public JNRPEConsole(final JNRPE jnrpe, final PluginRepository pr, final CommandRepository cr) {
+    public JNRPEConsole(final JNRPE jnrpe, final IPluginRepository pr, final CommandRepository cr) {
         jnrpeInstance = jnrpe;
         pluginRepository = pr;
         commandRepository = cr;

@@ -17,9 +17,9 @@ package it.jnrpe.server.console;
 
 import it.jnrpe.JNRPE;
 import it.jnrpe.ReturnValue;
+import it.jnrpe.plugins.IPluginRepository;
 import it.jnrpe.plugins.PluginOption;
 import it.jnrpe.plugins.PluginProxy;
-import it.jnrpe.plugins.PluginRepository;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -39,9 +39,9 @@ public class PluginCommand extends ConsoleCommand {
     public final static String NAME="plugin:";
     
     private final String pluginName;
-    private final PluginRepository pluginRepository;
+    private final IPluginRepository pluginRepository;
     
-    public PluginCommand(ConsoleReader consoleReader, JNRPE jnrpe, String pluginName, PluginRepository pr) {
+    public PluginCommand(ConsoleReader consoleReader, JNRPE jnrpe, String pluginName, IPluginRepository pr) {
         super(consoleReader, jnrpe);
         this.pluginName = pluginName;
         this.pluginRepository = pr;

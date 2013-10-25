@@ -15,13 +15,13 @@ import java.lang.annotation.RetentionPolicy;
 
 /**
  * Definition for a list of plugin options.
- * 
+ *
  * @author Frederico Campos
  *
  */
 
-@Retention(RetentionPolicy.RUNTIME)     
+@Retention(RetentionPolicy.RUNTIME)
 public @interface PluginOptions {
 
-	Option[] value();
+    Option[] value();
 }

@@ -58,12 +58,12 @@ class PluginCommandLine implements ICommandLine {
      *            The name of the option whose values we are searching for.
      * @return The list of the values.
      */
-    public List getOptionValues(final String optionName) {
+    public List<String> getOptionValues(final String optionName) {
         if (optionName.length() == 1) {
             return getOptionValues(optionName.charAt(0));
         }
 
-        return (List) commandLine.getValues("--" + optionName);
+        return (List<String>) commandLine.getValues("--" + optionName);
     }
 
     /**
@@ -100,8 +100,8 @@ class PluginCommandLine implements ICommandLine {
      *            The name of the option whose values we are searching for.
      * @return The list of the values.
      */
-    public List getOptionValues(final char shortOption) {
-        return (List) commandLine.getValues("-" + shortOption);
+    public List<String> getOptionValues(final char shortOption) {
+        return (List<String>) commandLine.getValues("-" + shortOption);
     }
 
     /**

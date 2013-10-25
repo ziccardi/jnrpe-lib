@@ -18,8 +18,8 @@ package it.jnrpe.server.console;
 import static jline.internal.Preconditions.checkNotNull;
 import it.jnrpe.commands.CommandDefinition;
 import it.jnrpe.commands.CommandRepository;
+import it.jnrpe.plugins.IPluginRepository;
 import it.jnrpe.plugins.PluginDefinition;
-import it.jnrpe.plugins.PluginRepository;
 
 import java.util.Collection;
 import java.util.List;
@@ -39,7 +39,7 @@ class CommandCompleter implements Completer {
 
         private final SortedSet<String> strings = new TreeSet<String>();
 
-        public CommandCompleter(final PluginRepository pluginRepository, final CommandRepository commandRepository) {
+        public CommandCompleter(final IPluginRepository pluginRepository, final CommandRepository commandRepository) {
             
             for (PluginDefinition pd : pluginRepository.getAllPlugins()) {
                 strings.add(PluginCommand.NAME + pd.getName().toLowerCase());

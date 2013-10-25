@@ -18,8 +18,8 @@ package it.jnrpe.server.console;
 import it.jnrpe.JNRPE;
 import it.jnrpe.commands.CommandDefinition;
 import it.jnrpe.commands.CommandRepository;
+import it.jnrpe.plugins.IPluginRepository;
 import it.jnrpe.plugins.PluginDefinition;
-import it.jnrpe.plugins.PluginRepository;
 
 import java.util.Map;
 import java.util.TreeMap;
@@ -35,7 +35,7 @@ public class CommandExecutor {
     
     private static CommandExecutor instance = null;
     
-    public static CommandExecutor getInstance(ConsoleReader consoleReader, JNRPE jnrpe, PluginRepository pluginRepository, CommandRepository commandRepository) {
+    public static CommandExecutor getInstance(ConsoleReader consoleReader, JNRPE jnrpe, IPluginRepository pluginRepository, CommandRepository commandRepository) {
         if (instance == null) {
             synchronized (CommandExecutor.class) {
                 if (instance == null) {

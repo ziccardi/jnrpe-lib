@@ -28,19 +28,19 @@ public class LegacyThreshold implements IThreshold {
     /**
      * The range for an OK status.
      */
-    private LegacyRange okRange;
+    private final LegacyRange okRange;
     /**
      * The range for a Warning status.
      */
-    private LegacyRange warnRange;
+    private final LegacyRange warnRange;
     /**
      * The range for a critical status.
      */
-    private LegacyRange critRange;
+    private final LegacyRange critRange;
     /**
      * The metric associated with this threshold specification.
      */
-    private String metricName;
+    private final String metricName;
 
     /**
      * Builds and initializes the threshold object.
@@ -134,6 +134,7 @@ public class LegacyThreshold implements IThreshold {
                 return critRange.getThresholdString();
             }
             break;
+        default:
         }
 
         return null;

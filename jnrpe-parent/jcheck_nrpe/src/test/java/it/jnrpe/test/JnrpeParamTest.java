@@ -25,6 +25,7 @@ import it.jnrpe.commands.CommandRepository;
 import it.jnrpe.events.IJNRPEEvent;
 import it.jnrpe.events.IJNRPEEventListener;
 import it.jnrpe.events.LogEvent;
+import it.jnrpe.plugins.IPluginRepository;
 import it.jnrpe.plugins.PluginDefinition;
 import it.jnrpe.plugins.PluginOption;
 import it.jnrpe.plugins.PluginRepository;
@@ -98,7 +99,7 @@ public class JnrpeParamTest {
 
     @Test
     public void testPortInUse() throws UnknownHostException {
-        PluginRepository pr = new PluginRepository();
+        IPluginRepository pr = new PluginRepository();
         CommandRepository cr = new CommandRepository();
 
         JNRPE instance1 = null, instance2 = null;

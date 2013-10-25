@@ -166,7 +166,10 @@ public final class CommandDefinition {
         optionsList.add(arg);
         return this;
     }
-    
+
+    /**
+     * @return all the command options.
+     */
     public Collection<CommandOption> getOptions() {
         return optionsList;
     }

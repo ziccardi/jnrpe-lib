@@ -183,7 +183,7 @@ class JNRPEProtocolPacket {
                 throw new BadCRCException("Bad CRC");
             }
         } catch (IOException e) {
-            // Should never happen...
+            throw new IllegalStateException(e);
         }
     }
 
@@ -207,7 +207,7 @@ class JNRPEProtocolPacket {
             dout.close();
 
         } catch (IOException e) {
-            // Should never happen...
+            throw new IllegalStateException(e);
         }
         return bout.toByteArray();
     }

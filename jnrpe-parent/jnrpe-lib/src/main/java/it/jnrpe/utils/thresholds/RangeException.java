@@ -78,7 +78,7 @@ public class RangeException extends BadThresholdException {
      * @param rangeString The whole range string
      */
     final void setWholeRangeString(final String rangeString) {
-        this.wholeRangeString = rangeString;
+        wholeRangeString = rangeString;
     }
 
     /**
@@ -126,12 +126,13 @@ public class RangeException extends BadThresholdException {
      * @param stage The failed stage
      */
     final void setFailedStage(final Stage stage) {
-        this.failedStage = stage;
+        failedStage = stage;
     }
 
     /**
      * @return the error message.
      */
+    @Override
     public String getMessage() {
         return message;
     }

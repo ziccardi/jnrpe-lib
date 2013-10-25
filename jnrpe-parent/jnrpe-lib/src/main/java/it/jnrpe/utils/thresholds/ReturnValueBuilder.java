@@ -19,8 +19,6 @@ import it.jnrpe.ReturnValue;
 import it.jnrpe.Status;
 import it.jnrpe.plugins.Metric;
 
-import java.math.BigDecimal;
-
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -35,7 +33,7 @@ public final class ReturnValueBuilder {
     /**
      * The return value that we are configuring.
      */
-    private ReturnValue retVal = new ReturnValue().withStatus(Status.OK);
+    private final ReturnValue retVal = new ReturnValue().withStatus(Status.OK);
 
     /**
      * The thresholds that must be used to compute the Status result.
@@ -154,19 +152,6 @@ public final class ReturnValueBuilder {
     }
 
     /**
-     * Convert a non null value into a BigDecimal.
-     * @param value The value to be converted.
-     * @return The converted value.
-     */
-    private BigDecimal toBigDecimal(final Long value) {
-        if (value != null) {
-            return new BigDecimal(value);
-        }
-
-        return null;
-    }
-
-    /**
      * Force the message to return to Nagios. Instead of computing
      * the message using the {@link Metric} object received in the
      * {@link #withValue(Metric)} methods, this value will be
@@ -177,7 +162,7 @@ public final class ReturnValueBuilder {
      * @return this
      */
     public ReturnValueBuilder withForcedMessage(final String message) {
-        this.retValMessage = message;
+        retValMessage = message;
         return this;
     }
 
@@ -191,7 +176,7 @@ public final class ReturnValueBuilder {
      * @return this
      */
     public ReturnValueBuilder withStatus(final Status forceStatus) {
-        this.forcedStatus = forceStatus;
+        forcedStatus = forceStatus;
         return this;
     }
 

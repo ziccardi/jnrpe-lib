@@ -50,7 +50,7 @@ class ThreadFactory {
         this.commandInvoker = cmdInvoker;
 
         watchDog = new ThreadTimeoutWatcher();
-        watchDog.setThreadTimeout(threadTimeout);
+        ThreadTimeoutWatcher.setThreadTimeout(threadTimeout);
         watchDog.start();
     }
 
@@ -74,11 +74,11 @@ class ThreadFactory {
      */
     public void shutdown() {
         try {
-            watchDog.stopWatching();
+            ThreadTimeoutWatcher.stopWatching();
             // Waits for the thread to stop.
             watchDog.join(DEFAULT_THREAD_STOP_TIMEOUT);
         } catch (InterruptedException ie) {
-            // This should never happen...
+            throw new IllegalStateException(ie);
         }
     }
 }
