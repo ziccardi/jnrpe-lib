@@ -17,20 +17,31 @@ package it.jnrpe.osgi;
 
 import it.jnrpe.commands.CommandDefinition;
 import it.jnrpe.commands.CommandRepository;
-import it.jnrpe.plugins.IPluginInterface;
 import it.jnrpe.plugins.IPluginRepository;
 import it.jnrpe.plugins.PluginDefinition;
 import it.jnrpe.utils.PluginRepositoryUtil;
+import it.jnrpe.utils.StreamManager;
+
+import java.io.InputStream;
+import java.util.Collection;
 
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
 import org.osgi.util.tracker.BundleTracker;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class JNRPEBundleTracker extends BundleTracker {
 
-    private final String JNRPE_PLUGIN_CLASS = "JNRPE-Plugin-Class";
-    private final String JNRPE_PLUGIN_PACKAGE_CLASS = "JNRPE-PluginPackage-Class";
+    private final static String JNRPE_PLUGIN_PACKAGE_NAME =
+            "JNRPE-PluginPackage-Name";
+
+    /**
+     * The logger.
+     */
+    private static final Logger LOG = LoggerFactory
+            .getLogger(JNRPEBundleTracker.class);
 
     private final IPluginRepository pluginRepository;
     private final CommandRepository commandRepository;
@@ -43,98 +54,82 @@ public class JNRPEBundleTracker extends BundleTracker {
         commandRepository = commandRepo;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public Object addingBundle(final Bundle bundle, final BundleEvent event) {
-        String pluginClassName =
-                (String) bundle.getHeaders().get(JNRPE_PLUGIN_CLASS);
 
         String pluginPackageClassName =
-                (String) bundle.getHeaders().get(JNRPE_PLUGIN_PACKAGE_CLASS);
+                (String) bundle.getHeaders().get(JNRPE_PLUGIN_PACKAGE_NAME);
 
-        if (pluginClassName != null) {
-            // The bundle is a plugin...
-            Class<? extends IPluginInterface> clazz;
+        if (pluginPackageClassName != null) {
+            LOG.info("Plugin package found: {} " + pluginPackageClassName);
+
+            StreamManager sm = new StreamManager();
+            // The bundle is a plugin package...
             try {
-                clazz = bundle.loadClass(pluginClassName);
-                PluginDefinition pd =
-                        PluginRepositoryUtil.loadFromPluginAnnotation(clazz);
-                pluginRepository.addPluginDefinition(pd);
-            } catch (Exception e) {
+                BundleDelegatingClassLoader bdc =
+                        new BundleDelegatingClassLoader(bundle);
+                InputStream in =
+                        sm.handle(bdc.getResourceAsStream("plugin.xml"));
 
-            }
-        } else {
-            if (pluginPackageClassName != null) {
-                // The bundle is a plugin package...
-                try {
-                    IJNRPEPluginPackage pp = (IJNRPEPluginPackage) bundle.loadClass(pluginPackageClassName).newInstance();
+                Collection<PluginDefinition> pdList =
+                        PluginRepositoryUtil
+                        .loadFromXmlPluginPackageDefinitions(bdc, in);
 
-                    for (Class<? extends IPluginInterface> clazz : pp.getAllPlugins()) {
-                        PluginDefinition pd =  PluginRepositoryUtil.loadFromPluginAnnotation(clazz);
-                        pluginRepository.addPluginDefinition(pd);
-                    }
-
-                } catch (Exception e) {
-                    // TODO Error loading package...
-                    e.printStackTrace();
+                for (PluginDefinition pd : pdList) {
+                    LOG.info("Adding plugin '{}' to the repository",
+                            pd.getName());
+                    pluginRepository.addPluginDefinition(pd);
                 }
+
+            } catch (Exception e) {
+                LOG.error("Error adding plugin to the repository", e);
+            } finally {
+                sm.closeAll();
             }
         }
 
         return bundle;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public void remove(final Bundle bundle) {
-        String pluginClassName =
-                (String) bundle.getHeaders().get(JNRPE_PLUGIN_CLASS);
-
         String pluginPackageClassName =
-                (String) bundle.getHeaders().get(JNRPE_PLUGIN_PACKAGE_CLASS);
+                (String) bundle.getHeaders().get(JNRPE_PLUGIN_PACKAGE_NAME);
 
-        if (pluginClassName != null) {
-            Class<? extends IPluginInterface> clazz;
+        if (pluginPackageClassName != null) {
+
+            StreamManager sm = new StreamManager();
+
+            // The bundle is a plugin package...
             try {
-                clazz = bundle.loadClass(pluginClassName);
+                BundleDelegatingClassLoader bdc =
+                        new BundleDelegatingClassLoader(bundle);
+                InputStream in =
+                        sm.handle(bdc.getResourceAsStream("plugin.xml"));
 
-                // TODO : this method is not very efficient. It should be not a
-                // problem, but
-                // a better way should be followed
-                PluginDefinition pd =
-                        PluginRepositoryUtil.loadFromPluginAnnotation(clazz);
+                Collection<PluginDefinition> pdList =
+                        PluginRepositoryUtil
+                        .loadFromXmlPluginPackageDefinitions(bdc,
+                                in);
 
-                // First remove all the commands using the plugin...
-                for (CommandDefinition cd : commandRepository.getAllCommandDefinition(pd.getName())) {
-                    commandRepository.removeCommandDefinition(cd);
-                }
-
-                // Now we can remove the plugin...
-                pluginRepository.removePluginDefinition(pd);
-            } catch (Exception e) {
-
-            }
-        } else {
-            if (pluginPackageClassName != null) {
-                // The bundle is a plugin package...
-                try {
-                    IJNRPEPluginPackage pp = (IJNRPEPluginPackage) bundle.loadClass(pluginPackageClassName).newInstance();
-
-                    for (Class<? extends IPluginInterface> clazz : pp.getAllPlugins()) {
-                        PluginDefinition pd =  PluginRepositoryUtil.loadFromPluginAnnotation(clazz);
-
-                        // First remove all the commands using the plugin...
-                        for (CommandDefinition cd : commandRepository.getAllCommandDefinition(pd.getName())) {
-                            commandRepository.removeCommandDefinition(cd);
-                        }
-
-                        pluginRepository.removePluginDefinition(pd);
+                for (PluginDefinition pd : pdList) {
+                    // First remove all the commands using the plugin...
+                    for (CommandDefinition cd : commandRepository
+                            .getAllCommandDefinition(pd.getName())) {
+                        LOG.info(
+                                "Removing command '{}' from the repository",
+                                cd.getName());
+                        commandRepository.removeCommandDefinition(cd);
                     }
 
-                } catch (Exception e) {
-                    // TODO Error loading package...
-                    e.printStackTrace();
+                    LOG.info("Removing plugin '{}' from the repository",
+                            pd.getName());
+                    pluginRepository.removePluginDefinition(pd);
                 }
+            } catch (Exception e) {
+                LOG.error("Error removing plugin from the repository", e);
+            } finally {
+                sm.closeAll();
             }
         }
     }

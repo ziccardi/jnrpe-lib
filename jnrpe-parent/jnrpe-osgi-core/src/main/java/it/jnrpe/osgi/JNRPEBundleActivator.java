@@ -80,6 +80,7 @@ public class JNRPEBundleActivator implements BundleActivator, ManagedService {
         }
 
         JNRPE engine = new JNRPE(pluginRepository, commandRepository);
+        engine.addEventListener(new EventLoggerListener());
 
         if (allowAddress == null || allowAddress.trim().length() == 0) {
             allowAddress = "127.0.0.1";
@@ -171,7 +172,7 @@ public class JNRPEBundleActivator implements BundleActivator, ManagedService {
         commandRepository = new CommandRepository();
 
         bundleTracker = new JNRPEBundleTracker(context, pluginRepository, commandRepository);
-
+        bundleTracker.open();
         // Register the managed service...
         Dictionary<String, String> props = new Hashtable<String, String>();
         props.put(Constants.SERVICE_PID, PID);

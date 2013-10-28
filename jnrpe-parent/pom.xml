@@ -207,6 +207,7 @@ It is fully compatible with check_nrpe and can be used to execute both old nativ
 		<module>jcheck_nrpe</module>
 		<module>jnrpe-debian</module>
 		<module>jnrpe-osgi-core</module>
+		<module>jnrpe-plugins-osgi</module>
 	</modules>
 	<!-- <parent> <groupId>org.sonatype.oss</groupId> <version>7</version> <artifactId>oss-parent</artifactId> 
 		</parent> -->

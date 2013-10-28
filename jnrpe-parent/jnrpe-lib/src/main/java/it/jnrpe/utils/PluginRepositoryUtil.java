@@ -24,12 +24,17 @@ import it.jnrpe.plugins.annotations.Plugin;
 import it.jnrpe.plugins.annotations.PluginOptions;
 
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.dom4j.Document;
-import org.dom4j.DocumentException;
 import org.dom4j.Element;
-import org.dom4j.io.SAXReader;
+import org.dom4j.io.DOMReader;
 
 /**
  * An utility class that allows to define the plugin repository in an XML file
@@ -62,11 +67,30 @@ public final class PluginRepositoryUtil {
             final PluginRepository repo, final ClassLoader cl,
             final InputStream in)
                     throws PluginConfigurationException {
-        SAXReader reader = new SAXReader();
+        for (PluginDefinition pd : loadFromXmlPluginPackageDefinitions(cl, in)) {
+            repo.addPluginDefinition(pd);
+        }
+    }
+
+    public static Collection<PluginDefinition> loadFromXmlPluginPackageDefinitions(
+            final ClassLoader cl,
+            final InputStream in)
+                    throws PluginConfigurationException {
+
+        List<PluginDefinition> res = new ArrayList<PluginDefinition>();
+
+        DocumentBuilderFactory factory = DocumentBuilderFactory
+                .newInstance();
+
+        //SAXReader reader = new SAXReader();
         Document document;
+
         try {
-            document = reader.read(in);
-        } catch (DocumentException e) {
+            DocumentBuilder loader = factory.newDocumentBuilder();
+            DOMReader reader = new DOMReader();
+
+            document = reader.read(loader.parse(in));
+        } catch (Exception e) {
             throw new PluginConfigurationException(e);
         }
 
@@ -79,8 +103,11 @@ public final class PluginRepositoryUtil {
             Element plugin = i.next();
 
             PluginDefinition pd = parsePluginDefinition(cl, plugin);
-            repo.addPluginDefinition(pd);
+            //repo.addPluginDefinition(pd);
+            res.add(pd);
         }
+
+        return res;
     }
 
     /**
@@ -97,11 +124,18 @@ public final class PluginRepositoryUtil {
     public static PluginDefinition parseXmlPluginDefinition(
             final ClassLoader cl,
             final InputStream in) throws PluginConfigurationException {
-        SAXReader reader = new SAXReader();
+
+        DocumentBuilderFactory factory = DocumentBuilderFactory
+                .newInstance();
+
         Document document;
+
         try {
-            document = reader.read(in);
-        } catch (DocumentException e) {
+            DocumentBuilder loader = factory.newDocumentBuilder();
+            DOMReader reader = new DOMReader();
+
+            document = reader.read(loader.parse(in));
+        } catch (Exception e) {
             throw new PluginConfigurationException(e);
         }
 
