@@ -10,10 +10,22 @@
 	<packaging>bundle</packaging>
 
 	<dependencies>
+		<!-- JNRPE Dependencies -->
 		<dependency>
 			<groupId>net.sf.jnrpe</groupId>
 			<artifactId>jnrpe-lib</artifactId>
 		</dependency>
+		
+		<!-- Other dependencies -->
+		
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.7.5</version>
+		</dependency>
+		
+		<!-- OSGI dependencies -->
+		
 		<dependency>
 			<groupId>org.osgi</groupId>
 			<artifactId>org.osgi.core</artifactId>
@@ -42,10 +54,18 @@
 						<Bundle-Version>${project.version}</Bundle-Version>
 						<Bundle-Activator>it.jnrpe.osgi.JNRPEBundleActivator</Bundle-Activator>
 
-						<Import-Package>*</Import-Package>
-						<Export-Package>!*</Export-Package>
+						<Import-Package>org.osgi.framework
+										,org.osgi.service.cm
+										,org.osgi.service.log
+										,org.osgi.util.tracker
+										,javax.net.*
+										,!*
+						</Import-Package>
+						<Export-Package>it.jnrpe,it.jnrpe.plugins,it.jnrpe.plugins.annotations
+										,it.jnrpe.utils,it.jnrpe.utils.thresholds
+										,it.jnrpe.events</Export-Package>
 
-						<Embed-Dependency></Embed-Dependency>
+						<Embed-Dependency>!org.osgi*,*</Embed-Dependency>
 						<Embed-Transitive>true</Embed-Transitive>
 					</instructions>
 				</configuration>

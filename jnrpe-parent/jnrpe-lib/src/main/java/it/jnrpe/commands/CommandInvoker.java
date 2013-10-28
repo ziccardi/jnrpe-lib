@@ -1,18 +1,23 @@
 /*
- * Copyright (c) 2008 Massimiliano Ziccardi Licensed under the Apache License,
- * Version 2.0 (the "License"); you may not use this file except in compliance
- * with the License. You may obtain a copy of the License at
- * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
- * or agreed to in writing, software distributed under the License is
- * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied. See the License for the specific language
- * governing permissions and limitations under the License.
+ * Copyright (c) 2011 Massimiliano Ziccardi
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package it.jnrpe.commands;
 
+import it.jnrpe.JNRPELIB;
 import it.jnrpe.ReturnValue;
 import it.jnrpe.Status;
-import it.jnrpe.JNRPELIB;
 import it.jnrpe.events.EventsUtil;
 import it.jnrpe.events.IJNRPEEventListener;
 import it.jnrpe.events.LogEvent;
@@ -66,9 +71,9 @@ public final class CommandInvoker {
             final CommandRepository commandRepo,
             final Set<IJNRPEEventListener> listeners) {
         acceptParams = true;
-        this.pluginRepository = pluginRepo;
-        this.commandRepository = commandRepo;
-        this.listenersList = listeners;
+        pluginRepository = pluginRepo;
+        commandRepository = commandRepo;
+        listenersList = listeners;
     }
 
     /**
@@ -85,7 +90,7 @@ public final class CommandInvoker {
      * @return The result of the command
      */
     public ReturnValue invoke(final String commandName,
-                               final String[] argsAry) {
+            final String[] argsAry) {
         if (commandName.equals("_NRPE_CHECK")) {
             return new ReturnValue(Status.OK, JNRPELIB.VERSION);
         }
@@ -111,14 +116,14 @@ public final class CommandInvoker {
      * @return The result of the command
      */
     public ReturnValue
-            invoke(final CommandDefinition cd, final String[] argsAry) {
+    invoke(final CommandDefinition cd, final String[] argsAry) {
         String pluginName = cd.getPluginName();
 
         String[] commandLine = cd.getCommandLine();
 
         if (acceptParams) {
             for (int j = 0;
-                        commandLine != null && j < commandLine.length; j++) {
+                    commandLine != null && j < commandLine.length; j++) {
                 for (int i = 0; i < argsAry.length; i++) {
                     commandLine[j] =
                             commandLine[j].replaceAll("\\$[Aa][Rr][Gg]"
@@ -136,7 +141,7 @@ public final class CommandInvoker {
                     "Unable to instantiate plugin named " + pluginName);
             return new ReturnValue(Status.UNKNOWN,
                     "Error instantiating plugin '" + pluginName
-                            + "' : bad plugin name?");
+                    + "' : bad plugin name?");
         }
 
         plugin.addListeners(listenersList);
