@@ -23,7 +23,7 @@ import it.jnrpe.commands.CommandDefinition;
 import it.jnrpe.commands.CommandOption;
 import it.jnrpe.commands.CommandRepository;
 import it.jnrpe.plugins.PluginDefinition;
-import it.jnrpe.plugins.utils.httpserver.SimpleHttpServer;
+import it.jnrpe.plugins.mocks.httpserver.SimpleHttpServer;
 import it.jnrpe.utils.PluginRepositoryUtil;
 import junit.framework.Assert;
 
@@ -40,6 +40,8 @@ import org.testng.annotations.Test;
 public class CheckHttpTest implements Constants {
 
 	private SimpleHttpServer server = null;
+	
+	private String PORT = SimpleHttpServer.PORT + "";
 
 	/**
 	 * running single unit test
@@ -72,7 +74,7 @@ public class CheckHttpTest implements Constants {
 		.addArgument(new CommandOption("port", "$ARG2$")));
 
 		JNRPEClient client = new JNRPEClient(BIND_ADDRESS, JNRPE_PORT, false);
-		ReturnValue ret = client.sendCommand("CHECK_HTTP_OK", "localhost", "9000");
+		ReturnValue ret = client.sendCommand("CHECK_HTTP_OK", "localhost", PORT);
 		Assert.assertEquals(ret.getMessage(), Status.OK, ret.getStatus());
 	}
 
@@ -94,19 +96,19 @@ public class CheckHttpTest implements Constants {
 
 		ReturnValue ret = client.sendCommand("CHECK_EXPECTED", 
 				"localhost",
-				"9000",
+				PORT,
 				"Hello World,This is a paragraph",
 				"Java");
 		Assert.assertEquals(ret.getMessage(), ret.getStatus(), Status.OK);
 
 		ret = client.sendCommand("CHECK_EXPECTED", 
 				"localhost",
-				"9000",
+				PORT,
 				"GET from JNRPE detected",
 				"JNRPE");
 		Assert.assertEquals(Status.OK, ret.getStatus());
 
-		ret = client.sendCommand("CHECK_EXPECTED", "localhost", "9000", "This will throw a warning!", "Java");
+		ret = client.sendCommand("CHECK_EXPECTED", "localhost", PORT, "This will throw a warning!", "Java");
 		Assert.assertEquals(ret.getMessage(), Status.WARNING, ret.getStatus());	
 
 	}
@@ -128,7 +130,7 @@ public class CheckHttpTest implements Constants {
 
 		JNRPEClient client = new JNRPEClient(BIND_ADDRESS, JNRPE_PORT, false);
 
-		ReturnValue ret = client.sendCommand("CHECK_REGEX", "localhost", "9000", "(hello world)");
+		ReturnValue ret = client.sendCommand("CHECK_REGEX", "localhost", PORT, "(hello world)");
 		Assert.assertEquals(ret.getMessage(), Status.CRITICAL, ret.getStatus());
 	}
 
@@ -145,7 +147,7 @@ public class CheckHttpTest implements Constants {
 		String expectedString = "\"param1:val1,param2:val2,param3:val3\"";
 
 		JNRPEClient client = new JNRPEClient(BIND_ADDRESS, JNRPE_PORT, false);	
-		ReturnValue ret = client.sendCommand("CHECK_POST", "localhost", "9000", post, expectedString);		
+		ReturnValue ret = client.sendCommand("CHECK_POST", "localhost", PORT, post, expectedString);		
 		Assert.assertEquals(ret.getMessage(), Status.OK, ret.getStatus());
 
 	}    
@@ -177,7 +179,7 @@ public class CheckHttpTest implements Constants {
 		.addArgument(new CommandOption("no-body"))
 				);
 		JNRPEClient client = new JNRPEClient(BIND_ADDRESS, JNRPE_PORT, false);
-		ReturnValue ret = client.sendCommand("CHECK_NOBODY", "localhost", "9000", "200 OK");		
+		ReturnValue ret = client.sendCommand("CHECK_NOBODY", "localhost", PORT, "200 OK");		
 		Assert.assertEquals(ret.getMessage(), Status.OK, ret.getStatus());
 	}
 
