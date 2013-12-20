@@ -144,13 +144,14 @@ public class HttpUtils {
 			HttpURLConnection conn,
 			Integer timeout){
 		if (props != null) {
+			if (props.get("User-Agent") == null){
+				conn.setRequestProperty("User-Agent", "Java"); 
+			}
 			for (Object key : props.keySet()) {
 				conn.setRequestProperty(key + "", props.get(key) + "");
 			}
 		}
-		if (props.get("User-Agent") == null){
-			conn.setRequestProperty("User-Agent", "Java"); 
-		}
+		
 		
 		if (timeout != null) {
 			conn.setConnectTimeout(timeout * 1000);
