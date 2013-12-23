@@ -90,7 +90,6 @@ public class CheckPgsql extends PluginBase {
 
         try {
             conn = getConnection(cl);
-            // elapsed = (System.currentTimeMillis() - start) / 1000l;
         } catch (ClassNotFoundException e) {
             log.error("PostgreSQL driver library not found into the classpath: "
                     + "download and put it in the same directory of "
@@ -115,15 +114,7 @@ public class CheckPgsql extends PluginBase {
         return metricList;
     }
 
-    /**
-     * Executes the plugin.
-     *
-     * @param cl
-     *            The command line
-     * @return the Return value
-     * @throws BadThresholdException
-     *             -
-     */
+
 
     /**
      * Connect to the server.
