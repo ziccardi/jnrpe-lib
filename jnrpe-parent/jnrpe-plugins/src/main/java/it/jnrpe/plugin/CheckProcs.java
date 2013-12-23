@@ -18,7 +18,6 @@ package it.jnrpe.plugin;
 import it.jnrpe.ICommandLine;
 import it.jnrpe.ReturnValue;
 import it.jnrpe.Status;
-import it.jnrpe.plugins.MetricGatheringException;
 import it.jnrpe.plugins.PluginBase;
 import it.jnrpe.plugins.annotations.Option;
 import it.jnrpe.plugins.annotations.Plugin;
@@ -56,20 +55,24 @@ import org.apache.commons.lang.StringUtils;
     @Option(shortName = "c", longName = "critical", description = "Critical value if metric is out of range", required = false, hasArgs = true, argName = "critical", optionalArgs = false, option = "critical"),
 
     @Option(shortName = "m", longName = "metric", description = "Metric type. Valid values are: PROCS - number of processes"
-            + "; VSZ - virtual memory size; RSS -  resident set memory size; CPU - CPU percentage; ELAPSED - elapsed time in seconds", required = false, hasArgs = true, argName = "metric", optionalArgs = false, option = "metric"),
+            + "; VSZ - virtual memory size (unix only); RSS - resident set memory size (unix only); MEM - memory usage in KB (Windows only); CPU - CPU percentage; " +
+            "ELAPSED - elapsed time in seconds (unix only)", required = false, hasArgs = true, argName = "metric", optionalArgs = false, option = "metric"),
 
-            @Option(shortName = "a", longName = "argument-array", description = "Only scan for processes with args that contain STRING.", required = false, hasArgs = true, argName = "argument-array", optionalArgs = false, option = "argument-array"),
-            @Option(shortName = "e", longName = "ereg-argument-array", description = "Only scan for processes with args that contain the regex.", required = false, hasArgs = true, argName = "ereg-argument-array", optionalArgs = false, option = "ereg-argument-array"),
-            @Option(shortName = "p", longName = "ppid", description = "Only scan for children of the parent process ID indicated.", required = false, hasArgs = true, argName = "ppid", optionalArgs = false, option = "ppid"),
-            @Option(shortName = "z", longName = "vsz", description = "Only scan for processes with VSZ higher than indicated.", required = false, hasArgs = true, argName = "vsz", optionalArgs = false, option = "vsz"),
-            @Option(shortName = "r", longName = "rss", description = "Only scan for processes with RSS higher than indicated.", required = false, hasArgs = true, argName = "rss", optionalArgs = false, option = "rss"),
+            @Option(shortName = "a", longName = "argument-array", description = "Only scan for processes with args that contain STRING. (unix only)", required = false, hasArgs = true, argName = "argument-array", optionalArgs = false, option = "argument-array"),
+            @Option(shortName = "e", longName = "ereg-argument-array", description = "Only scan for processes with args that contain the regex. (unix only)", required = false, hasArgs = true, argName = "ereg-argument-array", optionalArgs = false, option = "ereg-argument-array"),
+
+            @Option(shortName = "p", longName = "ppid", description = "Only scan for children of the parent process ID indicated (unix only).", required = false, hasArgs = true, argName = "ppid", optionalArgs = false, option = "ppid"),
+
+            @Option(shortName = "z", longName = "vsz", description = "Only scan for processes with VSZ higher than indicated (unix only).", required = false, hasArgs = true, argName = "vsz", optionalArgs = false, option = "vsz"),
+            @Option(shortName = "r", longName = "rss", description = "Only scan for processes with RSS higher than indicated (unix only).", required = false, hasArgs = true, argName = "rss", optionalArgs = false, option = "rss"),
+            @Option(shortName = "M", longName = "memory", description = "Only scan for processes with memory usage higher than indicated (windows only).", required = false, hasArgs = true, argName = "memory", optionalArgs = false, option = "memory"),
 
             @Option(shortName = "C", longName = "command", description = "Only scan for exact matches of COMMAND (without path).", required = false, hasArgs = true, argName = "command", optionalArgs = false, option = "command"),
             @Option(shortName = "u", longName = "user", description = "Only scan for exact matches of USER", required = false, hasArgs = true, argName = "user", optionalArgs = false, option = "user")
 })
 public class CheckProcs extends PluginBase {
 
-    private final static String[] DEFAULT_WINDOWS_CMD = new String[]{"tasklist.exe /FO CSV"};
+    private final static String[] DEFAULT_WINDOWS_CMD = new String[]{"cmd", "/C", "tasklist /FO CSV /V"};
 
     private final static String[] DEFAULT_UNIX_CMD = new String[]{"/bin/sh", "-c", "/bin/ps -eo comm,pid,ppid,user,c,rss,vsz,time,args"};
 
@@ -82,6 +85,8 @@ public class CheckProcs extends PluginBase {
     private final static String METRIC_CPU = "CPU";
 
     private final static String METRIC_ELAPSED = "ELAPSED";
+
+    private final static String METRIC_MEMORY = "MEMORY";
 
     private final static String FILTER_COMMAND = "command";
 
@@ -97,17 +102,25 @@ public class CheckProcs extends PluginBase {
 
     private final static String FILTER_EREG_ARG_ARRAY = "ereg-argument-array";
 
-    private final static String FILTER_STATE = "state";
+    private final static String FILTER_MEMORY = "memory";
 
     private final static String[] FILTERS = new String[] { 
-        FILTER_COMMAND, 
-        FILTER_STATE, 
+        FILTER_COMMAND,  
         FILTER_PPID, 
         FILTER_VSZ,
         FILTER_RSS,
         FILTER_USER, 
         FILTER_ARG_ARRAY, 
         FILTER_EREG_ARG_ARRAY
+    };
+
+    private final static String[] UNIX_ONLY = new String[]{
+        FILTER_ARG_ARRAY,
+        FILTER_RSS,
+        FILTER_PPID,
+        FILTER_VSZ,
+        FILTER_EREG_ARG_ARRAY,
+
     };
 
     private final static String UNIX_TMP_FILE = "/tmp/checkprocs.out";
@@ -125,8 +138,9 @@ public class CheckProcs extends PluginBase {
      * @throws BadThresholdException
      */
     public ReturnValue execute(final ICommandLine cl) throws BadThresholdException {
+        String os = null;
         try {
-            String os = System.getProperty("os.name").toLowerCase();
+            os = System.getProperty("os.name").toLowerCase();
             String metric = cl.getOptionValue("metric");
             if (metric == null){
                 metric = METRIC_PROCS;
@@ -134,26 +148,22 @@ public class CheckProcs extends PluginBase {
             metric = metric.toUpperCase();
 
             boolean unix = true;
-            String cmd[] = null;
-            String outputFile = null;
             if (os.contains("windows")) {
-                cmd = buildWindowsCommand(cl, metric);
                 unix = false;
-            } else {
-                outputFile = UNIX_TMP_FILE;
-                cmd = buildUnixCommand(cl, metric);
             }
             validateArguments(cl, os, metric);
 
-            String output = null;
-            output = exec(cmd, outputFile);
+            String output = exec(unix);
+
             List<Map<String, String>> result = unix ? parseUnixOutput(output): parseWindowsOutput(output);
             return analyze(result, cl, metric);
         }catch(Exception e ){
             e.printStackTrace();
             throw new BadThresholdException(e);
         }finally{
-            cleanup();
+            if (!os.equals("windows")){
+                cleanup();
+            }
         }
     }
 
@@ -165,8 +175,24 @@ public class CheckProcs extends PluginBase {
      * @param metric
      * @return
      */
-    //@TODO
-    private void validateArguments(ICommandLine cl, String os, String metric) throws MetricGatheringException {
+    private void validateArguments(ICommandLine cl, String os, String metric) throws Exception {
+        if (os.equals("windows")){
+            if (metric.equals(METRIC_VSZ) ||
+                    metric.equals(METRIC_RSS) || 
+                    metric.endsWith(METRIC_ELAPSED)){
+                throw new Exception("Metric " + metric + " not supported in Wndows.");
+            }else {
+                for (String opt: UNIX_ONLY){
+                    if (cl.getOptionValue("opt") != null){
+                        throw new Exception("Option " + opt + " is not supported in Windows.");
+                    }
+                }
+            }
+        }else{
+            if (metric.equals(METRIC_MEMORY)){
+                throw new Exception("Metric " + metric + " not supported in unix.");
+            }
+        }
     }
 
     /**
@@ -213,7 +239,7 @@ public class CheckProcs extends PluginBase {
                 return new ReturnValue(Status.WARNING, "PROCS WARNING: " + message + " " + size + " processes.");
             }
         }
-        return new ReturnValue(Status.OK, "PROCS OK: " + message + ", " + size + " processes.");
+        return new ReturnValue(Status.OK, "PROCS OK: " + message + " " + size + " processes.");
     }
 
     /**
@@ -250,7 +276,6 @@ public class CheckProcs extends PluginBase {
 
     @SuppressWarnings("deprecation")
     private int compareMetric(List<Map<String, String>> output, String value, String metric) throws BadThresholdException{
-        //		private List<Map<String, String>>  compareMetric(List<Map<String, String>> output, String value, String metric) throws BadThresholdException{
         List<Map<String, String>> list = new ArrayList<Map<String, String>>();
         for (Map<String, String> values: output){
             int procValue = Integer.parseInt(values.get(metric.toLowerCase()));
@@ -275,8 +300,8 @@ public class CheckProcs extends PluginBase {
                 msg += key + " = " + filterAndValue.get(key) + ", ";
             }
             msg = msg.trim();
-            if (msg.endsWith(",")){
-                msg = msg.substring(0, msg.length() - 1);
+            if (msg.endsWith(", ")){
+                msg = msg.substring(0, msg.length() - 2);
             }
         }
         return msg;
@@ -288,11 +313,15 @@ public class CheckProcs extends PluginBase {
      * @param command
      * @return String
      */
-    private String exec(String command[], String outputFile) throws Exception {
+    private String exec(boolean unix) throws Exception {
         String output = null;
-        Process p = Runtime.getRuntime().exec(command);
-        InputStream input = p.getInputStream();
-        if (outputFile != null){
+        InputStream input = null;
+        String[] command = null;
+        if (unix) {
+            command = DEFAULT_UNIX_CMD;
+            Process p = Runtime.getRuntime().exec(command);
+            input = p.getInputStream();
+            String outputFile = UNIX_TMP_FILE; 
             OutputStream out = new BufferedOutputStream(new FileOutputStream(outputFile));
             int cnt;
             byte[] buffer = new byte[1024];
@@ -303,14 +332,20 @@ public class CheckProcs extends PluginBase {
             output = FileUtils.readFileToString(new File(outputFile));
             output = getFormattedOutput(output);
         }else{
+            command = DEFAULT_WINDOWS_CMD;
+            Process p = Runtime.getRuntime().exec(command);
+            input = p.getInputStream();
             StringBuffer lines = new StringBuffer();
             String line = null;
             BufferedReader in =
-                    new BufferedReader(new InputStreamReader(p.getInputStream()));
+                    new BufferedReader(new InputStreamReader(input, "CP437"));
             while ((line = in.readLine()) != null) {
-                lines.append(line);
+                lines.append(line).append("\n");
             }
+            output = lines.toString();
         }
+
+
         input.close();
         return output;
     }
@@ -350,17 +385,44 @@ public class CheckProcs extends PluginBase {
      * @param output
      * @return List<Map<String,String>>
      */
-    //@TODO
+
     private List<Map<String, String>> parseWindowsOutput(String output) {
         List<Map<String, String>> info = new ArrayList<Map<String, String>>();
         String[] lines = output.split("\n");
+
+        int totalRunTime = 0;
+        String cpu = METRIC_CPU.toLowerCase();
+        int count = 0;
         for (String l : lines) {
+            if (count == 0){
+                count++;
+                continue;
+            }
+
             Map<String, String> values = new HashMap<String, String>();
-            String[] line = l.replace("\"", "").split(",");
+            String[] line = l.replaceAll("\"", "").split(",");
             values.put(FILTER_COMMAND, line[0]);
             values.put("pid", line[1]);
+            values.put(FILTER_MEMORY, "" + convertToMemoryInt(line[4]));
+            values.put(FILTER_USER, line[6]);
+            int seconds = convertToSeconds(line[7].trim());
+            if (line[0].contains("System Idle Process")){
+                seconds = 0;
+            }
+            totalRunTime += seconds;
+            values.put(cpu, seconds + "");
+
             info.add(values);
+
         }
+        for (Map<String, String> map: info){
+            int secs = Integer.parseInt(map.get(cpu));
+            log.debug("secs " + secs + "");
+            double perc = ((double)secs / (double)totalRunTime) * 100;
+            map.put(cpu, (int)perc + "");
+        }
+
+        log.debug(info + "");
         return info;
     }
 
@@ -393,13 +455,20 @@ public class CheckProcs extends PluginBase {
             values.put(METRIC_CPU.toLowerCase(), line[4].trim());
             values.put(METRIC_RSS.toLowerCase(), line[5].trim());
             values.put(METRIC_VSZ.toLowerCase(), line[6].trim());
-            values.put(METRIC_ELAPSED.toLowerCase(), convertToSeconds(line[7].trim(), true) + "");
+            values.put(METRIC_ELAPSED.toLowerCase(), convertToSeconds(line[7].trim()) + "");
             values.put(FILTER_ARG_ARRAY, line[8]);
 
             info.add(values);
         }		
         return info;
     }
+
+    private int convertToMemoryInt(String mem) {
+        char[] replace = new char[]{160};
+        mem = mem.replaceAll(" ", "").replace("K", "").replace(new String(replace), "");
+        return Integer.parseInt(mem);
+    }
+
 
     /**
      * Apply filters to processes output
@@ -428,7 +497,7 @@ public class CheckProcs extends PluginBase {
                 }else if (filter.contains(FILTER_EREG_ARG_ARRAY) && !patternMatches(filterValue, map.get(FILTER_ARG_ARRAY))){
                     matchesAll = false;
                     break;
-                }else if (filter.contains(FILTER_VSZ) || filter.contains(FILTER_RSS)){
+                }else if (filter.contains(FILTER_VSZ) || filter.contains(FILTER_RSS) || filter.contains(FILTER_MEMORY)){
                     int filterval = Integer.parseInt(filterValue);
                     int value = Integer.parseInt(map.get(filter));
                     if (value < filterval){
@@ -452,7 +521,6 @@ public class CheckProcs extends PluginBase {
      */
     private boolean patternMatches(String regex, String input) {
         Pattern p = Pattern.compile(regex);
-        log.debug(input);
         return p.matches(regex, input);
     }
 
@@ -472,33 +540,32 @@ public class CheckProcs extends PluginBase {
      * @param input
      * @return
      */
-    private int convertToSeconds(String input, boolean unix){
+    private int convertToSeconds(String input){
         int days = 0;
         int hours = 0;
         int minutes = 0;
         int seconds = 0;
-        if (unix) {
-            int hyphenCount = StringUtils.countMatches(input, "-");
-            int colonCount = StringUtils.countMatches(input, ":");
-            if (hyphenCount > 0) {
-                String day = input.split("-")[0];
-                days = Integer.parseInt(day);
-                String[] time = input.split("-")[0].split(":");
-                hours = Integer.parseInt(time[0]);
-                minutes = Integer.parseInt(time[1]);
-                seconds = Integer.parseInt(time[2]);
-            }else{
-                String[] split = input.split(":");
-                if (colonCount == 2) {
-                    hours = Integer.parseInt(split[0]);
-                    minutes = Integer.parseInt(split[1]);
-                    seconds = Integer.parseInt(split[2]);
-                }else if (colonCount == 1){
-                    minutes = Integer.parseInt(split[0]);
-                    seconds = Integer.parseInt(split[1]);
-                }
+        int hyphenCount = StringUtils.countMatches(input, "-");
+        int colonCount = StringUtils.countMatches(input, ":");
+        if (hyphenCount > 0) {
+            String day = input.split("-")[0];
+            days = Integer.parseInt(day);
+            String[] time = input.split("-")[0].split(":");
+            hours = Integer.parseInt(time[0]);
+            minutes = Integer.parseInt(time[1]);
+            seconds = Integer.parseInt(time[2]);
+        }else{
+            String[] split = input.split(":");
+            if (colonCount == 2) {
+                hours = Integer.parseInt(split[0]);
+                minutes = Integer.parseInt(split[1]);
+                seconds = Integer.parseInt(split[2]);
+            }else if (colonCount == 1){
+                minutes = Integer.parseInt(split[0]);
+                seconds = Integer.parseInt(split[1]);
             }
         }
+
         return (days * 86400) +
                 (hours * 3600) +
                 (minutes * 60) +
@@ -506,31 +573,11 @@ public class CheckProcs extends PluginBase {
     }
 
     /**
-     * Builds unix command line string
-     * 
-     * @param cl
-     * @return
-     */
-    private String[] buildUnixCommand(ICommandLine cl, String metricType){
-        return DEFAULT_UNIX_CMD;
-    }
-
-    /**
-     * Builds windows command line string
-     * 
-     * @param cl
-     * @return
-     */
-    private String[] buildWindowsCommand(ICommandLine cl, String metricType){
-        return DEFAULT_WINDOWS_CMD;
-    }
-
-    /**
      * Delete tmp file
      */
     private void cleanup() {
         File tmp = new File(UNIX_TMP_FILE);
-        if (tmp != null){
+        if (tmp != null && tmp.exists()){
             tmp.delete();
         }
     }
