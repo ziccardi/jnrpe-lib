@@ -58,17 +58,17 @@ import org.apache.commons.lang.StringUtils;
             + "; VSZ - virtual memory size (unix only); RSS - resident set memory size (unix only); MEM - memory usage in KB (Windows only); CPU - CPU percentage; " +
             "ELAPSED - elapsed time in seconds (unix only)", required = false, hasArgs = true, argName = "metric", optionalArgs = false, option = "metric"),
 
-            @Option(shortName = "a", longName = "argument-array", description = "Only scan for processes with args that contain STRING. (unix only)", required = false, hasArgs = true, argName = "argument-array", optionalArgs = false, option = "argument-array"),
-            @Option(shortName = "e", longName = "ereg-argument-array", description = "Only scan for processes with args that contain the regex. (unix only)", required = false, hasArgs = true, argName = "ereg-argument-array", optionalArgs = false, option = "ereg-argument-array"),
+    @Option(shortName = "a", longName = "argument-array", description = "Only scan for processes with args that contain STRING. (unix only). Use instead of ereg-argument-array.", required = false, hasArgs = true, argName = "argument-array", optionalArgs = false, option = "argument-array"),
+    @Option(shortName = "e", longName = "ereg-argument-array", description = "Only scan for processes with args that contain the regex. (unix only). Use instead of argument-array.", required = false, hasArgs = true, argName = "ereg-argument-array", optionalArgs = false, option = "ereg-argument-array"),
 
-            @Option(shortName = "p", longName = "ppid", description = "Only scan for children of the parent process ID indicated (unix only).", required = false, hasArgs = true, argName = "ppid", optionalArgs = false, option = "ppid"),
+    @Option(shortName = "p", longName = "ppid", description = "Only scan for children of the parent process ID indicated (unix only).", required = false, hasArgs = true, argName = "ppid", optionalArgs = false, option = "ppid"),
 
-            @Option(shortName = "z", longName = "vsz", description = "Only scan for processes with VSZ higher than indicated (unix only).", required = false, hasArgs = true, argName = "vsz", optionalArgs = false, option = "vsz"),
-            @Option(shortName = "r", longName = "rss", description = "Only scan for processes with RSS higher than indicated (unix only).", required = false, hasArgs = true, argName = "rss", optionalArgs = false, option = "rss"),
-            @Option(shortName = "M", longName = "memory", description = "Only scan for processes with memory usage higher than indicated (windows only).", required = false, hasArgs = true, argName = "memory", optionalArgs = false, option = "memory"),
+    @Option(shortName = "z", longName = "vsz", description = "Only scan for processes with VSZ higher than indicated (unix only).", required = false, hasArgs = true, argName = "vsz", optionalArgs = false, option = "vsz"),
+    @Option(shortName = "r", longName = "rss", description = "Only scan for processes with RSS higher than indicated (unix only).", required = false, hasArgs = true, argName = "rss", optionalArgs = false, option = "rss"),
+    @Option(shortName = "M", longName = "memory", description = "Only scan for processes with memory usage higher than indicated (windows only).", required = false, hasArgs = true, argName = "memory", optionalArgs = false, option = "memory"),
 
-            @Option(shortName = "C", longName = "command", description = "Only scan for exact matches of COMMAND (without path).", required = false, hasArgs = true, argName = "command", optionalArgs = false, option = "command"),
-            @Option(shortName = "u", longName = "user", description = "Only scan for exact matches of USER", required = false, hasArgs = true, argName = "user", optionalArgs = false, option = "user")
+    @Option(shortName = "C", longName = "command", description = "Only scan for exact matches of COMMAND (without path).", required = false, hasArgs = true, argName = "command", optionalArgs = false, option = "command"),
+    @Option(shortName = "u", longName = "user", description = "Only scan for exact matches of USER", required = false, hasArgs = true, argName = "user", optionalArgs = false, option = "user")
 })
 public class CheckProcs extends PluginBase {
 
