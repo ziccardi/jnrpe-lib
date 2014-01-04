@@ -18,6 +18,7 @@ package it.jnrpe.plugin;
 import it.jnrpe.ICommandLine;
 import it.jnrpe.ReturnValue;
 import it.jnrpe.Status;
+import it.jnrpe.plugin.utils.ShellUtils;
 import it.jnrpe.plugins.PluginBase;
 import it.jnrpe.plugins.annotations.Option;
 import it.jnrpe.plugins.annotations.Plugin;
@@ -138,30 +139,25 @@ public class CheckProcs extends PluginBase {
      * @throws BadThresholdException
      */
     public ReturnValue execute(final ICommandLine cl) throws BadThresholdException {
-        String os = null;
+        boolean windows = ShellUtils.isWindows();
         try {
-            os = System.getProperty("os.name").toLowerCase();
             String metric = cl.getOptionValue("metric");
             if (metric == null){
                 metric = METRIC_PROCS;
             }
             metric = metric.toUpperCase();
 
-            boolean unix = true;
-            if (os.contains("windows")) {
-                unix = false;
-            }
-            validateArguments(cl, os, metric);
+            validateArguments(cl, windows, metric);
 
-            String output = exec(unix);
+            String output = exec(!windows);
 
-            List<Map<String, String>> result = unix ? parseUnixOutput(output): parseWindowsOutput(output);
+            List<Map<String, String>> result = windows ? parseWindowsOutput(output) : parseUnixOutput(output);
             return analyze(result, cl, metric);
         }catch(Exception e ){
             e.printStackTrace();
             throw new BadThresholdException(e);
         }finally{
-            if (!os.equals("windows")){
+            if (!windows){
                 cleanup();
             }
         }
@@ -175,8 +171,8 @@ public class CheckProcs extends PluginBase {
      * @param metric
      * @return
      */
-    private void validateArguments(ICommandLine cl, String os, String metric) throws Exception {
-        if (os.equals("windows")){
+    private void validateArguments(ICommandLine cl, boolean windows, String metric) throws Exception {
+        if (windows){
             if (metric.equals(METRIC_VSZ) ||
                     metric.equals(METRIC_RSS) || 
                     metric.endsWith(METRIC_ELAPSED)){
@@ -318,6 +314,7 @@ public class CheckProcs extends PluginBase {
         InputStream input = null;
         String[] command = null;
         if (unix) {
+            // write output to tmp file
             command = DEFAULT_UNIX_CMD;
             Process p = Runtime.getRuntime().exec(command);
             input = p.getInputStream();
@@ -331,22 +328,13 @@ public class CheckProcs extends PluginBase {
             out.close();
             output = FileUtils.readFileToString(new File(outputFile));
             output = getFormattedOutput(output);
+            input.close();
+            
         }else{
             command = DEFAULT_WINDOWS_CMD;
-            Process p = Runtime.getRuntime().exec(command);
-            input = p.getInputStream();
-            StringBuffer lines = new StringBuffer();
-            String line = null;
-            BufferedReader in =
-                    new BufferedReader(new InputStreamReader(input, "CP437"));
-            while ((line = in.readLine()) != null) {
-                lines.append(line).append("\n");
-            }
-            output = lines.toString();
+            output = ShellUtils.executeSystemCommandAndGetOutput(command, "CP437");
         }
 
-
-        input.close();
         return output;
     }
 
