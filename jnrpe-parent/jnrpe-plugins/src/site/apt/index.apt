@@ -37,6 +37,8 @@ JNRPE Plugin package
    
    * <<CheckProcs>> : checks system processes and does check against metrics.
    
+   * <<CheckTime>> :  Checks the time on a specified host.
+   
    * <<CheckTomcat>> : checks status of a tomcat instance
    
    * <<CheckHttp>> : tests the HTTP service on a specified host
