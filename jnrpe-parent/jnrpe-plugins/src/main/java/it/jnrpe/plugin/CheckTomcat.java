@@ -93,9 +93,6 @@ public class CheckTomcat extends PluginBase {
         int timeout =
                 Integer.parseInt(cl.getOptionValue("timeout", DEFAULT_TIMEOUT));
 
-        // http(s)://user[:pwd]@hostname:port/uri
-        //String urlPattern = "{0}://{1}@{2}:{3}{4}";
-//{[-h (--hostname) [<hostname>]]=[127.0.0.1], [-a (--password) [<password>]]=[tomcat], [-w (--warning) [<warning>]]=[1:], [-p (--port) [<port>]]=[8080], [-l (--username) [<username>]]=[tomcat]}
         if (!uri.startsWith("/")) {
             uri = "/" + uri;
         }
@@ -117,10 +114,6 @@ public class CheckTomcat extends PluginBase {
 
         String url = protocol + credentials + "@" + hostname + ":" + port + uri;
 
-        // String url =
-        // (cl.hasOption("ssl") ? "https://" : "http://")
-        // + username + ":" + password + "@" + hostname + ":"
-        // + port + uri;
         String encoded =
                 Base64.encodeBase64String((username + ":" + password)
                         .getBytes());
@@ -130,7 +123,7 @@ public class CheckTomcat extends PluginBase {
         String errmsg = null;
         try {
             response = Utils.getUrl(new URL(url), props, timeout * 1000);
-        
+
         } catch (Exception e) {
             log.info("Plugin execution failed : " + e.getMessage(), e);
             errmsg = e.getMessage();
@@ -145,7 +138,7 @@ public class CheckTomcat extends PluginBase {
 
         // can only have one check at a time
         if (checkThreads && checkMemory){
-             throw new BadThresholdException("Either --memory or --threads allowed in command.");
+            throw new BadThresholdException("Either --memory or --threads allowed in command.");
         }
         return analyseStatus(response, warning, critical, checkMemory, checkThreads);
     }
@@ -223,19 +216,19 @@ public class CheckTomcat extends PluginBase {
                     return new ReturnValue(Status.CRITICAL, "Free memory critical: " + availableMemMb + " MB available").
                             withPerformanceData("memory", new Long(maxMemMb),
                                     !critical.contains("%") ? UnitOfMeasure.megabytes : UnitOfMeasure.percentage,
-                                    warning,
-                                    critical,
-                                    0L,
-                                    new Long(maxMem));
+                                            warning,
+                                            critical,
+                                            0L,
+                                            new Long(maxMem));
                 }
                 if (warn != null && ThresholdUtil.isValueInRange(warn, availableMemMb)){
                     return new ReturnValue(Status.WARNING, "Free memory low: "
                             + availableMem / (1024*1024)+ " MB available / " + buff.toString()).withPerformanceData("memory", new Long(maxMemMb),
                                     !warning.contains("%") ? UnitOfMeasure.megabytes : UnitOfMeasure.percentage,
-                                    warning,
-                                    critical,
-                                    0L,
-                                    new Long(maxMem));
+                                            warning,
+                                            critical,
+                                            0L,
+                                            new Long(maxMem));
                 }
             }
 
@@ -247,7 +240,7 @@ public class CheckTomcat extends PluginBase {
 
                 Element threadInfo =
                         (Element) connector.getElementsByTagName("threadInfo")
-                                .item(0);
+                        .item(0);
                 maxThreads =
                         Integer.parseInt(threadInfo.getAttribute("maxThreads"));
                 currentThreadCount =
@@ -275,24 +268,22 @@ public class CheckTomcat extends PluginBase {
                                 + connectorName + " threads: " + threadsAvailable).withMessage(msg).
                                 withPerformanceData(connectorName + " threads", new Long(threadsAvailable),
                                         !critical.contains("%") ? UnitOfMeasure.counter : UnitOfMeasure.percentage,
-                                        warning,
-                                        critical,
-                                        0L,
-                                        new Long(maxThreads));
+                                                warning,
+                                                critical,
+                                                0L,
+                                                new Long(maxThreads));
                     }
                     if (warning != null && ThresholdUtil.isValueInRange(warn, threadsAvailable)) {
                         return new ReturnValue(Status.WARNING, "WARNING - Free "
-                               + connectorName + " threads: " + threadsAvailable + ", " + msg).
-                               withPerformanceData(connectorName + " threads",
-                                       new Long(threadsAvailable),
-                                       !warning.contains("%") ? UnitOfMeasure.counter : UnitOfMeasure.percentage,
-                                       warning,
-                                       critical,
-                                       0L,
-                                       new Long(maxThreads));
+                                + connectorName + " threads: " + threadsAvailable + ", " + msg).
+                                withPerformanceData(connectorName + " threads",
+                                        new Long(threadsAvailable),
+                                        !warning.contains("%") ? UnitOfMeasure.counter : UnitOfMeasure.percentage,
+                                                warning,
+                                                critical,
+                                                0L,
+                                                new Long(maxThreads));
                     }
-
-                    //retVal.withPerformanceData(connectorName + " threads", new Long(threadsAvailable),null, warning, critical, 0L, new Long(maxThreads));
 
                 }
                 buff.append(msg);
