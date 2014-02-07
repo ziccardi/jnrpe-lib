@@ -35,7 +35,6 @@
 	
 	<properties>
 		<project.parentbuild.sourceEncoding>UTF-8</project.parentbuild.sourceEncoding>
-		<jrnpe-plugins.version>0.7.2-RC6-SNAPSHOT</jrnpe-plugins.version>
 		<debian.install.path>/usr/local/jnrpe</debian.install.path>
 		<debian.conf.path>/etc/jnrpe</debian.conf.path>
 		<debian.log.path>/var/log/jnrpe</debian.log.path>
