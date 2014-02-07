@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package it.jnrpe.plugins.utils.httpserver;
+package it.jnrpe.plugins.mocks.httpserver;
 
 import org.eclipse.jetty.server.Server;
 /**
@@ -23,27 +23,27 @@ import org.eclipse.jetty.server.Server;
  * 
  */
 public class SimpleHttpServer  {
-    private final int PORT = 9000;
+	public static final int PORT = 9999;
 
-    private Server server = null;
+	private Server server = null;
 
-    public SimpleHttpServer(){
-	this.server = new Server(PORT);
-	this.server.setHandler(new SimpleHttpHandler());
+	public SimpleHttpServer(){
+		this.server = new Server(PORT);
+		this.server.setHandler(new SimpleHttpHandler());
 
-    }
+	}
 
-    public void start() throws Exception {
-	this.server.start();
-    }
+	public void start() throws Exception {
+		this.server.start();
+	}
 
-    public void stop() throws Exception {
-	this.server.stop();
-    }
+	public void stop() throws Exception {
+		this.server.stop();
+	}
 
-    public static void main(String[] args) throws Exception {
-	SimpleHttpServer server = new SimpleHttpServer();
-	server.start();		
-    }
+	public static void main(String[] args) throws Exception {
+		SimpleHttpServer server = new SimpleHttpServer();
+		server.start();		
+	}
 
 }

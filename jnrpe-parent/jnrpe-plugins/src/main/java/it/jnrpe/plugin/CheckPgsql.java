@@ -90,7 +90,6 @@ public class CheckPgsql extends PluginBase {
 
         try {
             conn = getConnection(cl);
-            // elapsed = (System.currentTimeMillis() - start) / 1000l;
         } catch (ClassNotFoundException e) {
             log.error("PostgreSQL driver library not found into the classpath: "
                     + "download and put it in the same directory of "
@@ -113,98 +112,9 @@ public class CheckPgsql extends PluginBase {
                 new BigDecimal(elapsed), new BigDecimal(0), null));
 
         return metricList;
-
-//        Status status = null;
-//
-//        if (critical != null
-//                && ThresholdUtil.isValueInRange(critical, elapsed)) {
-//            status = Status.CRITICAL;
-//        }
-//
-//        if (warning != null
-//                && (ThresholdUtil.isValueInRange(warning, elapsed))) {
-//            status = Status.WARNING;
-//        }
-//
-//        closeConnection(conn);
-//        if (status == null) {
-//            status = Status.OK;
-//        }
-//        String database = DEFAULT_TABLE;
-//        if (cl.hasOption("database")) {
-//            database = cl.getOptionValue("database");
-//        }
-//        return new ReturnValue(status, "Database " + database + " " + elapsed
-//                + " secs.").withPerformanceData("time", elapsed,
-//                ReturnValue.UnitOfMeasure.seconds, warning, critical, 0L, null);
     }
 
-    /**
-     * Executes the plugin.
-     *
-     * @param cl
-     *            The command line
-     * @return the Return value
-     * @throws BadThresholdException
-     *             -
-     */
-//    public final ReturnValue execute(final ICommandLine cl)
-//            throws BadThresholdException {
-//
-//        String warning = cl.getOptionValue("warning");
-//        String critical = cl.getOptionValue("critical");
-//        Connection conn = null;
-//        Long start = System.currentTimeMillis();
-//
-//        try {
-//            conn = getConnection(cl);
-//            // elapsed = (System.currentTimeMillis() - start) / 1000l;
-//        } catch (ClassNotFoundException e) {
-//            log.error("PostgreSQL driver library not found into the classpath: "
-//                    + "download and put it in the same directory of "
-//                    + "this plugin");
-//            return new ReturnValue(
-//                    Status.CRITICAL,
-//                    "CHECK_PGSQL - CRITICAL: Error accessing the PostgreSQL "
-//                            + "server - JDBC driver not installed");
-//        } catch (Exception e) {
-//            log.error("Error accessing the PostgreSQL server", e);
-//            return new ReturnValue(Status.CRITICAL,
-//                    "CHECK_PGSQL - CRITICAL: Error accessing the PostgreSQL "
-//                            + "server - " + e.getMessage());
-//        }
-//
-//        // if (conn == null){
-//        // return new ReturnValue(Status.CRITICAL,
-//        // "CHECK_PGSQL - CRITICAL: No database connection - " + error);
-//        // }
-//
-//        Long end = System.currentTimeMillis();
-//        Long elapsed = new Long((end - start) / 1000);
-//        Status status = null;
-//
-//        if (critical != null
-//                && ThresholdUtil.isValueInRange(critical, elapsed)) {
-//            status = Status.CRITICAL;
-//        }
-//
-//        if (warning != null
-//                && (ThresholdUtil.isValueInRange(warning, elapsed))) {
-//            status = Status.WARNING;
-//        }
-//
-//        closeConnection(conn);
-//        if (status == null) {
-//            status = Status.OK;
-//        }
-//        String database = DEFAULT_TABLE;
-//        if (cl.hasOption("database")) {
-//            database = cl.getOptionValue("database");
-//        }
-//        return new ReturnValue(status, "Database " + database + " " + elapsed
-//                + " secs.").withPerformanceData("time", elapsed,
-//                ReturnValue.UnitOfMeasure.seconds, warning, critical, 0L, null);
-//    }
+
 
     /**
      * Connect to the server.
@@ -254,7 +164,6 @@ public class CheckPgsql extends PluginBase {
         props.setProperty("user", username);
         props.setProperty("password", password);
         props.setProperty("timeout", timeout);
-        // props.setProperty("loglevel","2");
         String url =
                 "jdbc:postgresql://" + hostname + ":" + port + "/" + database;
         DriverManager.registerDriver((Driver) Class.forName(
@@ -262,12 +171,6 @@ public class CheckPgsql extends PluginBase {
         Connection conn = DriverManager.getConnection(url, props);
         return conn;
 
-        /*
-         * printf (_(" %s - database %s (%d sec.)|%s\n"), state_text(status),
-         * dbName, elapsed_time, fperfdata("time", elapsed_time, "s",
-         * (int)twarn, twarn, (int)tcrit, tcrit, TRUE, 0, FALSE,0)); return
-         * status;
-         */
     }
 
     /**

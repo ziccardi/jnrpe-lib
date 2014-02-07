@@ -141,8 +141,6 @@ public class CheckHttp extends PluginBase {
         if (cl.hasOption("certificate")) {
             String ok = cl.getOptionValue("certificate");
             thrb.withLegacyThreshold("certificate", ok, null, null);
-            // String critical = cl.getOptionValue("critical");
-            // String warning = cl.getOptionValue("warning");
         }
     }
 
