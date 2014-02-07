@@ -58,12 +58,6 @@ It is fully compatible with check_nrpe and can be used to execute both old nativ
 		</developer>
 	</developers>
 
-
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-				<jrnpe-plugins.version>0.7.2-RC6-SNAPSHOT</jrnpe-plugins.version>
-	</properties>
-
 	<build>
 		<pluginManagement>
 			<plugins>
@@ -218,27 +212,36 @@ It is fully compatible with check_nrpe and can be used to execute both old nativ
 		<developerConnection>scm:git:git@github.com:ziccardi/jnrpe-lib.git</developerConnection>
 		<tag>HEAD</tag>
 	</scm>
+	
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<jnrpe-lib.version>1.0.1-RC6-SNAPSHOT</jnrpe-lib.version>
+		<jnrpe-server.version>2.0.3-RC6-SNAPSHOT</jnrpe-server.version>
+		<jnrpe-plugins.version>0.7.2-RC6-SNAPSHOT</jnrpe-plugins.version>
+		<jcheck_nrpe.version>2.0.3-RC6-SNAPSHOT</jcheck_nrpe.version>
+	</properties>
+	
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
 				<groupId>net.sf.jnrpe</groupId>
 				<artifactId>jnrpe-lib</artifactId>
-				<version>1.0.1-RC6-SNAPSHOT</version>
+				<version>${jnrpe-lib.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>net.sf.jnrpe</groupId>
 				<artifactId>jnrpe-server</artifactId>
-				<version>2.0.3-RC6-SNAPSHOT</version>
+				<version>${jnrpe-server.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>net.sf.jnrpe</groupId>
 				<artifactId>jnrpe-plugins</artifactId>
-				<version>${jrnpe-plugins.version}</version>
+				<version>${jnrpe-plugins.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>net.sf.jnrpe</groupId>
 				<artifactId>jcheck_nrpe</artifactId>
-				<version>2.0.3-RC6-SNAPSHOT</version>
+				<version>${jcheck_nrpe.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

@@ -137,7 +137,7 @@
 									</mapper>
 								</data>
 								<data>
-									<src>${main_dir}/jnrpe-plugins/target/jnrpe-plugins-${jrnpe-plugins.version}.jar</src>
+									<src>${main_dir}/jnrpe-plugins/target/jnrpe-plugins-${jnrpe-plugins.version}.jar</src>
 									<type>file</type>
 									<mapper>
 										<type>perm</type>
