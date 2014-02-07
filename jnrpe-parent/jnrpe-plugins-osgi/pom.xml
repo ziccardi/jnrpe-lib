@@ -2,24 +2,29 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>net.sf.jnrpe</groupId>
-		<artifactId>jnrpe-parent</artifactId>
-		<version>2.0.3-RC6-SNAPSHOT</version>
+		<groupId>org.sonatype.oss</groupId>
+		<artifactId>oss-parent</artifactId>
+		<version>7</version>
+		<relativePath></relativePath>
 	</parent>
+	
 	<artifactId>jnrpe-plugins-osgi</artifactId>
-
+	<version>2.0.3-RC6-SNAPSHOT</version>
+	
 	<dependencies>
 		<!-- JNRPE Dependencies -->
 		
 		<dependency>
 			<groupId>net.sf.jnrpe</groupId>
 			<artifactId>jnrpe-plugins</artifactId>
+			<version>0.7.2-RC6-SNAPSHOT</version>
 			<scope>compile</scope>
 		</dependency>
 		
 		<dependency>
 			<groupId>net.sf.jnrpe</groupId>
 			<artifactId>jnrpe-lib</artifactId>
+			<version>1.0.1-RC6-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
 
